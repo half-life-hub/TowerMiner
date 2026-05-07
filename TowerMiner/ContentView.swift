@@ -5,7 +5,7 @@ import SwiftUI
 final class AppModel {
     var currentScreen: AppScreen = .home
     var playerProfile: PlayerProfile
-    var activeRunPreview: RunPreview?
+    var activeSession: GameSession?
 
     private let profileStore: ProfileStore
 
@@ -15,16 +15,12 @@ final class AppModel {
     }
 
     func startRun() {
-        activeRunPreview = RunPreview(
-            startingHealth: 5 + playerProfile.maxHealthLevel,
-            startingEnergy: 10 + (playerProfile.maxEnergyLevel * 2),
-            startingBombs: 1 + playerProfile.startingBombsLevel,
-            startingShields: 1 + playerProfile.startingShieldsLevel
-        )
+        activeSession = GameSession(profile: playerProfile)
         currentScreen = .run
     }
 
     func showHome() {
+        activeSession = nil
         currentScreen = .home
     }
 
@@ -55,9 +51,9 @@ struct ContentView: View {
                     onBack: appModel.showHome
                 )
             case .run:
-                if let preview = appModel.activeRunPreview {
+                if let session = appModel.activeSession {
                     RunView(
-                        preview: preview,
+                        session: session,
                         onBackToMenu: appModel.showHome
                     )
                 } else {

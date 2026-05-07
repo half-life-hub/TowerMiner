@@ -23,7 +23,7 @@ Use the checkboxes in the milestone, task, testing, and MVP sections below as th
 Current overall status:
 
 - [x] Milestone 1: App Shell
-- [ ] Milestone 2: Core Grid Gameplay
+- [x] Milestone 2: Core Grid Gameplay
 - [ ] Milestone 3: Procedural Generation and Difficulty
 - [ ] Milestone 4: Health, Energy, and Hazards
 - [ ] Milestone 5: Rewards and Upgrades
@@ -556,15 +556,15 @@ Definition of done:
 
 Deliverables:
 
-- [ ] Tile model
-- [ ] Visible mine grid
-- [ ] Player position
-- [ ] Left/right/down movement
-- [ ] Basic digging
+- [x] Tile model
+- [x] Visible mine grid
+- [x] Player position
+- [x] Left/right/down movement
+- [x] Basic digging
 
 Definition of done:
 
-- [ ] Player can move and clear blocks in a generated shaft
+- [x] Player can move and clear blocks in a generated shaft
 
 ### Milestone 3: Procedural Generation and Difficulty
 
@@ -630,16 +630,16 @@ Definition of done:
 
 ### Phase 2: Playfield
 
-- [ ] Define tile, coordinate, and player state models.
-- [ ] Implement mine grid storage.
-- [ ] Implement visible grid rendering.
-- [ ] Add player avatar rendering and camera offset logic.
+- [x] Define tile, coordinate, and player state models.
+- [x] Implement mine grid storage.
+- [x] Implement visible grid rendering.
+- [x] Add player avatar rendering and camera offset logic.
 
 ### Phase 3: Engine
 
-- [ ] Implement move validation.
-- [ ] Implement dig resolution.
-- [ ] Implement gravity/drop behavior.
+- [x] Implement move validation.
+- [x] Implement dig resolution.
+- [x] Implement gravity/drop behavior.
 - [ ] Implement row generation and row trimming.
 - [ ] Add depth tracking.
 
@@ -751,9 +751,9 @@ Mitigation:
 ## Recommended Build Order
 
 - [x] Home screen and app state
-- [ ] Game session model
-- [ ] Tile grid and rendering
-- [ ] Movement and digging
+- [x] Game session model
+- [x] Tile grid and rendering
+- [x] Movement and digging
 - [ ] Procedural generation
 - [ ] Health, hazards, and run end
 - [ ] Rewards and results
