@@ -16,6 +16,22 @@ This plan assumes the current project is a basic SwiftUI app and needs game stru
 
 ---
 
+## Progress Tracking
+
+Use the checkboxes in the milestone, task, testing, and MVP sections below as the live source of implementation status.
+
+Current overall status:
+
+- [ ] Milestone 1: App Shell
+- [ ] Milestone 2: Core Grid Gameplay
+- [ ] Milestone 3: Procedural Generation and Difficulty
+- [ ] Milestone 4: Health, Energy, and Hazards
+- [ ] Milestone 5: Rewards and Upgrades
+- [ ] Milestone 6: Polish Pass
+- [ ] MVP complete
+
+---
+
 ## Product Definition
 
 ### Core Fantasy
@@ -526,80 +542,80 @@ Recommended initial values:
 
 Deliverables:
 
-- App navigation structure
-- Home screen
-- Placeholder run screen
-- Persistent profile model
+- [ ] App navigation structure
+- [ ] Home screen
+- [ ] Placeholder run screen
+- [ ] Persistent profile model
 
 Definition of done:
 
-- App launches into a usable menu
-- Start button creates a new session
+- [ ] App launches into a usable menu
+- [ ] Start button creates a new session
 
 ### Milestone 2: Core Grid Gameplay
 
 Deliverables:
 
-- Tile model
-- Visible mine grid
-- Player position
-- Left/right/down movement
-- Basic digging
+- [ ] Tile model
+- [ ] Visible mine grid
+- [ ] Player position
+- [ ] Left/right/down movement
+- [ ] Basic digging
 
 Definition of done:
 
-- Player can move and clear blocks in a generated shaft
+- [ ] Player can move and clear blocks in a generated shaft
 
 ### Milestone 3: Procedural Generation and Difficulty
 
 Deliverables:
 
-- Row generation rules
-- Depth progression
-- Harder blocks and hazard placement
+- [ ] Row generation rules
+- [ ] Depth progression
+- [ ] Harder blocks and hazard placement
 
 Definition of done:
 
-- Runs feel variable and remain playable over depth
+- [ ] Runs feel variable and remain playable over depth
 
 ### Milestone 4: Health, Energy, and Hazards
 
 Deliverables:
 
-- Damage system
-- Hazard tile interactions
-- Run over condition
+- [ ] Damage system
+- [ ] Hazard tile interactions
+- [ ] Run over condition
 
 Definition of done:
 
-- Player can lose a run through understandable mistakes
+- [ ] Player can lose a run through understandable mistakes
 
 ### Milestone 5: Rewards and Upgrades
 
 Deliverables:
 
-- Coins/gems collection
-- Results screen
-- Currency payout
-- Upgrade purchases
+- [ ] Coins/gems collection
+- [ ] Results screen
+- [ ] Currency payout
+- [ ] Upgrade purchases
 
 Definition of done:
 
-- Full replay loop is functional
+- [ ] Full replay loop is functional
 
 ### Milestone 6: Polish Pass
 
 Deliverables:
 
-- Animations
-- Particles
-- Screen shake
-- Better HUD styling
-- iPad layout adjustments
+- [ ] Animations
+- [ ] Particles
+- [ ] Screen shake
+- [ ] Better HUD styling
+- [ ] iPad layout adjustments
 
 Definition of done:
 
-- Game feels coherent and visually intentional
+- [ ] Game feels coherent and visually intentional
 
 ---
 
@@ -607,46 +623,46 @@ Definition of done:
 
 ### Phase 1: Foundation
 
-1. Create app-level screen routing.
-2. Define persistent profile and upgrade models.
-3. Add storage layer for profile save/load.
-4. Build menu and upgrade screens with placeholder content.
+- [ ] Create app-level screen routing.
+- [ ] Define persistent profile and upgrade models.
+- [ ] Add storage layer for profile save/load.
+- [ ] Build menu and upgrade screens with placeholder content.
 
 ### Phase 2: Playfield
 
-1. Define tile, coordinate, and player state models.
-2. Implement mine grid storage.
-3. Implement visible grid rendering.
-4. Add player avatar rendering and camera offset logic.
+- [ ] Define tile, coordinate, and player state models.
+- [ ] Implement mine grid storage.
+- [ ] Implement visible grid rendering.
+- [ ] Add player avatar rendering and camera offset logic.
 
 ### Phase 3: Engine
 
-1. Implement move validation.
-2. Implement dig resolution.
-3. Implement gravity/drop behavior.
-4. Implement row generation and row trimming.
-5. Add depth tracking.
+- [ ] Implement move validation.
+- [ ] Implement dig resolution.
+- [ ] Implement gravity/drop behavior.
+- [ ] Implement row generation and row trimming.
+- [ ] Add depth tracking.
 
 ### Phase 4: Systems
 
-1. Add pickups and inventory changes.
-2. Add hazard interactions and damage.
-3. Add bombs and shields.
-4. Add run-end logic and summary conversion.
+- [ ] Add pickups and inventory changes.
+- [ ] Add hazard interactions and damage.
+- [ ] Add bombs and shields.
+- [ ] Add run-end logic and summary conversion.
 
 ### Phase 5: Progression
 
-1. Add upgrade purchase flow.
-2. Apply upgrade modifiers to new sessions.
-3. Add best-depth tracking.
-4. Tune economy values.
+- [ ] Add upgrade purchase flow.
+- [ ] Apply upgrade modifiers to new sessions.
+- [ ] Add best-depth tracking.
+- [ ] Tune economy values.
 
 ### Phase 6: Polish
 
-1. Improve visual identity.
-2. Add particles and flashes.
-3. Add screen shake and stronger feedback.
-4. Tune layouts for small and large devices.
+- [ ] Improve visual identity.
+- [ ] Add particles and flashes.
+- [ ] Add screen shake and stronger feedback.
+- [ ] Tune layouts for small and large devices.
 
 ---
 
@@ -656,31 +672,31 @@ Definition of done:
 
 Add tests for:
 
-- Row generation validity
-- Upgrade cost calculations
-- Reward payout calculations
-- Movement and dig rules
-- Hazard damage rules
+- [ ] Row generation validity
+- [ ] Upgrade cost calculations
+- [ ] Reward payout calculations
+- [ ] Movement and dig rules
+- [ ] Hazard damage rules
 
 ### UI Tests
 
 Add tests for:
 
-- Launch to home screen
-- Start run flow
-- Open upgrades flow
-- Buy upgrade if currency is available
-- End run and return to menu
+- [ ] Launch to home screen
+- [ ] Start run flow
+- [ ] Open upgrades flow
+- [ ] Buy upgrade if currency is available
+- [ ] End run and return to menu
 
 ### Manual Test Checklist
 
-- Start multiple runs and verify generation variability
-- Verify no immediate impossible spawn states
-- Verify health and energy update correctly
-- Verify rewards persist after app relaunch
-- Verify upgrade effects apply to next run
-- Verify controls remain usable on small iPhones
-- Verify layout scales correctly on iPad
+- [ ] Start multiple runs and verify generation variability
+- [ ] Verify no immediate impossible spawn states
+- [ ] Verify health and energy update correctly
+- [ ] Verify rewards persist after app relaunch
+- [ ] Verify upgrade effects apply to next run
+- [ ] Verify controls remain usable on small iPhones
+- [ ] Verify layout scales correctly on iPad
 
 ---
 
@@ -734,16 +750,16 @@ Mitigation:
 
 ## Recommended Build Order
 
-1. Home screen and app state
-2. Game session model
-3. Tile grid and rendering
-4. Movement and digging
-5. Procedural generation
-6. Health, hazards, and run end
-7. Rewards and results
-8. Persistent upgrades
-9. Effects and polish
-10. Tests and balancing
+- [ ] Home screen and app state
+- [ ] Game session model
+- [ ] Tile grid and rendering
+- [ ] Movement and digging
+- [ ] Procedural generation
+- [ ] Health, hazards, and run end
+- [ ] Rewards and results
+- [ ] Persistent upgrades
+- [ ] Effects and polish
+- [ ] Tests and balancing
 
 ---
 
@@ -751,9 +767,9 @@ Mitigation:
 
 The MVP is complete when:
 
-- The game can be launched and played end to end without placeholder blockers
-- A full run can start, progress, end, and convert into persistent rewards
-- Upgrades can be purchased and affect later runs
-- Core controls feel responsive on iPhone
-- The project has basic automated coverage for core rules
-- The visual presentation is simple but polished enough to feel intentional
+- [ ] The game can be launched and played end to end without placeholder blockers
+- [ ] A full run can start, progress, end, and convert into persistent rewards
+- [ ] Upgrades can be purchased and affect later runs
+- [ ] Core controls feel responsive on iPhone
+- [ ] The project has basic automated coverage for core rules
+- [ ] The visual presentation is simple but polished enough to feel intentional
