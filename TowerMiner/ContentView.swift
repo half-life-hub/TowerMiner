@@ -1,61 +1,80 @@
-//
-//  ContentView.swift
-//  TowerMiner
-//
-//  Created by Steven Marshall on 7/5/2026.
-//
-
+import Observation
 import SwiftUI
-import SwiftData
+
+@Observable
+final class AppModel {
+    var currentScreen: AppScreen = .home
+    var playerProfile: PlayerProfile
+    var activeRunPreview: RunPreview?
+
+    private let profileStore: ProfileStore
+
+    init(profileStore: ProfileStore = ProfileStore()) {
+        self.profileStore = profileStore
+        self.playerProfile = profileStore.loadProfile()
+    }
+
+    func startRun() {
+        activeRunPreview = RunPreview(
+            startingHealth: 5 + playerProfile.maxHealthLevel,
+            startingEnergy: 10 + (playerProfile.maxEnergyLevel * 2),
+            startingBombs: 1 + playerProfile.startingBombsLevel,
+            startingShields: 1 + playerProfile.startingShieldsLevel
+        )
+        currentScreen = .run
+    }
+
+    func showHome() {
+        currentScreen = .home
+    }
+
+    func showUpgrades() {
+        currentScreen = .upgrades
+    }
+
+    func persistProfile() {
+        profileStore.saveProfile(playerProfile)
+    }
+}
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @State private var appModel = AppModel()
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        Group {
+            switch appModel.currentScreen {
+            case .home:
+                HomeView(
+                    profile: appModel.playerProfile,
+                    onStartRun: appModel.startRun,
+                    onOpenUpgrades: appModel.showUpgrades
+                )
+            case .upgrades:
+                UpgradeView(
+                    profile: appModel.playerProfile,
+                    onBack: appModel.showHome
+                )
+            case .run:
+                if let preview = appModel.activeRunPreview {
+                    RunView(
+                        preview: preview,
+                        onBackToMenu: appModel.showHome
+                    )
+                } else {
+                    HomeView(
+                        profile: appModel.playerProfile,
+                        onStartRun: appModel.startRun,
+                        onOpenUpgrades: appModel.showUpgrades
+                    )
                 }
-                .onDelete(perform: deleteItems)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+        .onChange(of: appModel.playerProfile) {
+            appModel.persistProfile()
         }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }

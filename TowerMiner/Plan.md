@@ -22,7 +22,7 @@ Use the checkboxes in the milestone, task, testing, and MVP sections below as th
 
 Current overall status:
 
-- [ ] Milestone 1: App Shell
+- [x] Milestone 1: App Shell
 - [ ] Milestone 2: Core Grid Gameplay
 - [ ] Milestone 3: Procedural Generation and Difficulty
 - [ ] Milestone 4: Health, Energy, and Hazards
@@ -542,15 +542,15 @@ Recommended initial values:
 
 Deliverables:
 
-- [ ] App navigation structure
-- [ ] Home screen
-- [ ] Placeholder run screen
-- [ ] Persistent profile model
+- [x] App navigation structure
+- [x] Home screen
+- [x] Placeholder run screen
+- [x] Persistent profile model
 
 Definition of done:
 
-- [ ] App launches into a usable menu
-- [ ] Start button creates a new session
+- [x] App launches into a usable menu
+- [x] Start button creates a new session
 
 ### Milestone 2: Core Grid Gameplay
 
@@ -623,10 +623,10 @@ Definition of done:
 
 ### Phase 1: Foundation
 
-- [ ] Create app-level screen routing.
-- [ ] Define persistent profile and upgrade models.
-- [ ] Add storage layer for profile save/load.
-- [ ] Build menu and upgrade screens with placeholder content.
+- [x] Create app-level screen routing.
+- [x] Define persistent profile and upgrade models.
+- [x] Add storage layer for profile save/load.
+- [x] Build menu and upgrade screens with placeholder content.
 
 ### Phase 2: Playfield
 
@@ -750,7 +750,7 @@ Mitigation:
 
 ## Recommended Build Order
 
-- [ ] Home screen and app state
+- [x] Home screen and app state
 - [ ] Game session model
 - [ ] Tile grid and rendering
 - [ ] Movement and digging
