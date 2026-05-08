@@ -25,7 +25,7 @@ Current overall status:
 - [x] Milestone 1: App Shell
 - [x] Milestone 2: Core Grid Gameplay
 - [x] Milestone 3: Procedural Generation and Difficulty
-- [ ] Milestone 4: Health, Energy, and Hazards
+- [x] Milestone 4: Health, Energy, and Hazards
 - [ ] Milestone 5: Rewards and Upgrades
 - [ ] Milestone 6: Polish Pass
 - [ ] MVP complete
@@ -582,13 +582,13 @@ Definition of done:
 
 Deliverables:
 
-- [ ] Damage system
-- [ ] Hazard tile interactions
-- [ ] Run over condition
+- [x] Damage system
+- [x] Hazard tile interactions
+- [x] Run over condition
 
 Definition of done:
 
-- [ ] Player can lose a run through understandable mistakes
+- [x] Player can lose a run through understandable mistakes
 
 ### Milestone 5: Rewards and Upgrades
 
@@ -646,9 +646,11 @@ Definition of done:
 ### Phase 4: Systems
 
 - [ ] Add pickups and inventory changes.
-- [ ] Add hazard interactions and damage.
-- [ ] Add bombs and shields.
-- [ ] Add run-end logic and summary conversion.
+- [x] Add hazard interactions and damage.
+- [ ] Add bombs.
+- [x] Add shields.
+- [x] Add run-end logic.
+- [ ] Add summary conversion.
 
 ### Phase 5: Progression
 
@@ -676,7 +678,7 @@ Add tests for:
 - [ ] Upgrade cost calculations
 - [ ] Reward payout calculations
 - [x] Movement and dig rules
-- [ ] Hazard damage rules
+- [x] Hazard damage rules
 
 ### UI Tests
 
@@ -692,7 +694,7 @@ Add tests for:
 
 - [ ] Start multiple runs and verify generation variability
 - [ ] Verify no immediate impossible spawn states
-- [ ] Verify health and energy update correctly
+- [x] Verify health and energy update correctly
 - [ ] Verify rewards persist after app relaunch
 - [ ] Verify upgrade effects apply to next run
 - [ ] Verify controls remain usable on small iPhones
@@ -755,7 +757,7 @@ Mitigation:
 - [x] Tile grid and rendering
 - [x] Movement and digging
 - [x] Procedural generation
-- [ ] Health, hazards, and run end
+- [x] Health, hazards, and run end
 - [ ] Rewards and results
 - [ ] Persistent upgrades
 - [ ] Effects and polish

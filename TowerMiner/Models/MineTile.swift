@@ -31,6 +31,26 @@ enum TileType: String, CaseIterable {
             return false
         }
     }
+
+    var isHazard: Bool {
+        switch self {
+        case .lava, .spike:
+            return true
+        case .empty, .dirt, .stone, .hardStone:
+            return false
+        }
+    }
+
+    var damage: Int {
+        switch self {
+        case .lava:
+            return 2
+        case .spike:
+            return 1
+        case .empty, .dirt, .stone, .hardStone:
+            return 0
+        }
+    }
 }
 
 struct MineTile: Equatable {
@@ -48,6 +68,18 @@ struct MineTile: Equatable {
 
     var isDiggable: Bool {
         type.isDiggable
+    }
+
+    var isHazard: Bool {
+        type.isHazard
+    }
+
+    var isPassable: Bool {
+        isEmpty || isHazard
+    }
+
+    var damage: Int {
+        type.damage
     }
 
     mutating func applyDig(power: Int = 1) {

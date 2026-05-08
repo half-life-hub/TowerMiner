@@ -11,6 +11,7 @@ final class GameSession {
     var tiles: [[MineTile]]
     var player: PlayerState
     var digPower: Int
+    var isRunOver: Bool
 
     init(
         profile: PlayerProfile,
@@ -25,15 +26,21 @@ final class GameSession {
         self.rowBufferCount = rowBufferCount
         self.generator = MineGenerator(columns: columns, seed: seed)
         self.digPower = 1
+        self.isRunOver = false
 
         let startColumn = columns / 2
+        let maxHealth = 5 + profile.maxHealthLevel
+        let maxEnergy = 10 + (profile.maxEnergyLevel * 2)
         self.tiles = generator.makeInitialRows(count: initialRowCount, startColumn: startColumn)
         self.player = PlayerState(
             position: GridPosition(row: 1, column: startColumn),
-            health: 5 + profile.maxHealthLevel,
-            energy: 10 + (profile.maxEnergyLevel * 2),
+            maxHealth: maxHealth,
+            health: maxHealth,
+            maxEnergy: maxEnergy,
+            energy: maxEnergy,
             bombs: 1 + profile.startingBombsLevel,
-            shields: 1 + profile.startingShieldsLevel
+            shields: 1 + profile.startingShieldsLevel,
+            activeShieldHits: 0
         )
     }
 
@@ -57,6 +64,10 @@ final class GameSession {
     }
 
     func canDig(at position: GridPosition) -> Bool {
+        guard !isRunOver else {
+            return false
+        }
+
         guard let tile = tile(at: position) else {
             return false
         }
@@ -66,25 +77,54 @@ final class GameSession {
     }
 
     func moveLeft() {
+        guard !isRunOver else {
+            return
+        }
+
         attemptMoveOrDig(to: player.position.offsetBy(columns: -1))
     }
 
     func moveRight() {
+        guard !isRunOver else {
+            return
+        }
+
         attemptMoveOrDig(to: player.position.offsetBy(columns: 1))
     }
 
     func moveDown() {
+        guard !isRunOver else {
+            return
+        }
+
         attemptMoveOrDig(to: player.position.offsetBy(rows: 1))
     }
 
     func dig(at position: GridPosition) {
+        guard !isRunOver else {
+            return
+        }
+
         guard canDig(at: position) else {
             return
         }
 
         tiles[position.row][position.column].applyDig(power: digPower)
-        player.energy = max(0, player.energy - 1)
+        spendEnergyOrHealth()
+        guard !isRunOver else {
+            return
+        }
+
         applyGravityIfNeeded()
+    }
+
+    func useShield() {
+        guard !isRunOver, player.shields > 0, player.activeShieldHits == 0 else {
+            return
+        }
+
+        player.shields -= 1
+        player.activeShieldHits = 1
     }
 
     private func attemptMoveOrDig(to destination: GridPosition) {
@@ -97,11 +137,17 @@ final class GameSession {
             return
         }
 
-        guard tiles[destination.row][destination.column].isEmpty else {
+        guard tiles[destination.row][destination.column].isPassable else {
             return
         }
         
         player.position = destination
+        resolveTileInteraction(at: destination)
+        guard !isRunOver else {
+            return
+        }
+
+        recoverEnergy()
         ensureRowsAvailable()
         applyGravityIfNeeded()
     }
@@ -114,6 +160,12 @@ final class GameSession {
             }
 
             player.position = below
+            resolveTileInteraction(at: below)
+            guard !isRunOver else {
+                break
+            }
+
+            recoverEnergy()
             ensureRowsAvailable()
         }
     }
@@ -134,5 +186,46 @@ final class GameSession {
             startColumn: columns / 2
         )
         tiles.append(contentsOf: newRows)
+    }
+
+    private func spendEnergyOrHealth() {
+        if player.energy > 0 {
+            player.energy -= 1
+        } else {
+            applyDamage(1)
+        }
+    }
+
+    private func recoverEnergy() {
+        player.energy = min(player.maxEnergy, player.energy + 1)
+    }
+
+    private func resolveTileInteraction(at position: GridPosition) {
+        let tile = tiles[position.row][position.column]
+        guard tile.isHazard else {
+            return
+        }
+
+        applyDamage(tile.damage)
+
+        if tile.type == .spike {
+            tiles[position.row][position.column] = MineTile(type: .empty)
+        }
+    }
+
+    private func applyDamage(_ amount: Int) {
+        guard amount > 0 else {
+            return
+        }
+
+        if player.activeShieldHits > 0 {
+            player.activeShieldHits -= 1
+            return
+        }
+
+        player.health = max(0, player.health - amount)
+        if player.health == 0 {
+            isRunOver = true
+        }
     }
 }

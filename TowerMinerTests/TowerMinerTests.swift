@@ -32,16 +32,65 @@ struct TowerMinerTests {
         #expect(session.player.energy == 9)
     }
 
-    @Test func movementCanContinueAfterEnergyReachesZero() {
+    @Test func movementContinuesWhileEnergyRecovers() {
         let session = GameSession(profile: .default, seed: 9_137)
 
         for _ in 0..<20 {
             session.moveDown()
         }
 
-        #expect(session.player.energy == 0)
         #expect(session.currentDepth >= 20)
         #expect(session.tiles.count > 24)
+        #expect(!session.isRunOver)
+    }
+
+    @Test func exhaustedDiggingCostsHealth() {
+        let session = GameSession(profile: .default, seed: 9_137)
+
+        session.moveLeft()
+        session.player.energy = 0
+        session.dig(at: GridPosition(row: 4, column: 3))
+
+        #expect(session.player.health == 4)
+        #expect(!session.isRunOver)
+    }
+
+    @Test func spikeDamagesPlayerAndClearsAfterEntry() {
+        let session = GameSession(profile: .default, seed: 9_137)
+        let spikePosition = session.player.position.offsetBy(columns: 1)
+
+        session.tiles[spikePosition.row][spikePosition.column] = MineTile(type: .spike)
+        session.moveRight()
+
+        #expect(session.player.health == 4)
+        #expect(session.tile(at: spikePosition)?.type == .empty)
+        #expect(!session.isRunOver)
+    }
+
+    @Test func lavaCanEndRun() {
+        let session = GameSession(profile: .default, seed: 9_137)
+        let lavaPosition = session.player.position.offsetBy(columns: 1)
+
+        session.player.health = 1
+        session.tiles[lavaPosition.row][lavaPosition.column] = MineTile(type: .lava)
+        session.moveRight()
+
+        #expect(session.player.health == 0)
+        #expect(session.isRunOver)
+    }
+
+    @Test func shieldAbsorbsOneHazardHit() {
+        let session = GameSession(profile: .default, seed: 9_137)
+        let lavaPosition = session.player.position.offsetBy(columns: 1)
+
+        session.useShield()
+        session.tiles[lavaPosition.row][lavaPosition.column] = MineTile(type: .lava)
+        session.moveRight()
+
+        #expect(session.player.health == 5)
+        #expect(session.player.shields == 0)
+        #expect(session.player.activeShieldHits == 0)
+        #expect(!session.isRunOver)
     }
 
     @Test func generatorKeepsOpeningRowsSafe() {

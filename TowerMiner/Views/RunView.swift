@@ -25,9 +25,9 @@ struct RunView: View {
                     }
                     Spacer()
                     VStack(alignment: .trailing, spacing: 4) {
-                        Text("HP \(session.player.health)")
+                        Text("HP \(session.player.health)/\(session.player.maxHealth)")
                             .foregroundStyle(.white)
-                        Text("EN \(session.player.energy)")
+                        Text("EN \(session.player.energy)/\(session.player.maxEnergy)")
                             .foregroundStyle(.white.opacity(0.72))
                     }
                     Spacer()
@@ -83,7 +83,16 @@ struct RunView: View {
                         .lineLimit(2)
                     HStack(spacing: 16) {
                         runStat(title: "Bombs", value: "\(session.player.bombs)")
-                        runStat(title: "Shields", value: "\(session.player.shields)")
+                        Button {
+                            session.useShield()
+                        } label: {
+                            runStat(
+                                title: session.player.activeShieldHits > 0 ? "Shield Active" : "Shields",
+                                value: "\(session.player.shields)"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(session.player.shields == 0 || session.player.activeShieldHits > 0 || session.isRunOver)
                     }
                 }
 
@@ -96,6 +105,26 @@ struct RunView: View {
                 Spacer()
             }
             .padding(24)
+
+            if session.isRunOver {
+                VStack(spacing: 16) {
+                    Text("Run Over")
+                        .font(.largeTitle.weight(.black))
+                        .foregroundStyle(.white)
+                    Text("Depth \(session.currentDepth)")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.78))
+                    Button("Back to Menu", action: onBackToMenu)
+                        .buttonStyle(.borderedProminent)
+                }
+                .padding(28)
+                .frame(maxWidth: 300)
+                .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(Color(red: 0.95, green: 0.34, blue: 0.25).opacity(0.7), lineWidth: 1)
+                )
+            }
         }
     }
 
