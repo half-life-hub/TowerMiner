@@ -11,53 +11,32 @@ struct RunView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let contentWidth = min(geometry.size.width - 32, 680)
-            let boardHeight = max(280, min(geometry.size.height * 0.38, 420))
+            let contentWidth = min(geometry.size.width - 28, 720)
 
             ZStack {
-                LinearGradient(
-                    colors: [Color.black, Color(red: 0.08, green: 0.09, blue: 0.15), Color(red: 0.05, green: 0.04, blue: 0.08)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                runBackground
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 14) {
-                        header
+                VStack(spacing: 12) {
+                    topBar
+                        .frame(width: contentWidth)
 
-                        mineBoard(height: boardHeight)
-                            .modifier(ScreenShakeEffect(shakes: CGFloat(damageShake)))
-                            .animation(.spring(response: 0.22, dampingFraction: 0.55), value: damageShake)
+                    playfield(width: contentWidth, availableHeight: geometry.size.height)
+                        .frame(width: contentWidth)
+                        .modifier(ScreenShakeEffect(shakes: CGFloat(damageShake)))
 
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Controls move or dig. Tap blocks to mine.")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.86))
-                                .lineLimit(2)
+                    resourceStrip
+                        .frame(width: contentWidth)
 
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: geometry.size.width > 520 ? 4 : 2), spacing: 10) {
-                                runStat(title: "Coins", value: "\(session.player.coins)", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
-                                runStat(title: "Gems", value: "\(session.player.gems)", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-                                runStat(title: "Bombs", value: "\(session.player.bombs)", tint: .white.opacity(0.75))
-                                shieldButton
-                            }
-                        }
-
-                        ControlPad(
-                            onMoveLeft: session.moveLeft,
-                            onMoveRight: session.moveRight,
-                            onMoveDown: session.moveDown
-                        )
-
-                        Spacer(minLength: 0)
-                    }
+                    ControlPad(
+                        onMoveLeft: session.moveLeft,
+                        onMoveRight: session.moveRight,
+                        onMoveDown: session.moveDown
+                    )
                     .frame(width: contentWidth)
-                    .padding(.top, 18)
-                    .padding(.bottom, 24)
-                    .frame(maxWidth: .infinity)
                 }
-                .scrollIndicators(.hidden)
+                .padding(.top, 16)
+                .padding(.bottom, 18)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                 if session.isRunOver {
                     runOverOverlay
@@ -75,71 +54,128 @@ struct RunView: View {
         }
     }
 
-    private var header: some View {
-        HStack(alignment: .center, spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
+    private var runBackground: some View {
+        ZStack {
+            LinearGradient(
+                colors: [Color.black, Color(red: 0.05, green: 0.06, blue: 0.10), Color(red: 0.10, green: 0.05, blue: 0.04)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                ForEach(0..<9, id: \.self) { row in
+                    HStack(spacing: 0) {
+                        ForEach(0..<7, id: \.self) { column in
+                            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                                .stroke(.white.opacity((row + column).isMultiple(of: 3) ? 0.035 : 0.018), lineWidth: 1)
+                                .frame(height: 82)
+                        }
+                    }
+                }
+            }
+            .opacity(0.45)
+            .ignoresSafeArea()
+        }
+    }
+
+    private var topBar: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text("Run")
                     .font(.title.weight(.black))
                     .foregroundStyle(.white)
-                    .lineLimit(1)
-                Text("Depth \(session.currentDepth)")
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.72))
+                Label("Depth \(session.currentDepth)", systemImage: "arrow.down.to.line.compact")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.70))
             }
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 8) {
+            VStack(spacing: 8) {
                 meter(title: "HP", value: session.player.health, maxValue: session.player.maxHealth, tint: Color(red: 0.95, green: 0.34, blue: 0.25))
                 meter(title: "EN", value: session.player.energy, maxValue: session.player.maxEnergy, tint: Color(red: 0.52, green: 0.94, blue: 0.86))
             }
-            .frame(width: 118)
+            .frame(width: 124)
 
-            Button("Cash Out") {
+            Button {
                 onFinishRun(session.makeRunResult())
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                    Text("Cash Out")
+                }
+                .font(.caption.weight(.black))
+                .foregroundStyle(.black)
+                .padding(.horizontal, 12)
+                .frame(height: 42)
+                .background(Color(red: 0.52, green: 0.94, blue: 0.86), in: Capsule())
             }
-            .buttonStyle(.borderedProminent)
-            .font(.headline.weight(.semibold))
+            .buttonStyle(.plain)
+            .accessibilityLabel("Cash Out")
+        }
+        .padding(14)
+        .background(.black.opacity(0.32), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(.white.opacity(0.08), lineWidth: 1)
         }
     }
 
-    private func mineBoard(height: CGFloat) -> some View {
-        GeometryReader { geometry in
-            let spacing: CGFloat = 6
+    private func playfield(width: CGFloat, availableHeight: CGFloat) -> some View {
+        let boardHeight = max(320, min(availableHeight * 0.48, 520))
+
+        return GeometryReader { geometry in
+            let spacing: CGFloat = 5
             let boardInset: CGFloat = 12
-            let availableWidth = geometry.size.width - (boardInset * 2)
             let visibleRows = Array(session.visibleRowRange)
-            let availableHeight = geometry.size.height - (boardInset * 2)
+            let availableWidth = geometry.size.width - (boardInset * 2)
+            let availableTileHeight = geometry.size.height - (boardInset * 2) - 32
             let widthTileSize = floor((availableWidth - (CGFloat(session.columns - 1) * spacing)) / CGFloat(session.columns))
-            let heightTileSize = floor((availableHeight - (CGFloat(max(0, visibleRows.count - 1)) * spacing)) / CGFloat(visibleRows.count))
+            let heightTileSize = floor((availableTileHeight - (CGFloat(max(0, visibleRows.count - 1)) * spacing)) / CGFloat(visibleRows.count))
             let tileSize = max(18, min(widthTileSize, heightTileSize))
-            let boardHeight = (CGFloat(visibleRows.count) * tileSize) + (CGFloat(max(0, visibleRows.count - 1)) * spacing)
+            let gridHeight = (CGFloat(visibleRows.count) * tileSize) + (CGFloat(max(0, visibleRows.count - 1)) * spacing)
 
             ZStack {
-                VStack(spacing: spacing) {
-                    ForEach(visibleRows, id: \.self) { row in
-                        HStack(spacing: spacing) {
-                            ForEach(0..<session.columns, id: \.self) { column in
-                                let position = GridPosition(row: row, column: column)
-                                let tile = session.tiles[row][column]
+                VStack(spacing: 10) {
+                    HStack {
+                        Text("Mine Shaft")
+                            .font(.caption.weight(.black))
+                            .foregroundStyle(.white.opacity(0.56))
+                        Spacer()
+                        Text("Tap adjacent blocks")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.46))
+                    }
 
-                                Button {
-                                    session.dig(at: position)
-                                } label: {
-                                    MineTileView(
-                                        tile: tile,
-                                        isPlayerHere: session.player.position == position,
-                                        canDig: session.canDig(at: position)
-                                    )
-                                    .frame(width: tileSize, height: tileSize)
+                    VStack(spacing: spacing) {
+                        ForEach(visibleRows, id: \.self) { row in
+                            HStack(spacing: spacing) {
+                                ForEach(0..<session.columns, id: \.self) { column in
+                                    let position = GridPosition(row: row, column: column)
+                                    let tile = session.tiles[row][column]
+
+                                    Button {
+                                        session.dig(at: position)
+                                    } label: {
+                                        MineTileView(
+                                            tile: tile,
+                                            isPlayerHere: session.player.position == position,
+                                            canDig: session.canDig(at: position)
+                                        )
+                                        .frame(width: tileSize, height: tileSize)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                     }
+                    .frame(width: availableWidth, height: gridHeight, alignment: .top)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                    Spacer(minLength: 0)
                 }
-                .frame(width: availableWidth, height: boardHeight, alignment: .top)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(boardInset)
 
                 if showDustBurst {
                     ParticleBurst(color: Color(red: 0.72, green: 0.54, blue: 0.36), count: 10)
@@ -151,35 +187,41 @@ struct RunView: View {
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .padding(boardInset)
         }
-        .frame(height: height)
+        .frame(height: boardHeight)
         .background(
             LinearGradient(
-                colors: [.black.opacity(0.38), Color(red: 0.04, green: 0.04, blue: 0.07).opacity(0.9)],
+                colors: [Color.black.opacity(0.50), Color(red: 0.04, green: 0.04, blue: 0.07).opacity(0.96)],
                 startPoint: .top,
                 endPoint: .bottom
             ),
             in: RoundedRectangle(cornerRadius: 22, style: .continuous)
         )
-        .overlay(
+        .overlay {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(.white.opacity(0.10), lineWidth: 1)
-        )
+        }
     }
 
-    private var shieldButton: some View {
-        Button {
-            session.useShield()
-        } label: {
-            runStat(
-                title: session.player.activeShieldHits > 0 ? "Shield Active" : "Shields",
-                value: "\(session.player.shields)",
-                tint: Color(red: 0.62, green: 0.77, blue: 1.0)
-            )
+    private var resourceStrip: some View {
+        HStack(spacing: 8) {
+            chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+            chip(title: "Gems", value: "\(session.player.gems)", systemImage: "diamond.fill", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+            chip(title: "Bombs", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: .white.opacity(0.80))
+
+            Button {
+                session.useShield()
+            } label: {
+                chip(
+                    title: session.player.activeShieldHits > 0 ? "Shield" : "Shields",
+                    value: "\(session.player.shields)",
+                    systemImage: "shield.fill",
+                    tint: Color(red: 0.62, green: 0.77, blue: 1.0)
+                )
+            }
+            .buttonStyle(.plain)
+            .disabled(session.player.shields == 0 || session.player.activeShieldHits > 0 || session.isRunOver)
         }
-        .buttonStyle(.plain)
-        .disabled(session.player.shields == 0 || session.player.activeShieldHits > 0 || session.isRunOver)
     }
 
     private var runOverOverlay: some View {
@@ -197,29 +239,35 @@ struct RunView: View {
         }
         .padding(28)
         .frame(maxWidth: 300)
-        .background(.black.opacity(0.84), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(
+        .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(Color(red: 0.95, green: 0.34, blue: 0.25).opacity(0.7), lineWidth: 1)
-        )
+        }
     }
 
-    private func runStat(title: String, value: String, tint: Color) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.68))
-            Text(value)
-                .font(.headline.weight(.bold))
-                .foregroundStyle(.white)
+    private func chip(title: String, value: String, systemImage: String, tint: Color) -> some View {
+        HStack(spacing: 7) {
+            Image(systemName: systemImage)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(tint)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.54))
+                    .lineLimit(1)
+                Text(value)
+                    .font(.headline.weight(.black))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(tint)
-                .frame(width: 4)
+        .frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
+        .padding(.horizontal, 10)
+        .background(.black.opacity(0.32), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(.white.opacity(0.08), lineWidth: 1)
         }
     }
 
