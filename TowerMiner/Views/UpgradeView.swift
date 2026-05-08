@@ -2,6 +2,7 @@ import SwiftUI
 
 struct UpgradeView: View {
     let profile: PlayerProfile
+    let onPurchase: (UpgradeID) -> Void
     let onBack: () -> Void
 
     var body: some View {
@@ -27,17 +28,18 @@ struct UpgradeView: View {
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.88))
 
-                VStack(spacing: 12) {
-                    UpgradePreviewRow(title: "Max Health", level: profile.maxHealthLevel)
-                    UpgradePreviewRow(title: "Max Energy", level: profile.maxEnergyLevel)
-                    UpgradePreviewRow(title: "Starting Bombs", level: profile.startingBombsLevel)
-                    UpgradePreviewRow(title: "Starting Shields", level: profile.startingShieldsLevel)
-                    UpgradePreviewRow(title: "Gem Value", level: profile.gemValueLevel)
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(UpgradeID.allCases) { upgrade in
+                            UpgradePurchaseRow(
+                                upgrade: upgrade,
+                                level: profile.level(for: upgrade),
+                                credits: profile.totalCredits,
+                                onPurchase: onPurchase
+                            )
+                        }
+                    }
                 }
-
-                Text("Purchasing upgrades lands in Milestone 5.")
-                    .font(.headline)
-                    .foregroundStyle(.white.opacity(0.72))
 
                 Spacer()
             }
@@ -46,18 +48,46 @@ struct UpgradeView: View {
     }
 }
 
-private struct UpgradePreviewRow: View {
-    let title: String
+private struct UpgradePurchaseRow: View {
+    let upgrade: UpgradeID
     let level: Int
+    let credits: Int
+    let onPurchase: (UpgradeID) -> Void
+
+    private var isMaxed: Bool {
+        level >= upgrade.maxLevel
+    }
+
+    private var cost: Int {
+        upgrade.cost(for: level)
+    }
+
+    private var canPurchase: Bool {
+        !isMaxed && credits >= cost
+    }
 
     var body: some View {
-        HStack {
-            Text(title)
-                .foregroundStyle(.white.opacity(0.76))
-            Spacer()
-            Text("Level \(level)")
-                .font(.headline.weight(.bold))
-                .foregroundStyle(.white)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(upgrade.title)
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(.white)
+                    Text(upgrade.description)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.66))
+                }
+                Spacer()
+                Text("Lv \(level)/\(upgrade.maxLevel)")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(.white)
+            }
+
+            Button(isMaxed ? "Maxed" : "Buy \(cost)") {
+                onPurchase(upgrade)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!canPurchase)
         }
         .padding()
         .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -65,5 +95,17 @@ private struct UpgradePreviewRow: View {
 }
 
 #Preview {
-    UpgradeView(profile: .default, onBack: {})
+    UpgradeView(
+        profile: PlayerProfile(
+            totalCredits: 100,
+            bestDepth: 0,
+            maxHealthLevel: 0,
+            maxEnergyLevel: 1,
+            startingBombsLevel: 0,
+            startingShieldsLevel: 0,
+            gemValueLevel: 0
+        ),
+        onPurchase: { _ in },
+        onBack: {}
+    )
 }

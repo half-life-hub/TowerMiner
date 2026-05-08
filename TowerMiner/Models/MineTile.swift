@@ -5,6 +5,9 @@ enum TileType: String, CaseIterable {
     case dirt
     case stone
     case hardStone
+    case gold
+    case gem
+    case chest
     case lava
     case spike
 
@@ -18,6 +21,10 @@ enum TileType: String, CaseIterable {
             return 2
         case .hardStone:
             return 3
+        case .gold, .gem:
+            return 1
+        case .chest:
+            return 2
         case .lava, .spike:
             return 0
         }
@@ -25,7 +32,7 @@ enum TileType: String, CaseIterable {
 
     var isDiggable: Bool {
         switch self {
-        case .dirt, .stone, .hardStone:
+        case .dirt, .stone, .hardStone, .gold, .gem, .chest:
             return true
         case .empty, .lava, .spike:
             return false
@@ -36,7 +43,7 @@ enum TileType: String, CaseIterable {
         switch self {
         case .lava, .spike:
             return true
-        case .empty, .dirt, .stone, .hardStone:
+        case .empty, .dirt, .stone, .hardStone, .gold, .gem, .chest:
             return false
         }
     }
@@ -47,7 +54,29 @@ enum TileType: String, CaseIterable {
             return 2
         case .spike:
             return 1
-        case .empty, .dirt, .stone, .hardStone:
+        case .empty, .dirt, .stone, .hardStone, .gold, .gem, .chest:
+            return 0
+        }
+    }
+
+    var coinReward: Int {
+        switch self {
+        case .gold:
+            return 4
+        case .chest:
+            return 8
+        case .empty, .dirt, .stone, .hardStone, .gem, .lava, .spike:
+            return 0
+        }
+    }
+
+    var gemReward: Int {
+        switch self {
+        case .gem:
+            return 1
+        case .chest:
+            return 1
+        case .empty, .dirt, .stone, .hardStone, .gold, .lava, .spike:
             return 0
         }
     }
@@ -80,6 +109,14 @@ struct MineTile: Equatable {
 
     var damage: Int {
         type.damage
+    }
+
+    var coinReward: Int {
+        type.coinReward
+    }
+
+    var gemReward: Int {
+        type.gemReward
     }
 
     mutating func applyDig(power: Int = 1) {

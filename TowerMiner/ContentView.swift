@@ -6,6 +6,7 @@ final class AppModel {
     var currentScreen: AppScreen = .home
     var playerProfile: PlayerProfile
     var activeSession: GameSession?
+    var lastRunResult: RunResult?
 
     private let profileStore: ProfileStore
 
@@ -28,6 +29,22 @@ final class AppModel {
         currentScreen = .upgrades
     }
 
+    func finishRun(_ result: RunResult) {
+        lastRunResult = result
+        activeSession = nil
+        playerProfile.apply(result)
+        persistProfile()
+        currentScreen = .results
+    }
+
+    func purchaseUpgrade(_ upgrade: UpgradeID) {
+        guard playerProfile.purchase(upgrade) else {
+            return
+        }
+
+        persistProfile()
+    }
+
     func persistProfile() {
         profileStore.saveProfile(playerProfile)
     }
@@ -48,12 +65,30 @@ struct ContentView: View {
             case .upgrades:
                 UpgradeView(
                     profile: appModel.playerProfile,
+                    onPurchase: appModel.purchaseUpgrade,
                     onBack: appModel.showHome
                 )
             case .run:
                 if let session = appModel.activeSession {
                     RunView(
                         session: session,
+                        onBackToMenu: appModel.showHome,
+                        onFinishRun: appModel.finishRun
+                    )
+                } else {
+                    HomeView(
+                        profile: appModel.playerProfile,
+                        onStartRun: appModel.startRun,
+                        onOpenUpgrades: appModel.showUpgrades
+                    )
+                }
+            case .results:
+                if let result = appModel.lastRunResult {
+                    ResultsView(
+                        result: result,
+                        profile: appModel.playerProfile,
+                        onRetry: appModel.startRun,
+                        onOpenUpgrades: appModel.showUpgrades,
                         onBackToMenu: appModel.showHome
                     )
                 } else {

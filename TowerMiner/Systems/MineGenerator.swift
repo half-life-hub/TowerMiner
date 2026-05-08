@@ -43,6 +43,10 @@ struct MineGenerator {
         case 0...20:
             if roll < 8 {
                 return .empty
+            } else if roll < 13 {
+                return .gold
+            } else if roll < 16 {
+                return .gem
             } else if roll < 24 {
                 return .stone
             } else {
@@ -51,11 +55,17 @@ struct MineGenerator {
         case 21...50:
             if roll < 6 {
                 return .empty
-            } else if roll < 10 {
+            } else if roll < 12 {
+                return .gold
+            } else if roll < 17 {
+                return .gem
+            } else if roll < 19 {
+                return .chest
+            } else if roll < 24 {
                 return .spike
-            } else if roll < 34 {
-                return .stone
             } else if roll < 43 {
+                return .stone
+            } else if roll < 54 {
                 return .hardStone
             } else {
                 return .dirt
@@ -63,13 +73,19 @@ struct MineGenerator {
         default:
             if roll < 5 {
                 return .empty
-            } else if roll < 10 {
+            } else if roll < 11 {
+                return .gold
+            } else if roll < 17 {
+                return .gem
+            } else if roll < 20 {
+                return .chest
+            } else if roll < 25 {
                 return .spike
-            } else if roll < 15 {
+            } else if roll < 30 {
                 return .lava
-            } else if roll < 38 {
+            } else if roll < 48 {
                 return .stone
-            } else if roll < 54 {
+            } else if roll < 62 {
                 return .hardStone
             } else {
                 return .dirt

@@ -3,6 +3,7 @@ import SwiftUI
 struct RunView: View {
     let session: GameSession
     let onBackToMenu: () -> Void
+    let onFinishRun: (RunResult) -> Void
 
     var body: some View {
         ZStack {
@@ -31,7 +32,9 @@ struct RunView: View {
                             .foregroundStyle(.white.opacity(0.72))
                     }
                     Spacer()
-                    Button("Menu", action: onBackToMenu)
+                    Button("Cash Out") {
+                        onFinishRun(session.makeRunResult())
+                    }
                         .buttonStyle(.borderedProminent)
                 }
 
@@ -82,6 +85,11 @@ struct RunView: View {
                         .foregroundStyle(.white)
                         .lineLimit(2)
                     HStack(spacing: 16) {
+                        runStat(title: "Coins", value: "\(session.player.coins)")
+                        runStat(title: "Gems", value: "\(session.player.gems)")
+                    }
+
+                    HStack(spacing: 16) {
                         runStat(title: "Bombs", value: "\(session.player.bombs)")
                         Button {
                             session.useShield()
@@ -114,7 +122,9 @@ struct RunView: View {
                     Text("Depth \(session.currentDepth)")
                         .font(.title3.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.78))
-                    Button("Back to Menu", action: onBackToMenu)
+                    Button("View Results") {
+                        onFinishRun(session.makeRunResult())
+                    }
                         .buttonStyle(.borderedProminent)
                 }
                 .padding(28)
@@ -146,6 +156,7 @@ struct RunView: View {
 #Preview {
     RunView(
         session: GameSession(profile: .default),
-        onBackToMenu: {}
+        onBackToMenu: {},
+        onFinishRun: { _ in }
     )
 }

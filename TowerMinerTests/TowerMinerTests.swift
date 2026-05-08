@@ -93,6 +93,64 @@ struct TowerMinerTests {
         #expect(!session.isRunOver)
     }
 
+    @Test func miningRewardTilesAddsRunInventory() {
+        let session = GameSession(profile: .default, seed: 9_137)
+        let goldPosition = session.player.position.offsetBy(columns: 1)
+        let gemPosition = session.player.position.offsetBy(columns: -1)
+
+        session.tiles[session.player.position.row + 1][session.player.position.column] = MineTile(type: .dirt)
+        session.tiles[goldPosition.row][goldPosition.column] = MineTile(type: .gold)
+        session.tiles[gemPosition.row][gemPosition.column] = MineTile(type: .gem)
+
+        session.dig(at: goldPosition)
+        session.dig(at: gemPosition)
+
+        #expect(session.player.coins == 4)
+        #expect(session.player.gems == 1)
+    }
+
+    @Test func runResultCalculatesTotalPayout() {
+        let result = RunResult(depth: 20, coins: 12, gems: 3, gemValue: 5)
+
+        #expect(result.coinPayout == 12)
+        #expect(result.gemPayout == 15)
+        #expect(result.depthBonus == 10)
+        #expect(result.totalPayout == 37)
+    }
+
+    @Test func profileAppliesResultAndPurchasesUpgrade() {
+        var profile = PlayerProfile.default
+        let result = RunResult(depth: 30, coins: 10, gems: 2, gemValue: 5)
+
+        profile.apply(result)
+
+        #expect(profile.totalCredits == 35)
+        #expect(profile.bestDepth == 30)
+
+        let purchased = profile.purchase(.maxHealth)
+
+        #expect(purchased)
+        #expect(profile.maxHealthLevel == 1)
+        #expect(profile.totalCredits == 15)
+    }
+
+    @Test func purchasedUpgradesAffectNextSession() {
+        var profile = PlayerProfile.default
+        profile.totalCredits = 100
+
+        _ = profile.purchase(.maxHealth)
+        _ = profile.purchase(.maxEnergy)
+        _ = profile.purchase(.startingShields)
+        _ = profile.purchase(.gemValue)
+
+        let session = GameSession(profile: profile, seed: 9_137)
+
+        #expect(session.player.maxHealth == 6)
+        #expect(session.player.maxEnergy == 12)
+        #expect(session.player.shields == 2)
+        #expect(session.gemValue == 7)
+    }
+
     @Test func generatorKeepsOpeningRowsSafe() {
         let generator = MineGenerator(columns: 9, seed: 9_137)
         let rows = generator.makeInitialRows(count: 4, startColumn: 4)

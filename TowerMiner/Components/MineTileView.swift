@@ -24,6 +24,24 @@ struct MineTileView: View {
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.32))
             }
+
+            if tile.type == .gold {
+                Image(systemName: "circle.fill")
+                    .font(.caption)
+                    .foregroundStyle(Color(red: 1.0, green: 0.78, blue: 0.23))
+            }
+
+            if tile.type == .gem {
+                Image(systemName: "diamond.fill")
+                    .font(.caption)
+                    .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
+            }
+
+            if tile.type == .chest {
+                Image(systemName: "shippingbox.fill")
+                    .font(.caption)
+                    .foregroundStyle(Color(red: 0.94, green: 0.65, blue: 0.28))
+            }
             
             if tile.type == .lava {
                 Image(systemName: "flame.fill")
@@ -74,6 +92,30 @@ struct MineTileView: View {
             return AnyShapeStyle(
                 LinearGradient(
                     colors: [Color(red: 0.38, green: 0.44, blue: 0.54), Color(red: 0.24, green: 0.29, blue: 0.36)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        case .gold:
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color(red: 0.58, green: 0.38, blue: 0.12), Color(red: 0.34, green: 0.22, blue: 0.08)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        case .gem:
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color(red: 0.12, green: 0.48, blue: 0.52), Color(red: 0.06, green: 0.22, blue: 0.28)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        case .chest:
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Color(red: 0.47, green: 0.28, blue: 0.14), Color(red: 0.23, green: 0.13, blue: 0.08)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )

@@ -26,7 +26,7 @@ Current overall status:
 - [x] Milestone 2: Core Grid Gameplay
 - [x] Milestone 3: Procedural Generation and Difficulty
 - [x] Milestone 4: Health, Energy, and Hazards
-- [ ] Milestone 5: Rewards and Upgrades
+- [x] Milestone 5: Rewards and Upgrades
 - [ ] Milestone 6: Polish Pass
 - [ ] MVP complete
 
@@ -594,14 +594,14 @@ Definition of done:
 
 Deliverables:
 
-- [ ] Coins/gems collection
-- [ ] Results screen
-- [ ] Currency payout
-- [ ] Upgrade purchases
+- [x] Coins/gems collection
+- [x] Results screen
+- [x] Currency payout
+- [x] Upgrade purchases
 
 Definition of done:
 
-- [ ] Full replay loop is functional
+- [x] Full replay loop is functional
 
 ### Milestone 6: Polish Pass
 
@@ -645,19 +645,19 @@ Definition of done:
 
 ### Phase 4: Systems
 
-- [ ] Add pickups and inventory changes.
+- [x] Add pickups and inventory changes.
 - [x] Add hazard interactions and damage.
 - [ ] Add bombs.
 - [x] Add shields.
 - [x] Add run-end logic.
-- [ ] Add summary conversion.
+- [x] Add summary conversion.
 
 ### Phase 5: Progression
 
-- [ ] Add upgrade purchase flow.
-- [ ] Apply upgrade modifiers to new sessions.
-- [ ] Add best-depth tracking.
-- [ ] Tune economy values.
+- [x] Add upgrade purchase flow.
+- [x] Apply upgrade modifiers to new sessions.
+- [x] Add best-depth tracking.
+- [x] Tune economy values.
 
 ### Phase 6: Polish
 
@@ -675,8 +675,8 @@ Definition of done:
 Add tests for:
 
 - [x] Row generation validity
-- [ ] Upgrade cost calculations
-- [ ] Reward payout calculations
+- [x] Upgrade cost calculations
+- [x] Reward payout calculations
 - [x] Movement and dig rules
 - [x] Hazard damage rules
 
@@ -695,8 +695,8 @@ Add tests for:
 - [ ] Start multiple runs and verify generation variability
 - [ ] Verify no immediate impossible spawn states
 - [x] Verify health and energy update correctly
-- [ ] Verify rewards persist after app relaunch
-- [ ] Verify upgrade effects apply to next run
+- [x] Verify rewards persist after app relaunch
+- [x] Verify upgrade effects apply to next run
 - [ ] Verify controls remain usable on small iPhones
 - [ ] Verify layout scales correctly on iPad
 
@@ -758,8 +758,8 @@ Mitigation:
 - [x] Movement and digging
 - [x] Procedural generation
 - [x] Health, hazards, and run end
-- [ ] Rewards and results
-- [ ] Persistent upgrades
+- [x] Rewards and results
+- [x] Persistent upgrades
 - [ ] Effects and polish
 - [ ] Tests and balancing
 

@@ -7,6 +7,7 @@ final class GameSession {
     let visibleRowCount: Int
     let rowBufferCount: Int
     let generator: MineGenerator
+    let gemValue: Int
 
     var tiles: [[MineTile]]
     var player: PlayerState
@@ -25,6 +26,7 @@ final class GameSession {
         self.visibleRowCount = visibleRowCount
         self.rowBufferCount = rowBufferCount
         self.generator = MineGenerator(columns: columns, seed: seed)
+        self.gemValue = 5 + (profile.gemValueLevel * 2)
         self.digPower = 1
         self.isRunOver = false
 
@@ -38,6 +40,8 @@ final class GameSession {
             health: maxHealth,
             maxEnergy: maxEnergy,
             energy: maxEnergy,
+            coins: 0,
+            gems: 0,
             bombs: 1 + profile.startingBombsLevel,
             shields: 1 + profile.startingShieldsLevel,
             activeShieldHits: 0
@@ -109,7 +113,14 @@ final class GameSession {
             return
         }
 
+        let coinReward = tiles[position.row][position.column].coinReward
+        let gemReward = tiles[position.row][position.column].gemReward
         tiles[position.row][position.column].applyDig(power: digPower)
+        if tiles[position.row][position.column].isEmpty {
+            player.coins += coinReward
+            player.gems += gemReward
+        }
+
         spendEnergyOrHealth()
         guard !isRunOver else {
             return
@@ -125,6 +136,15 @@ final class GameSession {
 
         player.shields -= 1
         player.activeShieldHits = 1
+    }
+
+    func makeRunResult() -> RunResult {
+        RunResult(
+            depth: currentDepth,
+            coins: player.coins,
+            gems: player.gems,
+            gemValue: gemValue
+        )
     }
 
     private func attemptMoveOrDig(to destination: GridPosition) {
