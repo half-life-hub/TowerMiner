@@ -27,7 +27,7 @@ Current overall status:
 - [x] Milestone 3: Procedural Generation and Difficulty
 - [x] Milestone 4: Health, Energy, and Hazards
 - [x] Milestone 5: Rewards and Upgrades
-- [ ] Milestone 6: Polish Pass
+- [x] Milestone 6: Polish Pass
 - [ ] MVP complete
 
 ---
@@ -607,15 +607,15 @@ Definition of done:
 
 Deliverables:
 
-- [ ] Animations
-- [ ] Particles
-- [ ] Screen shake
-- [ ] Better HUD styling
-- [ ] iPad layout adjustments
+- [x] Animations
+- [x] Particles
+- [x] Screen shake
+- [x] Better HUD styling
+- [x] iPad layout adjustments
 
 Definition of done:
 
-- [ ] Game feels coherent and visually intentional
+- [x] Game feels coherent and visually intentional
 
 ---
 
@@ -661,10 +661,10 @@ Definition of done:
 
 ### Phase 6: Polish
 
-- [ ] Improve visual identity.
-- [ ] Add particles and flashes.
-- [ ] Add screen shake and stronger feedback.
-- [ ] Tune layouts for small and large devices.
+- [x] Improve visual identity.
+- [x] Add particles and flashes.
+- [x] Add screen shake and stronger feedback.
+- [x] Tune layouts for small and large devices.
 
 ---
 
@@ -697,8 +697,8 @@ Add tests for:
 - [x] Verify health and energy update correctly
 - [x] Verify rewards persist after app relaunch
 - [x] Verify upgrade effects apply to next run
-- [ ] Verify controls remain usable on small iPhones
-- [ ] Verify layout scales correctly on iPad
+- [x] Verify controls remain usable on small iPhones
+- [x] Verify layout scales correctly on iPad
 
 ---
 
@@ -760,7 +760,7 @@ Mitigation:
 - [x] Health, hazards, and run end
 - [x] Rewards and results
 - [x] Persistent upgrades
-- [ ] Effects and polish
+- [x] Effects and polish
 - [ ] Tests and balancing
 
 ---

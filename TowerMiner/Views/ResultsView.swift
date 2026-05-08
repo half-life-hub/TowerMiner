@@ -16,37 +16,41 @@ struct ResultsView: View {
             )
             .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 22) {
-                Text("Run Results")
-                    .font(.largeTitle.weight(.black))
-                    .foregroundStyle(.white)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    Text("Run Results")
+                        .font(.largeTitle.weight(.black))
+                        .foregroundStyle(.white)
 
-                VStack(spacing: 12) {
-                    ResultRow(title: "Depth", value: "\(result.depth)")
-                    ResultRow(title: "Coins", value: "\(result.coins)")
-                    ResultRow(title: "Gems", value: "\(result.gems)")
-                    ResultRow(title: "Gem Payout", value: "\(result.gemPayout)")
-                    ResultRow(title: "Depth Bonus", value: "\(result.depthBonus)")
-                    ResultRow(title: "Total Credits", value: "\(result.totalPayout)")
+                    VStack(spacing: 12) {
+                        ResultRow(title: "Depth", value: "\(result.depth)")
+                        ResultRow(title: "Coins", value: "\(result.coins)")
+                        ResultRow(title: "Gems", value: "\(result.gems)")
+                        ResultRow(title: "Gem Payout", value: "\(result.gemPayout)")
+                        ResultRow(title: "Depth Bonus", value: "\(result.depthBonus)")
+                        ResultRow(title: "Total Credits", value: "\(result.totalPayout)")
+                    }
+
+                    Text("Banked Credits: \(profile.totalCredits)")
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.82))
+
+                    VStack(spacing: 12) {
+                        Button("Retry", action: onRetry)
+                            .buttonStyle(.borderedProminent)
+                        Button("Upgrades", action: onOpenUpgrades)
+                            .buttonStyle(.bordered)
+                        Button("Menu", action: onBackToMenu)
+                            .buttonStyle(.borderless)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Spacer(minLength: 0)
                 }
-
-                Text("Banked Credits: \(profile.totalCredits)")
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.82))
-
-                VStack(spacing: 12) {
-                    Button("Retry", action: onRetry)
-                        .buttonStyle(.borderedProminent)
-                    Button("Upgrades", action: onOpenUpgrades)
-                        .buttonStyle(.bordered)
-                    Button("Menu", action: onBackToMenu)
-                        .buttonStyle(.borderless)
-                }
+                .frame(maxWidth: 680, alignment: .leading)
+                .padding(24)
                 .frame(maxWidth: .infinity)
-
-                Spacer()
             }
-            .padding(24)
         }
     }
 }

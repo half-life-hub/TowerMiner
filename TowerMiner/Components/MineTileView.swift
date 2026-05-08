@@ -57,17 +57,29 @@ struct MineTileView: View {
 
             if isPlayerHere {
                 Circle()
-                    .fill(Color(red: 0.52, green: 0.94, blue: 0.86))
-                    .padding(10)
+                    .fill(
+                        RadialGradient(
+                            colors: [Color.white, Color(red: 0.52, green: 0.94, blue: 0.86)],
+                            center: .topLeading,
+                            startRadius: 1,
+                            endRadius: 16
+                        )
+                    )
+                    .padding(9)
                     .overlay(
                         Circle()
                             .stroke(Color.white.opacity(0.85), lineWidth: 2)
-                            .padding(10)
+                            .padding(9)
                     )
+                    .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.85), radius: 8)
+                    .transition(.scale.combined(with: .opacity))
             }
         }
         .aspectRatio(1, contentMode: .fit)
         .shadow(color: shadowColor, radius: canDig ? 8 : 3)
+        .scaleEffect(canDig ? 1.04 : 1.0)
+        .animation(.spring(response: 0.2, dampingFraction: 0.72), value: canDig)
+        .animation(.spring(response: 0.18, dampingFraction: 0.7), value: isPlayerHere)
     }
 
     private var tileFill: some ShapeStyle {
@@ -160,6 +172,14 @@ struct MineTileView: View {
     }
 
     private var shadowColor: Color {
-        canDig ? Color(red: 0.55, green: 0.92, blue: 0.88).opacity(0.25) : .clear
+        if tile.type == .gem {
+            return Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.45)
+        }
+
+        if tile.type == .lava {
+            return Color(red: 1.0, green: 0.22, blue: 0.08).opacity(0.5)
+        }
+
+        return canDig ? Color(red: 0.55, green: 0.92, blue: 0.88).opacity(0.25) : .clear
     }
 }

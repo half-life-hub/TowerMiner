@@ -8,7 +8,7 @@ struct HomeView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(red: 0.05, green: 0.08, blue: 0.16), Color(red: 0.15, green: 0.09, blue: 0.10)],
+                colors: [Color.black, Color(red: 0.06, green: 0.08, blue: 0.14), Color(red: 0.16, green: 0.08, blue: 0.05)],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -21,6 +21,7 @@ struct HomeView: View {
                     Text("Tower Miner")
                         .font(.system(size: 42, weight: .black, design: .rounded))
                         .foregroundStyle(.white)
+                        .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.32), radius: 12)
 
                     Text("Dig deeper, cash out, and come back stronger.")
                         .font(.headline)

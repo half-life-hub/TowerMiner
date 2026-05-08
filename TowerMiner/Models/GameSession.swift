@@ -13,6 +13,9 @@ final class GameSession {
     var player: PlayerState
     var digPower: Int
     var isRunOver: Bool
+    var digFeedbackID: Int
+    var rewardFeedbackID: Int
+    var damageFeedbackID: Int
 
     init(
         profile: PlayerProfile,
@@ -29,6 +32,9 @@ final class GameSession {
         self.gemValue = 5 + (profile.gemValueLevel * 2)
         self.digPower = 1
         self.isRunOver = false
+        self.digFeedbackID = 0
+        self.rewardFeedbackID = 0
+        self.damageFeedbackID = 0
 
         let startColumn = columns / 2
         let maxHealth = 5 + profile.maxHealthLevel
@@ -116,9 +122,13 @@ final class GameSession {
         let coinReward = tiles[position.row][position.column].coinReward
         let gemReward = tiles[position.row][position.column].gemReward
         tiles[position.row][position.column].applyDig(power: digPower)
+        digFeedbackID += 1
         if tiles[position.row][position.column].isEmpty {
             player.coins += coinReward
             player.gems += gemReward
+            if coinReward > 0 || gemReward > 0 {
+                rewardFeedbackID += 1
+            }
         }
 
         spendEnergyOrHealth()
@@ -244,6 +254,7 @@ final class GameSession {
         }
 
         player.health = max(0, player.health - amount)
+        damageFeedbackID += 1
         if player.health == 0 {
             isRunOver = true
         }
