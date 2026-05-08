@@ -77,9 +77,10 @@ struct RunView: View {
                 )
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Tap an adjacent block to dig it. Use the controls to move through cleared space.")
+                    Text("Controls move or dig. Tap blocks to mine.")
                         .font(.headline)
                         .foregroundStyle(.white)
+                        .lineLimit(2)
                     HStack(spacing: 16) {
                         runStat(title: "Bombs", value: "\(session.player.bombs)")
                         runStat(title: "Shields", value: "\(session.player.shields)")

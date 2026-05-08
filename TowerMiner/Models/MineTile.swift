@@ -4,6 +4,9 @@ enum TileType: String, CaseIterable {
     case empty
     case dirt
     case stone
+    case hardStone
+    case lava
+    case spike
 
     var durability: Int {
         switch self {
@@ -13,11 +16,20 @@ enum TileType: String, CaseIterable {
             return 1
         case .stone:
             return 2
+        case .hardStone:
+            return 3
+        case .lava, .spike:
+            return 0
         }
     }
 
     var isDiggable: Bool {
-        self != .empty
+        switch self {
+        case .dirt, .stone, .hardStone:
+            return true
+        case .empty, .lava, .spike:
+            return false
+        }
     }
 }
 

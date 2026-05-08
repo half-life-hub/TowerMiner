@@ -24,7 +24,7 @@ Current overall status:
 
 - [x] Milestone 1: App Shell
 - [x] Milestone 2: Core Grid Gameplay
-- [ ] Milestone 3: Procedural Generation and Difficulty
+- [x] Milestone 3: Procedural Generation and Difficulty
 - [ ] Milestone 4: Health, Energy, and Hazards
 - [ ] Milestone 5: Rewards and Upgrades
 - [ ] Milestone 6: Polish Pass
@@ -570,13 +570,13 @@ Definition of done:
 
 Deliverables:
 
-- [ ] Row generation rules
-- [ ] Depth progression
-- [ ] Harder blocks and hazard placement
+- [x] Row generation rules
+- [x] Depth progression
+- [x] Harder blocks and hazard placement
 
 Definition of done:
 
-- [ ] Runs feel variable and remain playable over depth
+- [x] Runs feel variable and remain playable over depth
 
 ### Milestone 4: Health, Energy, and Hazards
 
@@ -640,8 +640,8 @@ Definition of done:
 - [x] Implement move validation.
 - [x] Implement dig resolution.
 - [x] Implement gravity/drop behavior.
-- [ ] Implement row generation and row trimming.
-- [ ] Add depth tracking.
+- [x] Implement row generation and row buffering.
+- [x] Add depth tracking.
 
 ### Phase 4: Systems
 
@@ -672,10 +672,10 @@ Definition of done:
 
 Add tests for:
 
-- [ ] Row generation validity
+- [x] Row generation validity
 - [ ] Upgrade cost calculations
 - [ ] Reward payout calculations
-- [ ] Movement and dig rules
+- [x] Movement and dig rules
 - [ ] Hazard damage rules
 
 ### UI Tests
@@ -754,7 +754,7 @@ Mitigation:
 - [x] Game session model
 - [x] Tile grid and rendering
 - [x] Movement and digging
-- [ ] Procedural generation
+- [x] Procedural generation
 - [ ] Health, hazards, and run end
 - [ ] Rewards and results
 - [ ] Persistent upgrades

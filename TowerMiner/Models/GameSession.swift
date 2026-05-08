@@ -4,8 +4,9 @@ import Observation
 @Observable
 final class GameSession {
     let columns: Int
-    let totalRows: Int
     let visibleRowCount: Int
+    let rowBufferCount: Int
+    let generator: MineGenerator
 
     var tiles: [[MineTile]]
     var player: PlayerState
@@ -14,16 +15,19 @@ final class GameSession {
     init(
         profile: PlayerProfile,
         columns: Int = 9,
-        totalRows: Int = 24,
-        visibleRowCount: Int = 12
+        initialRowCount: Int = 24,
+        visibleRowCount: Int = 12,
+        rowBufferCount: Int = 12,
+        seed: UInt64 = UInt64.random(in: UInt64.min...UInt64.max)
     ) {
         self.columns = columns
-        self.totalRows = totalRows
         self.visibleRowCount = visibleRowCount
+        self.rowBufferCount = rowBufferCount
+        self.generator = MineGenerator(columns: columns, seed: seed)
         self.digPower = 1
 
         let startColumn = columns / 2
-        self.tiles = GameSession.makeStartingMine(columns: columns, totalRows: totalRows, startColumn: startColumn)
+        self.tiles = generator.makeInitialRows(count: initialRowCount, startColumn: startColumn)
         self.player = PlayerState(
             position: GridPosition(row: 1, column: startColumn),
             health: 5 + profile.maxHealthLevel,
@@ -39,8 +43,8 @@ final class GameSession {
 
     var visibleRowRange: ClosedRange<Int> {
         let halfWindow = visibleRowCount / 2
-        let minRow = max(0, min(player.position.row - halfWindow, totalRows - visibleRowCount))
-        let maxRow = min(totalRows - 1, minRow + visibleRowCount - 1)
+        let minRow = max(0, min(player.position.row - halfWindow, tiles.count - visibleRowCount))
+        let maxRow = min(tiles.count - 1, minRow + visibleRowCount - 1)
         return minRow...maxRow
     }
 
@@ -57,21 +61,20 @@ final class GameSession {
             return false
         }
 
-        return player.energy > 0
-            && tile.isDiggable
+        return tile.isDiggable
             && player.position.manhattanDistance(to: position) == 1
     }
 
     func moveLeft() {
-        attemptMove(to: player.position.offsetBy(columns: -1))
+        attemptMoveOrDig(to: player.position.offsetBy(columns: -1))
     }
 
     func moveRight() {
-        attemptMove(to: player.position.offsetBy(columns: 1))
+        attemptMoveOrDig(to: player.position.offsetBy(columns: 1))
     }
 
     func moveDown() {
-        attemptMove(to: player.position.offsetBy(rows: 1))
+        attemptMoveOrDig(to: player.position.offsetBy(rows: 1))
     }
 
     func dig(at position: GridPosition) {
@@ -80,20 +83,26 @@ final class GameSession {
         }
 
         tiles[position.row][position.column].applyDig(power: digPower)
-        player.energy -= 1
+        player.energy = max(0, player.energy - 1)
         applyGravityIfNeeded()
     }
 
-    private func attemptMove(to destination: GridPosition) {
+    private func attemptMoveOrDig(to destination: GridPosition) {
         guard isWithinBounds(destination) else {
+            return
+        }
+
+        if tiles[destination.row][destination.column].isDiggable {
+            dig(at: destination)
             return
         }
 
         guard tiles[destination.row][destination.column].isEmpty else {
             return
         }
-
+        
         player.position = destination
+        ensureRowsAvailable()
         applyGravityIfNeeded()
     }
 
@@ -105,39 +114,25 @@ final class GameSession {
             }
 
             player.position = below
+            ensureRowsAvailable()
         }
     }
 
     private func isWithinBounds(_ position: GridPosition) -> Bool {
-        position.row >= 0 && position.row < totalRows && position.column >= 0 && position.column < columns
+        position.row >= 0 && position.row < tiles.count && position.column >= 0 && position.column < columns
     }
 
-    private static func makeStartingMine(columns: Int, totalRows: Int, startColumn: Int) -> [[MineTile]] {
-        var grid = Array(
-            repeating: Array(repeating: MineTile(type: .dirt), count: columns),
-            count: totalRows
-        )
-
-        for row in 0..<totalRows {
-            for column in 0..<columns {
-                if row == 0 {
-                    grid[row][column] = MineTile(type: .empty)
-                    continue
-                }
-
-                let distanceFromCenter = abs(column - startColumn)
-                if column == startColumn && row <= 3 {
-                    grid[row][column] = MineTile(type: .empty)
-                } else if distanceFromCenter == 1 && row <= 2 {
-                    grid[row][column] = MineTile(type: .empty)
-                } else if row > 4 && ((row + column) % 5 == 0) {
-                    grid[row][column] = MineTile(type: .stone)
-                } else {
-                    grid[row][column] = MineTile(type: .dirt)
-                }
-            }
+    private func ensureRowsAvailable() {
+        let remainingRows = tiles.count - player.position.row
+        guard remainingRows <= visibleRowCount else {
+            return
         }
 
-        return grid
+        let newRows = generator.makeRows(
+            from: tiles.count,
+            count: rowBufferCount,
+            startColumn: columns / 2
+        )
+        tiles.append(contentsOf: newRows)
     }
 }
