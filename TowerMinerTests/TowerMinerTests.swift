@@ -32,6 +32,19 @@ struct TowerMinerTests {
         #expect(session.player.energy == 9)
     }
 
+    @Test func directionalDigMovesIntoOneDurabilityTileWhenItClears() {
+        let session = GameSession(profile: .default, seed: 9_137)
+        let target = session.player.position.offsetBy(columns: 1)
+
+        session.tiles[target.row][target.column] = MineTile(type: .dirt)
+        session.tiles[session.player.position.row + 1][session.player.position.column] = MineTile(type: .dirt)
+
+        session.moveRight()
+
+        #expect(session.tile(at: target)?.type == .empty)
+        #expect(session.player.position.column == target.column)
+    }
+
     @Test func movementContinuesWhileEnergyRecovers() {
         let session = GameSession(profile: .default, seed: 9_137)
 

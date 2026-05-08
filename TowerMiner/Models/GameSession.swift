@@ -119,19 +119,7 @@ final class GameSession {
             return
         }
 
-        let coinReward = tiles[position.row][position.column].coinReward
-        let gemReward = tiles[position.row][position.column].gemReward
-        tiles[position.row][position.column].applyDig(power: digPower)
-        digFeedbackID += 1
-        if tiles[position.row][position.column].isEmpty {
-            player.coins += coinReward
-            player.gems += gemReward
-            if coinReward > 0 || gemReward > 0 {
-                rewardFeedbackID += 1
-            }
-        }
-
-        spendEnergyOrHealth()
+        resolveDig(at: position)
         guard !isRunOver else {
             return
         }
@@ -163,14 +151,37 @@ final class GameSession {
         }
 
         if tiles[destination.row][destination.column].isDiggable {
-            dig(at: destination)
+            resolveDig(at: destination)
+            if !isRunOver, tiles[destination.row][destination.column].isEmpty {
+                moveIntoClearedTile(at: destination)
+            }
             return
         }
 
         guard tiles[destination.row][destination.column].isPassable else {
             return
         }
-        
+
+        moveIntoClearedTile(at: destination)
+    }
+
+    private func resolveDig(at position: GridPosition) {
+        let coinReward = tiles[position.row][position.column].coinReward
+        let gemReward = tiles[position.row][position.column].gemReward
+        tiles[position.row][position.column].applyDig(power: digPower)
+        digFeedbackID += 1
+        if tiles[position.row][position.column].isEmpty {
+            player.coins += coinReward
+            player.gems += gemReward
+            if coinReward > 0 || gemReward > 0 {
+                rewardFeedbackID += 1
+            }
+        }
+
+        spendEnergyOrHealth()
+    }
+
+    private func moveIntoClearedTile(at destination: GridPosition) {
         player.position = destination
         resolveTileInteraction(at: destination)
         guard !isRunOver else {
