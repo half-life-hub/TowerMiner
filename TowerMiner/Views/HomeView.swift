@@ -36,18 +36,12 @@ struct HomeView: View {
 
     private var titleBlock: some View {
         VStack(spacing: 8) {
-            Text("Tower Miner")
-                .font(.system(size: 42, weight: .black, design: .rounded))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.white, Color(red: 0.73, green: 0.96, blue: 0.90)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+            Image("logo")
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 360)
                 .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.32), radius: 14)
-                .lineLimit(1)
-                .minimumScaleFactor(0.72)
+                .accessibilityLabel("Tower Miner")
 
             Text("Dig deep. Bank the haul. Upgrade the rig.")
                 .font(.headline.weight(.semibold))
