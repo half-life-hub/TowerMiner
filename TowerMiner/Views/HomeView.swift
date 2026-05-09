@@ -209,17 +209,16 @@ private struct PrimaryGameButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.headline.weight(.black))
-            .foregroundStyle(.black)
+            .foregroundStyle(.white)
             .padding(.vertical, 17)
+            .padding(.horizontal, 18)
             .background(
-                LinearGradient(
-                    colors: [Color.white, Color(red: 0.52, green: 0.94, blue: 0.86)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                ),
-                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+                GameMenuButtonBackground(
+                    isPressed: configuration.isPressed,
+                    isPrimary: true
+                )
             )
-            .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.30), radius: 14, y: 8)
+            .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(configuration.isPressed ? 0.18 : 0.34), radius: 18, y: 8)
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
             .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
     }
@@ -231,13 +230,96 @@ private struct SecondaryGameButtonStyle: ButtonStyle {
             .font(.headline.weight(.bold))
             .foregroundStyle(.white)
             .padding(.vertical, 16)
-            .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(.white.opacity(0.12), lineWidth: 1)
+            .padding(.horizontal, 18)
+            .background(
+                GameMenuButtonBackground(
+                    isPressed: configuration.isPressed,
+                    isPrimary: false
+                )
             )
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
             .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
+    }
+}
+
+private struct GameMenuButtonBackground: View {
+    let isPressed: Bool
+    let isPrimary: Bool
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: isPrimary
+                            ? [
+                                Color(red: 0.22, green: 0.24, blue: 0.24),
+                                Color(red: 0.08, green: 0.09, blue: 0.11),
+                                Color(red: 0.24, green: 0.15, blue: 0.08)
+                            ]
+                            : [
+                                Color(red: 0.16, green: 0.17, blue: 0.18),
+                                Color(red: 0.05, green: 0.06, blue: 0.08),
+                                Color(red: 0.12, green: 0.09, blue: 0.07)
+                            ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            .white.opacity(isPrimary ? 0.42 : 0.24),
+                            Color(red: 0.52, green: 0.94, blue: 0.86).opacity(isPrimary ? 0.88 : 0.52),
+                            Color(red: 0.52, green: 0.35, blue: 0.20).opacity(0.55)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: isPrimary ? 2 : 1.5
+                )
+
+            HStack {
+                cornerGem
+                Spacer()
+                cornerGem
+            }
+            .padding(.horizontal, 12)
+        }
+        .overlay(alignment: .top) {
+            Capsule()
+                .fill(.white.opacity(isPrimary ? 0.16 : 0.08))
+                .frame(height: 2)
+                .padding(.horizontal, 22)
+                .padding(.top, 7)
+        }
+        .overlay(alignment: .bottom) {
+            Capsule()
+                .fill(.black.opacity(0.42))
+                .frame(height: 3)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 6)
+        }
+        .brightness(isPressed ? -0.05 : 0)
+    }
+
+    private var cornerGem: some View {
+        Diamond()
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(isPrimary ? 0.95 : 0.70),
+                        Color(red: 0.52, green: 0.94, blue: 0.86),
+                        Color(red: 0.05, green: 0.42, blue: 0.48)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .frame(width: isPrimary ? 13 : 10, height: isPrimary ? 13 : 10)
+            .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(isPrimary ? 0.78 : 0.38), radius: 8)
     }
 }
 
