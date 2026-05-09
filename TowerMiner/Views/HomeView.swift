@@ -143,15 +143,10 @@ struct HomeView: View {
 
     private var progressPanel: some View {
         VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                StatTile(title: "Credits", value: "\(profile.totalCredits)", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
-                StatTile(title: "Best Depth", value: "\(profile.bestDepth)", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            }
-
-            HStack(spacing: 12) {
-                StatTile(title: "Rig Level", value: "\(totalUpgradeLevels)", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
-                StatTile(title: "Gem Value", value: "\(5 + profile.gemValueLevel * 2)", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
-            }
+            StatBar(title: "Credits", value: "\(profile.totalCredits)", symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+            StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+            StatBar(title: "Rig Level", value: "\(totalUpgradeLevels)", symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
+            StatBar(title: "Gem Value", value: "\(5 + profile.gemValueLevel * 2)", symbol: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
         }
     }
 
@@ -204,34 +199,104 @@ private struct MineMenuBackground: View {
     }
 }
 
-private struct StatTile: View {
+private struct StatBar: View {
     let title: String
     let value: String
+    let symbol: String
     let tint: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.white.opacity(0.62))
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                tint.opacity(0.92),
+                                tint.opacity(0.40),
+                                Color.black.opacity(0.45)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                Image(systemName: symbol)
+                    .font(.system(size: 15, weight: .black))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
+            }
+            .frame(width: 38, height: 34)
+            .overlay {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(.white.opacity(0.22), lineWidth: 1)
+            }
+
+            Text(title.uppercased())
+                .font(.caption.weight(.black))
+                .tracking(0.8)
+                .foregroundStyle(.white.opacity(0.66))
+
+            Spacer(minLength: 10)
+
             Text(value)
-                .font(.title2.weight(.black))
+                .font(.title3.weight(.black))
+                .monospacedDigit()
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.70)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(.black.opacity(0.30), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(tint)
-                .frame(width: 4)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.18, green: 0.19, blue: 0.20),
+                                Color(red: 0.06, green: 0.07, blue: 0.09),
+                                Color(red: 0.16, green: 0.10, blue: 0.06)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                tint.opacity(0.72),
+                                tint.opacity(0.20),
+                                .clear
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 5)
+                    .padding(.horizontal, 14)
+                    .padding(.top, 7)
+                    .frame(maxHeight: .infinity, alignment: .top)
+            }
         }
         .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            .white.opacity(0.20),
+                            tint.opacity(0.44),
+                            .black.opacity(0.36)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
         }
+        .shadow(color: tint.opacity(0.10), radius: 10, y: 5)
     }
 }
 
