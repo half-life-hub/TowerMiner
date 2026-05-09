@@ -66,12 +66,11 @@ struct HomeView: View {
                 )
                 .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.16), radius: 22, y: 10)
 
-            VStack(spacing: 12) {
+            VStack(spacing: 0) {
                 Image("menu_emblem")
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 340)
-                    .frame(height: 118)
+                    .frame(height: 100)
                     .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.28), radius: 16, y: 6)
                     .accessibilityHidden(true)
 
@@ -84,7 +83,7 @@ struct HomeView: View {
             }
             .padding(20)
         }
-        .frame(height: 210)
+        .frame(height: 150)
         .overlay(
             RoundedRectangle(cornerRadius: 26, style: .continuous)
                 .strokeBorder(
