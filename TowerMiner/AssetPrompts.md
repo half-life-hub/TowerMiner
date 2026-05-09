@@ -89,6 +89,28 @@ After generating the sheet:
 
 Generate backgrounds separately because they are full-screen opaque images, not cutout sheet assets.
 
+## Menu Panel Graphic Prompt
+
+Generate this separately for the graphic inside the rectangle under the title logo on the main menu.
+
+### `menu_emblem.png`
+
+```text
+Create one transparent PNG image for Tower Miner.
+Reference name: menu_emblem.png.
+Target aspect ratio: 2:1 horizontal.
+Background: transparent.
+
+Asset:
+A polished hero emblem for the main menu panel. Show a small dramatic underground mining scene: dark stone blocks framing a glowing cyan crystal core in the center, a few warm gold nuggets embedded in the rocks, subtle orange lava rim light near the bottom, and faint dust motes. The graphic should feel like a premium mobile game menu centerpiece.
+
+Composition:
+Single centered emblem only. No title text, no logo, no captions, no UI buttons, no HUD, no border, no panel frame. Keep the edges soft enough to sit inside an existing rounded rectangle panel. Leave transparent padding around the scene so it does not touch the panel edges.
+
+Style:
+Stylized mobile game art for Tower Miner, semi-pixel inspired but polished, dark underground fantasy mining theme, chunky readable shapes, crisp edges, subtle bevels, cyan glow accents, high contrast, modern iOS game quality, no watermark, no photorealism.
+```
+
 ### `bg_menu.png`
 
 ```text

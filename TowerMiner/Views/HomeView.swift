@@ -67,26 +67,13 @@ struct HomeView: View {
                 .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.16), radius: 22, y: 10)
 
             VStack(spacing: 12) {
-                ZStack {
-                    ForEach(0..<4, id: \.self) { index in
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color(red: 0.30, green: 0.20, blue: 0.14).opacity(0.92))
-                            .frame(width: 56, height: 38)
-                            .offset(x: CGFloat(index - 2) * 32, y: CGFloat(index % 2) * 18)
-                    }
-
-                    Diamond()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.white, Color(red: 0.52, green: 0.94, blue: 0.86), Color(red: 0.10, green: 0.52, blue: 0.56)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 72, height: 72)
-                        .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.85), radius: 20)
-                }
-                .frame(height: 118)
+                Image("menu_emblem")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 340)
+                    .frame(height: 118)
+                    .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.28), radius: 16, y: 6)
+                    .accessibilityHidden(true)
 
                 HStack(spacing: 10) {
                     Label("Best \(profile.bestDepth)", systemImage: "arrow.down.to.line.compact")
