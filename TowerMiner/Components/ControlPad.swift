@@ -6,11 +6,12 @@ struct ControlPad: View {
     let onMoveDown: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 6) {
             controlButton(title: "Left", systemImage: "arrow.left", assetName: "button_left", action: onMoveLeft)
             controlButton(title: "Down", systemImage: "arrow.down", assetName: "button_down", action: onMoveDown)
             controlButton(title: "Right", systemImage: "arrow.right", assetName: "button_right", action: onMoveRight)
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private func controlButton(title: String, systemImage: String, assetName: String? = nil, action: @escaping () -> Void) -> some View {
@@ -26,8 +27,7 @@ struct ControlPad: View {
             Image(assetName)
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .frame(minHeight: 64)
+                .frame(width: 82, height: 82)
                 .accessibilityLabel(title)
         } else {
             VStack(spacing: 6) {
