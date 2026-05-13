@@ -21,7 +21,6 @@ struct HomeView: View {
                 ScrollView {
                     VStack(spacing: 22) {
                         titleBlock
-                        mineEmblem
                         progressPanel
                         actionPanel
                     }
@@ -48,96 +47,6 @@ struct HomeView: View {
                 .foregroundStyle(.white.opacity(0.70))
                 .multilineTextAlignment(.center)
         }
-    }
-
-    private var mineEmblem: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.18, green: 0.19, blue: 0.20),
-                            Color(red: 0.06, green: 0.07, blue: 0.09),
-                            Color(red: 0.22, green: 0.13, blue: 0.08)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.16), radius: 22, y: 10)
-
-            VStack(spacing: 0) {
-                Image("menu_emblem")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 100)
-                    .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.28), radius: 16, y: 6)
-                    .accessibilityHidden(true)
-
-                HStack(spacing: 10) {
-                    Label("Best \(profile.bestDepth)", systemImage: "arrow.down.to.line.compact")
-                    Label("\(profile.totalCredits) credits", systemImage: "creditcard.fill")
-                }
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.white.opacity(0.78))
-            }
-            .padding(20)
-        }
-        .frame(height: 150)
-        .overlay(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            .white.opacity(0.28),
-                            Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.62),
-                            Color(red: 0.52, green: 0.35, blue: 0.20).opacity(0.50)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1.5
-                )
-        )
-        .overlay(alignment: .top) {
-            Capsule()
-                .fill(.white.opacity(0.12))
-                .frame(height: 2)
-                .padding(.horizontal, 34)
-                .padding(.top, 10)
-        }
-        .overlay(alignment: .bottom) {
-            Capsule()
-                .fill(.black.opacity(0.42))
-                .frame(height: 3)
-                .padding(.horizontal, 36)
-                .padding(.bottom, 9)
-        }
-        .overlay(alignment: .topLeading) {
-            emblemCornerGem
-                .padding(14)
-        }
-        .overlay(alignment: .topTrailing) {
-            emblemCornerGem
-                .padding(14)
-        }
-    }
-
-    private var emblemCornerGem: some View {
-        Diamond()
-            .fill(
-                LinearGradient(
-                    colors: [
-                        .white.opacity(0.86),
-                        Color(red: 0.52, green: 0.94, blue: 0.86),
-                        Color(red: 0.05, green: 0.42, blue: 0.48)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-            .frame(width: 14, height: 14)
-            .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.62), radius: 9)
     }
 
     private var progressPanel: some View {
