@@ -55,21 +55,10 @@ struct MineTileView: View {
             }
 
             if isPlayerHere {
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [Color.white, Color(red: 0.52, green: 0.94, blue: 0.86)],
-                            center: .topLeading,
-                            startRadius: 1,
-                            endRadius: 16
-                        )
-                    )
-                    .padding(9)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white.opacity(0.85), lineWidth: 2)
-                            .padding(9)
-                    )
+                Image("player_miner")
+                    .resizable()
+                    .scaledToFit()
+                    .padding(5)
                     .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.85), radius: 8)
                     .transition(.scale.combined(with: .opacity))
             }
