@@ -83,14 +83,25 @@ struct MineTileView: View {
 
     @ViewBuilder
     private var tileBase: some View {
-        if tile.type == .empty {
-            Image("tile_empty")
+        if let assetName = tileAssetName {
+            Image(assetName)
                 .resizable()
                 .scaledToFill()
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         } else {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .fill(tileFill)
+        }
+    }
+
+    private var tileAssetName: String? {
+        switch tile.type {
+        case .empty:
+            return "tile_empty"
+        case .dirt:
+            return "tile_dirt"
+        case .stone, .hardStone, .gold, .gem, .chest, .lava, .spike:
+            return nil
         }
     }
 
