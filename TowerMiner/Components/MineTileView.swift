@@ -95,9 +95,11 @@ struct MineTileView: View {
             return "tile_hard_stone"
         case .gold:
             return "tile_gold"
+        case .gem:
+            return "tile_gem"
         case .chest:
             return "tile_chest"
-        case .gem, .lava, .spike:
+        case .lava, .spike:
             return nil
         }
     }
