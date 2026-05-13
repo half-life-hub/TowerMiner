@@ -8,6 +8,8 @@ struct RunView: View {
     @State private var showDustBurst = false
     @State private var showRewardFlash = false
     @State private var damageShake = 0
+    @State private var previousTopVisibleRow = 0
+    @State private var shaftScrollOffset: CGFloat = 0
 
     var body: some View {
         GeometryReader { geometry in
@@ -53,6 +55,9 @@ struct RunView: View {
         }
         .onChange(of: session.damageFeedbackID) {
             damageShake += 1
+        }
+        .onChange(of: session.visibleRowRange.lowerBound) { _, newTopRow in
+            animateShaftScroll(to: newTopRow)
         }
     }
 
@@ -182,10 +187,13 @@ struct RunView: View {
                                     .buttonStyle(.plain)
                                 }
                             }
+                            .opacity(row >= visibleRows.suffix(2).first ?? row ? 0.92 : 1)
                         }
                     }
                     .frame(width: availableWidth, height: gridHeight, alignment: .top)
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .offset(y: shaftScrollOffset * (tileSize + spacing))
+                    .animation(.easeOut(duration: 0.24), value: shaftScrollOffset)
 
                     Spacer(minLength: 0)
                 }
@@ -229,6 +237,20 @@ struct RunView: View {
         let latestStart = lastRow - maxVisibleRows + 1
         let startRow = min(max(session.player.position.row - halfWindow, firstRow), latestStart)
         return Array(startRow..<(startRow + maxVisibleRows))
+    }
+
+    private func animateShaftScroll(to newTopRow: Int) {
+        let delta = newTopRow - previousTopVisibleRow
+        previousTopVisibleRow = newTopRow
+
+        guard delta > 0 else {
+            return
+        }
+
+        shaftScrollOffset = CGFloat(delta)
+        withAnimation(.easeOut(duration: 0.26)) {
+            shaftScrollOffset = 0
+        }
     }
 
     private var resourceStrip: some View {
