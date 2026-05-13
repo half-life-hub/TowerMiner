@@ -292,10 +292,19 @@ struct RunView: View {
         }
         .frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
         .padding(.horizontal, 10)
-        .background(.black.opacity(0.32), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background {
+            Image("panel_hud")
+                .resizable()
+                .scaledToFill()
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(.black.opacity(0.28))
+                }
+        }
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
+                .stroke(.white.opacity(0.10), lineWidth: 1)
         }
     }
 
