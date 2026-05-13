@@ -291,7 +291,8 @@ struct RunView: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
-        .padding(.horizontal, 10)
+        .padding(.leading, 26)
+        .padding(.trailing, 12)
         .background {
             Image("panel_hud")
                 .resizable()
