@@ -4,6 +4,7 @@ struct MineTileView: View {
     let tile: MineTile
     let isPlayerHere: Bool
     let canDig: Bool
+    let isDigAnimating: Bool
 
     var body: some View {
         ZStack {
@@ -54,6 +55,11 @@ struct MineTileView: View {
                     .foregroundStyle(Color(red: 0.95, green: 0.34, blue: 0.25))
             }
 
+            if isDigAnimating {
+                DigImpactOverlay()
+                    .transition(.scale(scale: 0.72).combined(with: .opacity))
+            }
+
             if isPlayerHere {
                 Image("player_miner")
                     .resizable()
@@ -65,9 +71,12 @@ struct MineTileView: View {
         }
         .aspectRatio(1, contentMode: .fit)
         .shadow(color: shadowColor, radius: canDig ? 8 : 3)
-        .scaleEffect(canDig ? 1.04 : 1.0)
+        .scaleEffect(isDigAnimating ? 0.94 : (canDig ? 1.04 : 1.0))
+        .rotationEffect(.degrees(isDigAnimating ? -1.4 : 0))
+        .brightness(isDigAnimating ? 0.08 : 0)
         .animation(.spring(response: 0.2, dampingFraction: 0.72), value: canDig)
         .animation(.spring(response: 0.18, dampingFraction: 0.7), value: isPlayerHere)
+        .animation(.spring(response: 0.16, dampingFraction: 0.42), value: isDigAnimating)
     }
 
     @ViewBuilder
@@ -205,5 +214,31 @@ struct MineTileView: View {
         }
 
         return canDig ? Color(red: 0.55, green: 0.92, blue: 0.88).opacity(0.25) : .clear
+    }
+}
+
+private struct DigImpactOverlay: View {
+    var body: some View {
+        ZStack {
+            ForEach(0..<7, id: \.self) { index in
+                Capsule()
+                    .fill(Color(red: 0.95, green: 0.76, blue: 0.45).opacity(0.88))
+                    .frame(width: 3, height: CGFloat(10 + (index % 3) * 4))
+                    .offset(y: -20)
+                    .rotationEffect(.degrees(Double(index) * 51))
+            }
+
+            Image(systemName: "hammer.fill")
+                .font(.system(size: 16, weight: .black))
+                .foregroundStyle(.white.opacity(0.90))
+                .shadow(color: .black.opacity(0.55), radius: 2, y: 1)
+                .rotationEffect(.degrees(-28))
+                .offset(x: 8, y: -8)
+
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color(red: 0.95, green: 0.76, blue: 0.45).opacity(0.72), lineWidth: 2)
+                .padding(3)
+        }
+        .allowsHitTesting(false)
     }
 }

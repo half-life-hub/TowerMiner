@@ -16,6 +16,7 @@ final class GameSession {
     var digFeedbackID: Int
     var rewardFeedbackID: Int
     var damageFeedbackID: Int
+    var lastDugPosition: GridPosition?
 
     init(
         profile: PlayerProfile,
@@ -35,6 +36,7 @@ final class GameSession {
         self.digFeedbackID = 0
         self.rewardFeedbackID = 0
         self.damageFeedbackID = 0
+        self.lastDugPosition = nil
 
         let startColumn = columns / 2
         let maxHealth = 5 + profile.maxHealthLevel
@@ -168,6 +170,7 @@ final class GameSession {
     private func resolveDig(at position: GridPosition) {
         let coinReward = tiles[position.row][position.column].coinReward
         let gemReward = tiles[position.row][position.column].gemReward
+        lastDugPosition = position
         tiles[position.row][position.column].applyDig(power: digPower)
         digFeedbackID += 1
         if tiles[position.row][position.column].isEmpty {

@@ -10,6 +10,7 @@ struct RunView: View {
     @State private var damageShake = 0
     @State private var previousTopVisibleRow = 0
     @State private var shaftScrollOffset: CGFloat = 0
+    @State private var activeDigPosition: GridPosition?
 
     var body: some View {
         GeometryReader { geometry in
@@ -49,6 +50,7 @@ struct RunView: View {
         }
         .onChange(of: session.digFeedbackID) {
             triggerDust()
+            triggerDigImpact()
         }
         .onChange(of: session.rewardFeedbackID) {
             triggerRewardFlash()
@@ -180,7 +182,8 @@ struct RunView: View {
                                         MineTileView(
                                             tile: tile,
                                             isPlayerHere: session.player.position == position,
-                                            canDig: session.canDig(at: position)
+                                            canDig: session.canDig(at: position),
+                                            isDigAnimating: activeDigPosition == position
                                         )
                                         .frame(width: tileSize, height: tileSize)
                                     }
@@ -364,6 +367,20 @@ struct RunView: View {
             try? await Task.sleep(for: .milliseconds(260))
             withAnimation(.easeOut(duration: 0.16)) {
                 showDustBurst = false
+            }
+        }
+    }
+
+    private func triggerDigImpact() {
+        guard let position = session.lastDugPosition else {
+            return
+        }
+
+        activeDigPosition = position
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(180))
+            if activeDigPosition == position {
+                activeDigPosition = nil
             }
         }
     }
