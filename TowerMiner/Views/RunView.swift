@@ -126,10 +126,11 @@ struct RunView: View {
 
     private func playfield(width: CGFloat, availableHeight: CGFloat) -> some View {
         let isLargeBoard = width >= 760
+        let isLandscape = width > availableHeight
         let boardHeight = max(
             320,
             min(
-                availableHeight * (isLargeBoard ? 0.62 : 0.48),
+                availableHeight * (isLandscape ? 0.58 : (isLargeBoard ? 0.62 : 0.48)),
                 isLargeBoard ? 760 : 520
             )
         )
@@ -137,7 +138,11 @@ struct RunView: View {
         return GeometryReader { geometry in
             let spacing: CGFloat = isLargeBoard ? 7 : 5
             let boardInset: CGFloat = isLargeBoard ? 16 : 12
-            let visibleRows = Array(session.visibleRowRange)
+            let fullVisibleRows = Array(session.visibleRowRange)
+            let visibleRows = rowsForCurrentOrientation(
+                from: fullVisibleRows,
+                maxVisibleRows: isLandscape ? 8 : fullVisibleRows.count
+            )
             let availableWidth = geometry.size.width - (boardInset * 2)
             let availableTileHeight = geometry.size.height - (boardInset * 2) - 32
             let widthTileSize = floor((availableWidth - (CGFloat(session.columns - 1) * spacing)) / CGFloat(session.columns))
@@ -210,6 +215,20 @@ struct RunView: View {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(.white.opacity(0.10), lineWidth: 1)
         }
+    }
+
+    private func rowsForCurrentOrientation(from rows: [Int], maxVisibleRows: Int) -> [Int] {
+        guard rows.count > maxVisibleRows,
+              let firstRow = rows.first,
+              let lastRow = rows.last
+        else {
+            return rows
+        }
+
+        let halfWindow = maxVisibleRows / 2
+        let latestStart = lastRow - maxVisibleRows + 1
+        let startRow = min(max(session.player.position.row - halfWindow, firstRow), latestStart)
+        return Array(startRow..<(startRow + maxVisibleRows))
     }
 
     private var resourceStrip: some View {
