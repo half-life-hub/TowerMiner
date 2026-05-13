@@ -102,7 +102,7 @@ struct MineTileView: View {
         case .lava:
             return "tile_lava"
         case .spike:
-            return nil
+            return "tile_spike"
         }
     }
 
