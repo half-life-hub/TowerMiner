@@ -142,10 +142,15 @@ struct HomeView: View {
 
     private var progressPanel: some View {
         VStack(spacing: 12) {
-            StatBar(title: "Credits", value: "\(profile.totalCredits)", symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
-            StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            StatBar(title: "Rig Level", value: "\(totalUpgradeLevels)", symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
-            StatBar(title: "Gem Value", value: "\(5 + profile.gemValueLevel * 2)", symbol: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
+            HStack(spacing: 12) {
+                StatBar(title: "Credits", value: "\(profile.totalCredits)", symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+                StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+            }
+
+            HStack(spacing: 12) {
+                StatBar(title: "Rig Level", value: "\(totalUpgradeLevels)", symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
+                StatBar(title: "Gem Value", value: "\(5 + profile.gemValueLevel * 2)", symbol: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
+            }
         }
     }
 
