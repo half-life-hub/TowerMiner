@@ -7,8 +7,7 @@ struct MineTileView: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(tileFill)
+            tileBase
 
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .strokeBorder(borderColor, lineWidth: canDig ? 2 : 1)
@@ -80,6 +79,19 @@ struct MineTileView: View {
         .scaleEffect(canDig ? 1.04 : 1.0)
         .animation(.spring(response: 0.2, dampingFraction: 0.72), value: canDig)
         .animation(.spring(response: 0.18, dampingFraction: 0.7), value: isPlayerHere)
+    }
+
+    @ViewBuilder
+    private var tileBase: some View {
+        if tile.type == .empty {
+            Image("tile_empty")
+                .resizable()
+                .scaledToFill()
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        } else {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(tileFill)
+        }
     }
 
     private var tileFill: some ShapeStyle {
