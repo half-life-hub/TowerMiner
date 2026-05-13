@@ -130,7 +130,9 @@ private struct HelpCard<Content: View>: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(16)
+        .padding(.leading, 28)
+        .padding(.trailing, 20)
+        .padding(.vertical, 16)
         .background {
             ZStack {
                 Image("panel_hud")
@@ -152,6 +154,7 @@ private struct HelpCard<Content: View>: View {
                     )
             }
         }
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .strokeBorder(
