@@ -7,14 +7,29 @@ struct ControlPad: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            controlButton(title: "Left", systemImage: "arrow.left", action: onMoveLeft)
+            controlButton(title: "Left", systemImage: "arrow.left", assetName: "button_left", action: onMoveLeft)
             controlButton(title: "Down", systemImage: "arrow.down", action: onMoveDown)
             controlButton(title: "Right", systemImage: "arrow.right", action: onMoveRight)
         }
     }
 
-    private func controlButton(title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+    private func controlButton(title: String, systemImage: String, assetName: String? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
+            controlButtonLabel(title: title, systemImage: systemImage, assetName: assetName)
+        }
+        .buttonStyle(PressScaleButtonStyle())
+    }
+
+    @ViewBuilder
+    private func controlButtonLabel(title: String, systemImage: String, assetName: String?) -> some View {
+        if let assetName {
+            Image(assetName)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 64)
+                .accessibilityLabel(title)
+        } else {
             VStack(spacing: 6) {
                 Image(systemName: systemImage)
                     .font(.title2.weight(.black))
@@ -37,7 +52,6 @@ struct ControlPad: View {
                     .stroke(.white.opacity(0.12), lineWidth: 1)
             )
         }
-        .buttonStyle(PressScaleButtonStyle())
     }
 }
 
