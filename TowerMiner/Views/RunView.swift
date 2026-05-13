@@ -11,12 +11,14 @@ struct RunView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let contentWidth = min(geometry.size.width - 28, 720)
+            let isLargeScreen = geometry.size.width >= 700
+            let horizontalPadding: CGFloat = isLargeScreen ? 56 : 28
+            let contentWidth = min(geometry.size.width - horizontalPadding, isLargeScreen ? 980 : 720)
 
             ZStack {
                 runBackground
 
-                VStack(spacing: 12) {
+                VStack(spacing: isLargeScreen ? 14 : 12) {
                     topBar
                         .frame(width: contentWidth)
 
@@ -34,8 +36,8 @@ struct RunView: View {
                     )
                     .frame(width: contentWidth)
                 }
-                .padding(.top, 16)
-                .padding(.bottom, 18)
+                .padding(.top, isLargeScreen ? 22 : 16)
+                .padding(.bottom, isLargeScreen ? 22 : 18)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
                 if session.isRunOver {
@@ -123,11 +125,18 @@ struct RunView: View {
     }
 
     private func playfield(width: CGFloat, availableHeight: CGFloat) -> some View {
-        let boardHeight = max(320, min(availableHeight * 0.48, 520))
+        let isLargeBoard = width >= 760
+        let boardHeight = max(
+            320,
+            min(
+                availableHeight * (isLargeBoard ? 0.62 : 0.48),
+                isLargeBoard ? 760 : 520
+            )
+        )
 
         return GeometryReader { geometry in
-            let spacing: CGFloat = 5
-            let boardInset: CGFloat = 12
+            let spacing: CGFloat = isLargeBoard ? 7 : 5
+            let boardInset: CGFloat = isLargeBoard ? 16 : 12
             let visibleRows = Array(session.visibleRowRange)
             let availableWidth = geometry.size.width - (boardInset * 2)
             let availableTileHeight = geometry.size.height - (boardInset * 2) - 32
