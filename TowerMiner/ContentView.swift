@@ -29,6 +29,10 @@ final class AppModel {
         currentScreen = .upgrades
     }
 
+    func showHelp() {
+        currentScreen = .help
+    }
+
     func finishRun(_ result: RunResult) {
         lastRunResult = result
         activeSession = nil
@@ -60,7 +64,8 @@ struct ContentView: View {
                 HomeView(
                     profile: appModel.playerProfile,
                     onStartRun: appModel.startRun,
-                    onOpenUpgrades: appModel.showUpgrades
+                    onOpenUpgrades: appModel.showUpgrades,
+                    onOpenHelp: appModel.showHelp
                 )
             case .upgrades:
                 UpgradeView(
@@ -68,6 +73,8 @@ struct ContentView: View {
                     onPurchase: appModel.purchaseUpgrade,
                     onBack: appModel.showHome
                 )
+            case .help:
+                HelpView(onBack: appModel.showHome)
             case .run:
                 if let session = appModel.activeSession {
                     RunView(
@@ -79,7 +86,8 @@ struct ContentView: View {
                     HomeView(
                         profile: appModel.playerProfile,
                         onStartRun: appModel.startRun,
-                        onOpenUpgrades: appModel.showUpgrades
+                        onOpenUpgrades: appModel.showUpgrades,
+                        onOpenHelp: appModel.showHelp
                     )
                 }
             case .results:
@@ -95,7 +103,8 @@ struct ContentView: View {
                     HomeView(
                         profile: appModel.playerProfile,
                         onStartRun: appModel.startRun,
-                        onOpenUpgrades: appModel.showUpgrades
+                        onOpenUpgrades: appModel.showUpgrades,
+                        onOpenHelp: appModel.showHelp
                     )
                 }
             }

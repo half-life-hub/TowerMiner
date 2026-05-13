@@ -4,6 +4,7 @@ struct HomeView: View {
     let profile: PlayerProfile
     let onStartRun: () -> Void
     let onOpenUpgrades: () -> Void
+    let onOpenHelp: () -> Void
 
     private var totalUpgradeLevels: Int {
         UpgradeID.allCases.reduce(0) { total, upgrade in
@@ -73,6 +74,12 @@ struct HomeView: View {
 
             Button(action: onOpenUpgrades) {
                 Label("Upgrade Rig", systemImage: "wrench.and.screwdriver.fill")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(SecondaryGameButtonStyle())
+
+            Button(action: onOpenHelp) {
+                Label("How To Play", systemImage: "questionmark.circle.fill")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(SecondaryGameButtonStyle())
@@ -355,6 +362,7 @@ private struct GameMenuButtonBackground: View {
             gemValueLevel: 2
         ),
         onStartRun: {},
-        onOpenUpgrades: {}
+        onOpenUpgrades: {},
+        onOpenHelp: {}
     )
 }

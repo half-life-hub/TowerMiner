@@ -5,4 +5,5 @@ enum AppScreen: String, Codable {
     case upgrades
     case run
     case results
+    case help
 }
