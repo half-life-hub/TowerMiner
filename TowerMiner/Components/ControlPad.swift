@@ -9,7 +9,7 @@ struct ControlPad: View {
         HStack(spacing: 12) {
             controlButton(title: "Left", systemImage: "arrow.left", assetName: "button_left", action: onMoveLeft)
             controlButton(title: "Down", systemImage: "arrow.down", assetName: "button_down", action: onMoveDown)
-            controlButton(title: "Right", systemImage: "arrow.right", action: onMoveRight)
+            controlButton(title: "Right", systemImage: "arrow.right", assetName: "button_right", action: onMoveRight)
         }
     }
 
