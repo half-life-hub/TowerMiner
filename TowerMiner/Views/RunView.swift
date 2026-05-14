@@ -99,6 +99,7 @@ struct RunView: View {
                         value: session.player.health,
                         maxValue: session.player.maxHealth,
                         systemImage: "heart.fill",
+                        assetName: "icon_health",
                         tint: Color(red: 0.95, green: 0.34, blue: 0.25)
                     )
 
@@ -435,23 +436,33 @@ struct RunView: View {
         .shadow(color: .black.opacity(0.20), radius: 8, y: 5)
     }
 
-    private func runMeter(title: String, value: Int, maxValue: Int, systemImage: String, tint: Color) -> some View {
+    private func runMeter(title: String, value: Int, maxValue: Int, systemImage: String, assetName: String? = nil, tint: Color) -> some View {
         HStack(spacing: 9) {
             ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [tint.opacity(0.86), tint.opacity(0.28), Color.black.opacity(0.38)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                if assetName == nil {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [tint.opacity(0.86), tint.opacity(0.28), Color.black.opacity(0.38)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
+                }
 
-                Image(systemName: systemImage)
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(.white)
+                if let assetName {
+                    Image(assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                } else {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundStyle(.white)
+                }
             }
-            .frame(width: 34, height: 30)
+            .frame(width: 30, height: 30)
+            .clipped()
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
