@@ -960,6 +960,18 @@ private struct ProceduralBombIcon: View {
                 .frame(width: 6, height: 6)
                 .shadow(color: Color(red: 1.0, green: 0.48, blue: 0.14), radius: 5)
                 .offset(x: 11, y: -12)
+
+            ProceduralSparkleIcon()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white, Color(red: 1.0, green: 0.78, blue: 0.23), Color(red: 1.0, green: 0.24, blue: 0.08)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 9, height: 9)
+                .shadow(color: Color(red: 1.0, green: 0.48, blue: 0.14).opacity(0.85), radius: 6)
+                .offset(x: 13, y: -14)
         }
     }
 }
