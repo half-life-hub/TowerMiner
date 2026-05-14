@@ -456,6 +456,7 @@ struct RunView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30, height: 30)
+                        .scaleEffect(meterAssetScale(for: assetName))
                 } else {
                     Image(systemName: systemImage)
                         .font(.system(size: 13, weight: .black))
@@ -503,6 +504,15 @@ struct RunView: View {
             }
         }
         .frame(minHeight: 32)
+    }
+
+    private func meterAssetScale(for assetName: String) -> CGFloat {
+        switch assetName {
+        case "icon_energy":
+            return 1.8
+        default:
+            return 1.0
+        }
     }
 
     private func triggerDust() {
