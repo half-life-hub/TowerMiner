@@ -5,8 +5,6 @@ struct RunView: View {
     let onBackToMenu: () -> Void
     let onFinishRun: (RunResult) -> Void
 
-    @State private var showDustBurst = false
-    @State private var showRewardFlash = false
     @State private var damageShake = 0
     @State private var previousTopVisibleRow = 0
     @State private var shaftScrollOffset: CGFloat = 0
@@ -49,11 +47,7 @@ struct RunView: View {
             }
         }
         .onChange(of: session.digFeedbackID) {
-            triggerDust()
             triggerDigImpact()
-        }
-        .onChange(of: session.rewardFeedbackID) {
-            triggerRewardFlash()
         }
         .onChange(of: session.damageFeedbackID) {
             damageShake += 1
@@ -266,15 +260,6 @@ struct RunView: View {
                 }
                 .padding(boardInset)
 
-                if showDustBurst {
-                    ParticleBurst(color: Color(red: 0.72, green: 0.54, blue: 0.36), count: 10)
-                        .transition(.opacity)
-                }
-
-                if showRewardFlash {
-                    ParticleBurst(color: Color(red: 0.52, green: 0.94, blue: 0.86), count: 14)
-                        .transition(.scale.combined(with: .opacity))
-                }
             }
         }
         .frame(height: boardHeight)
@@ -535,19 +520,6 @@ struct RunView: View {
         .frame(minHeight: 32)
     }
 
-    private func triggerDust() {
-        withAnimation(.easeOut(duration: 0.12)) {
-            showDustBurst = true
-        }
-
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(260))
-            withAnimation(.easeOut(duration: 0.16)) {
-                showDustBurst = false
-            }
-        }
-    }
-
     private func triggerDigImpact() {
         guard let position = session.lastDugPosition else {
             return
@@ -560,39 +532,6 @@ struct RunView: View {
                 activeDigPosition = nil
             }
         }
-    }
-
-    private func triggerRewardFlash() {
-        withAnimation(.spring(response: 0.22, dampingFraction: 0.6)) {
-            showRewardFlash = true
-        }
-
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(420))
-            withAnimation(.easeOut(duration: 0.18)) {
-                showRewardFlash = false
-            }
-        }
-    }
-}
-
-private struct ParticleBurst: View {
-    let color: Color
-    let count: Int
-
-    var body: some View {
-        ZStack {
-            ForEach(0..<count, id: \.self) { index in
-                Circle()
-                    .fill(color.opacity(0.8))
-                    .frame(width: CGFloat(4 + (index % 3) * 2), height: CGFloat(4 + (index % 3) * 2))
-                    .offset(
-                        x: cos(Double(index) * 1.7) * CGFloat(18 + index * 3),
-                        y: sin(Double(index) * 1.7) * CGFloat(18 + index * 3)
-                    )
-            }
-        }
-        .frame(width: 10, height: 10)
     }
 }
 

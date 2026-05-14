@@ -11,7 +11,7 @@ struct MineTileView: View {
             tileBase
 
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(borderColor, lineWidth: canDig ? 2 : 1)
+                .strokeBorder(borderColor, lineWidth: isPlayerHere ? 2 : 1)
 
             if tile.type == .stone {
                 Image(systemName: "circle.hexagongrid.fill")
@@ -56,7 +56,7 @@ struct MineTileView: View {
             }
 
             if isDigAnimating {
-                DigImpactOverlay()
+                DigImpactOverlay(tile: tile)
                     .transition(.scale(scale: 0.72).combined(with: .opacity))
             }
 
@@ -228,34 +228,169 @@ struct MineTileView: View {
 }
 
 private struct DigImpactOverlay: View {
+    let tile: MineTile
+
     var body: some View {
         ZStack {
-            Image("fx_mining_dust")
-                .resizable()
-                .scaledToFit()
-                .scaleEffect(1.42)
-                .opacity(0.88)
-                .blendMode(.screen)
+            ForEach(0..<12, id: \.self) { index in
+                let offset = chipOffset(index)
 
-            ForEach(0..<7, id: \.self) { index in
-                Capsule()
-                    .fill(Color(red: 0.95, green: 0.76, blue: 0.45).opacity(0.88))
-                    .frame(width: 3, height: CGFloat(10 + (index % 3) * 4))
-                    .offset(y: -20)
-                    .rotationEffect(.degrees(Double(index) * 51))
+                RockChipShape(variant: index)
+                    .fill(chipColor(index))
+                    .frame(width: chipWidth(index), height: chipHeight(index))
+                    .rotationEffect(.degrees(chipRotation(index)))
+                    .offset(x: offset.width, y: offset.height)
+                    .shadow(color: .black.opacity(0.38), radius: 1, y: 1)
             }
 
-            Image(systemName: "hammer.fill")
-                .font(.system(size: 16, weight: .black))
-                .foregroundStyle(.white.opacity(0.90))
-                .shadow(color: .black.opacity(0.55), radius: 2, y: 1)
-                .rotationEffect(.degrees(-28))
-                .offset(x: 8, y: -8)
+            ForEach(0..<5, id: \.self) { index in
+                let offset = dustOffset(index)
+
+                Circle()
+                    .fill(chipColor(index).opacity(0.26))
+                    .frame(width: CGFloat(8 + index), height: CGFloat(6 + index))
+                    .blur(radius: 0.4)
+                    .offset(x: offset.width, y: offset.height)
+            }
 
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color(red: 0.95, green: 0.76, blue: 0.45).opacity(0.72), lineWidth: 2)
-                .padding(3)
+                .stroke(chipColor(0).opacity(0.52), lineWidth: 2)
+                .padding(4)
         }
         .allowsHitTesting(false)
+    }
+
+    private var chipPalette: [Color] {
+        switch tile.type {
+        case .empty:
+            return [
+                Color(red: 0.22, green: 0.22, blue: 0.24),
+                Color(red: 0.12, green: 0.13, blue: 0.15),
+                Color(red: 0.43, green: 0.39, blue: 0.34)
+            ]
+        case .dirt, .chest:
+            return [
+                Color(red: 0.65, green: 0.43, blue: 0.23),
+                Color(red: 0.39, green: 0.25, blue: 0.15),
+                Color(red: 0.84, green: 0.64, blue: 0.36)
+            ]
+        case .stone, .hardStone, .spike:
+            return [
+                Color(red: 0.56, green: 0.60, blue: 0.66),
+                Color(red: 0.29, green: 0.33, blue: 0.39),
+                Color(red: 0.72, green: 0.74, blue: 0.76)
+            ]
+        case .gold:
+            return [
+                Color(red: 0.96, green: 0.72, blue: 0.22),
+                Color(red: 0.48, green: 0.32, blue: 0.13),
+                Color(red: 0.73, green: 0.66, blue: 0.54)
+            ]
+        case .gem:
+            return [
+                Color(red: 0.52, green: 0.94, blue: 0.86),
+                Color(red: 0.12, green: 0.48, blue: 0.52),
+                Color(red: 0.72, green: 0.96, blue: 0.94)
+            ]
+        case .lava:
+            return [
+                Color(red: 1.0, green: 0.35, blue: 0.10),
+                Color(red: 0.46, green: 0.08, blue: 0.04),
+                Color(red: 1.0, green: 0.76, blue: 0.24)
+            ]
+        }
+    }
+
+    private func chipColor(_ index: Int) -> Color {
+        chipPalette[index % chipPalette.count]
+    }
+
+    private func chipWidth(_ index: Int) -> CGFloat {
+        CGFloat([10, 7, 12, 8, 9, 6, 11, 7, 10, 8, 6, 9][index % 12])
+    }
+
+    private func chipHeight(_ index: Int) -> CGFloat {
+        CGFloat([8, 6, 9, 7, 6, 5, 8, 5, 7, 6, 5, 7][index % 12])
+    }
+
+    private func chipRotation(_ index: Int) -> Double {
+        Double([-18, 24, -42, 58, 13, -68, 36, -8, 73, -28, 44, -54][index % 12])
+    }
+
+    private func chipOffset(_ index: Int) -> CGSize {
+        let offsets = [
+            CGSize(width: -14, height: -9),
+            CGSize(width: -7, height: -16),
+            CGSize(width: 7, height: -15),
+            CGSize(width: 15, height: -8),
+            CGSize(width: -18, height: 2),
+            CGSize(width: 18, height: 3),
+            CGSize(width: -10, height: 13),
+            CGSize(width: 2, height: 16),
+            CGSize(width: 13, height: 12),
+            CGSize(width: -2, height: -4),
+            CGSize(width: 8, height: 3),
+            CGSize(width: -9, height: 6)
+        ]
+
+        return offsets[index % offsets.count]
+    }
+
+    private func dustOffset(_ index: Int) -> CGSize {
+        let offsets = [
+            CGSize(width: -16, height: -2),
+            CGSize(width: -7, height: 9),
+            CGSize(width: 5, height: -10),
+            CGSize(width: 14, height: 5),
+            CGSize(width: 0, height: 14)
+        ]
+
+        return offsets[index % offsets.count]
+    }
+}
+
+private struct RockChipShape: Shape {
+    let variant: Int
+
+    func path(in rect: CGRect) -> Path {
+        let minX = rect.minX
+        let maxX = rect.maxX
+        let minY = rect.minY
+        let maxY = rect.maxY
+        let midX = rect.midX
+        let midY = rect.midY
+
+        var path = Path()
+
+        switch variant % 4 {
+        case 0:
+            path.move(to: CGPoint(x: midX, y: minY))
+            path.addLine(to: CGPoint(x: maxX, y: midY * 0.92))
+            path.addLine(to: CGPoint(x: maxX * 0.72, y: maxY))
+            path.addLine(to: CGPoint(x: minX, y: maxY * 0.82))
+            path.addLine(to: CGPoint(x: minX * 0.82, y: minY + rect.height * 0.28))
+        case 1:
+            path.move(to: CGPoint(x: minX + rect.width * 0.18, y: minY))
+            path.addLine(to: CGPoint(x: maxX, y: minY + rect.height * 0.22))
+            path.addLine(to: CGPoint(x: maxX * 0.86, y: maxY))
+            path.addLine(to: CGPoint(x: midX * 0.74, y: maxY * 0.88))
+            path.addLine(to: CGPoint(x: minX, y: midY))
+        case 2:
+            path.move(to: CGPoint(x: minX, y: midY * 0.72))
+            path.addLine(to: CGPoint(x: midX, y: minY))
+            path.addLine(to: CGPoint(x: maxX, y: minY + rect.height * 0.38))
+            path.addLine(to: CGPoint(x: maxX * 0.78, y: maxY))
+            path.addLine(to: CGPoint(x: minX + rect.width * 0.16, y: maxY * 0.86))
+        default:
+            path.move(to: CGPoint(x: minX + rect.width * 0.24, y: minY))
+            path.addLine(to: CGPoint(x: maxX * 0.82, y: minY + rect.height * 0.12))
+            path.addLine(to: CGPoint(x: maxX, y: maxY * 0.64))
+            path.addLine(to: CGPoint(x: midX * 0.90, y: maxY))
+            path.addLine(to: CGPoint(x: minX, y: maxY * 0.68))
+            path.addLine(to: CGPoint(x: minX + rect.width * 0.08, y: midY * 0.72))
+        }
+
+        path.closeSubpath()
+        return path
     }
 }
