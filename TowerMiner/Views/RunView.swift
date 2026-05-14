@@ -872,6 +872,19 @@ private struct ProceduralGemIcon: View {
 
             ProceduralGemShape()
                 .stroke(Color.white.opacity(0.52), lineWidth: 1)
+
+            ProceduralGemFacetLines()
+                .stroke(Color.white.opacity(0.55), style: StrokeStyle(lineWidth: 1, lineCap: .round, lineJoin: .round))
+
+            ProceduralGemFacetLines()
+                .stroke(Color(red: 0.03, green: 0.44, blue: 0.54).opacity(0.38), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                .blendMode(.multiply)
+
+            Capsule()
+                .fill(Color.white.opacity(0.48))
+                .frame(width: 9, height: 3)
+                .rotationEffect(.degrees(-25))
+                .offset(x: -4, y: -6)
         }
         .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.45), radius: 5)
     }
@@ -885,6 +898,38 @@ private struct ProceduralGemShape: Shape {
         path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.height * 0.34))
         path.closeSubpath()
+        return path
+    }
+}
+
+private struct ProceduralGemFacetLines: Shape {
+    func path(in rect: CGRect) -> Path {
+        let top = CGPoint(x: rect.midX, y: rect.minY)
+        let right = CGPoint(x: rect.maxX, y: rect.height * 0.34)
+        let bottom = CGPoint(x: rect.midX, y: rect.maxY)
+        let left = CGPoint(x: rect.minX, y: rect.height * 0.34)
+        let center = CGPoint(x: rect.midX, y: rect.height * 0.42)
+
+        var path = Path()
+        path.move(to: top)
+        path.addLine(to: center)
+        path.addLine(to: bottom)
+
+        path.move(to: left)
+        path.addLine(to: center)
+        path.addLine(to: right)
+
+        path.move(to: CGPoint(x: rect.width * 0.24, y: rect.height * 0.34))
+        path.addLine(to: CGPoint(x: rect.width * 0.40, y: rect.height * 0.12))
+
+        path.move(to: CGPoint(x: rect.width * 0.76, y: rect.height * 0.34))
+        path.addLine(to: CGPoint(x: rect.width * 0.60, y: rect.height * 0.12))
+
+        path.move(to: CGPoint(x: rect.width * 0.30, y: rect.height * 0.66))
+        path.addLine(to: left)
+
+        path.move(to: CGPoint(x: rect.width * 0.70, y: rect.height * 0.66))
+        path.addLine(to: right)
         return path
     }
 }
