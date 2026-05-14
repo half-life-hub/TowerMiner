@@ -220,6 +220,13 @@ struct MineTileView: View {
 private struct DigImpactOverlay: View {
     var body: some View {
         ZStack {
+            Image("fx_mining_dust")
+                .resizable()
+                .scaledToFit()
+                .scaleEffect(1.42)
+                .opacity(0.88)
+                .blendMode(.screen)
+
             ForEach(0..<7, id: \.self) { index in
                 Capsule()
                     .fill(Color(red: 0.95, green: 0.76, blue: 0.45).opacity(0.88))
