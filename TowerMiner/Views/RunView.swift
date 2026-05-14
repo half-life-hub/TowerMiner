@@ -322,9 +322,9 @@ struct RunView: View {
 
     private var resourceStrip: some View {
         HStack(spacing: 8) {
-            chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", assetName: "icon_coin", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
-            chip(title: "Gems", value: "\(session.player.gems)", systemImage: "diamond.fill", assetName: "icon_gem", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", assetName: "icon_bomb", tint: .white.opacity(0.80))
+            chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+            chip(title: "Gems", value: "\(session.player.gems)", systemImage: "diamond.fill", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+            chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: .white.opacity(0.80))
 
             Button {
                 session.useShield()
@@ -333,7 +333,6 @@ struct RunView: View {
                         title: session.player.activeShieldHits > 0 ? "Active" : "Shield",
                         value: "\(session.player.shields)",
                         systemImage: "shield.fill",
-                        assetName: "icon_shield",
                         tint: Color(red: 0.62, green: 0.77, blue: 1.0)
                     )
             }
@@ -364,7 +363,7 @@ struct RunView: View {
         }
     }
 
-    private func chip(title: String, value: String, systemImage: String, assetName: String? = nil, tint: Color) -> some View {
+    private func chip(title: String, value: String, systemImage: String, tint: Color) -> some View {
         HStack(spacing: 5) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -398,18 +397,8 @@ struct RunView: View {
                         )
                     )
 
-                if let assetName {
-                    Image(assetName)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(1)
-                        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
-                } else {
-                    Image(systemName: systemImage)
-                        .font(.system(size: 11, weight: .black))
-                        .foregroundStyle(.white)
-                        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
-                }
+                proceduralStatIcon(for: title, fallbackSystemImage: systemImage)
+                    .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
             }
             .frame(width: 40, height: 40)
             .overlay {
@@ -439,6 +428,28 @@ struct RunView: View {
                 )
         }
         .shadow(color: .black.opacity(0.20), radius: 8, y: 5)
+    }
+
+    @ViewBuilder
+    private func proceduralStatIcon(for title: String, fallbackSystemImage: String) -> some View {
+        switch title {
+        case "Coins":
+            ProceduralCoinIcon()
+                .frame(width: 25, height: 25)
+        case "Gems":
+            ProceduralGemIcon()
+                .frame(width: 25, height: 25)
+        case "Bomb":
+            ProceduralBombIcon()
+                .frame(width: 25, height: 25)
+        case "Shield", "Active":
+            ProceduralShieldIcon()
+                .frame(width: 24, height: 27)
+        default:
+            Image(systemName: fallbackSystemImage)
+                .font(.system(size: 11, weight: .black))
+                .foregroundStyle(.white)
+        }
     }
 
     private func runMeter(title: String, value: Int, maxValue: Int, systemImage: String, tint: Color) -> some View {
@@ -819,6 +830,129 @@ private struct ProceduralDepthGaugeIcon: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+}
+
+private struct ProceduralCoinIcon: View {
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white, Color(red: 1.0, green: 0.78, blue: 0.23), Color(red: 0.62, green: 0.34, blue: 0.05)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            Circle()
+                .strokeBorder(Color(red: 0.45, green: 0.24, blue: 0.03).opacity(0.55), lineWidth: 2)
+                .padding(3)
+
+            Capsule()
+                .fill(Color.white.opacity(0.48))
+                .frame(width: 10, height: 3)
+                .rotationEffect(.degrees(-22))
+                .offset(x: -4, y: -5)
+        }
+    }
+}
+
+private struct ProceduralGemIcon: View {
+    var body: some View {
+        ZStack {
+            ProceduralGemShape()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white, Color(red: 0.52, green: 0.94, blue: 0.86), Color(red: 0.03, green: 0.44, blue: 0.54)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            ProceduralGemShape()
+                .stroke(Color.white.opacity(0.52), lineWidth: 1)
+        }
+        .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.45), radius: 5)
+    }
+}
+
+private struct ProceduralGemShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.height * 0.34))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.height * 0.34))
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct ProceduralBombIcon: View {
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [Color.white.opacity(0.34), Color(red: 0.12, green: 0.12, blue: 0.13), Color.black],
+                        center: .topLeading,
+                        startRadius: 1,
+                        endRadius: 18
+                    )
+                )
+                .frame(width: 22, height: 22)
+                .offset(y: 2)
+
+            Capsule()
+                .fill(Color(red: 0.20, green: 0.18, blue: 0.16))
+                .frame(width: 5, height: 9)
+                .rotationEffect(.degrees(-34))
+                .offset(x: 7, y: -9)
+
+            Circle()
+                .fill(Color(red: 1.0, green: 0.48, blue: 0.14))
+                .frame(width: 6, height: 6)
+                .shadow(color: Color(red: 1.0, green: 0.48, blue: 0.14), radius: 5)
+                .offset(x: 11, y: -12)
+        }
+    }
+}
+
+private struct ProceduralShieldIcon: View {
+    var body: some View {
+        ProceduralShieldShape()
+            .fill(
+                LinearGradient(
+                    colors: [Color.white, Color(red: 0.62, green: 0.77, blue: 1.0), Color(red: 0.09, green: 0.20, blue: 0.38)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay {
+                ProceduralShieldShape()
+                    .stroke(Color.white.opacity(0.42), lineWidth: 1.2)
+            }
+    }
+}
+
+private struct ProceduralShieldShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.86, y: rect.height * 0.18))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.78, y: rect.height * 0.66))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.midX, y: rect.maxY),
+            control: CGPoint(x: rect.maxX * 0.70, y: rect.height * 0.86)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX * 0.22, y: rect.height * 0.66),
+            control: CGPoint(x: rect.maxX * 0.30, y: rect.height * 0.86)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX * 0.14, y: rect.height * 0.18))
+        path.closeSubpath()
+        return path
     }
 }
 
