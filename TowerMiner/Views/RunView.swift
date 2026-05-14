@@ -154,9 +154,7 @@ struct RunView: View {
 
     private var depthBadge: some View {
         HStack(spacing: 8) {
-            Image("icon_depth")
-                .resizable()
-                .scaledToFit()
+            ProceduralDepthGaugeIcon()
                 .frame(width: 38, height: 62)
 
             VStack(alignment: .leading, spacing: 3) {
@@ -758,6 +756,69 @@ private struct ProceduralBoltIcon: Shape {
         path.addLine(to: CGPoint(x: rect.maxX * 0.55, y: rect.midY * 0.72))
         path.closeSubpath()
         return path
+    }
+}
+
+private struct ProceduralDepthGaugeIcon: View {
+    var body: some View {
+        GeometryReader { geometry in
+            let width = geometry.size.width
+            let height = geometry.size.height
+            let shaftWidth = width * 0.34
+
+            ZStack {
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.black.opacity(0.75),
+                                Color(red: 0.08, green: 0.16, blue: 0.18),
+                                Color.black.opacity(0.86)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: shaftWidth, height: height * 0.88)
+
+                Capsule()
+                    .strokeBorder(Color.white.opacity(0.55), lineWidth: 1.3)
+                    .frame(width: shaftWidth, height: height * 0.88)
+
+                VStack(spacing: height * 0.055) {
+                    ForEach(0..<6, id: \.self) { index in
+                        RoundedRectangle(cornerRadius: 1, style: .continuous)
+                            .fill(index.isMultiple(of: 2) ? Color.white.opacity(0.82) : Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.72))
+                            .frame(width: index.isMultiple(of: 2) ? width * 0.22 : width * 0.14, height: 1.4)
+                    }
+                }
+
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.95),
+                                Color(red: 0.05, green: 0.42, blue: 0.48).opacity(0.86)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: shaftWidth * 0.42, height: height * 0.72)
+                    .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.58), radius: 5)
+
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.78, blue: 0.23))
+                    .frame(width: width * 0.18, height: width * 0.18)
+                    .offset(y: -height * 0.32)
+
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.46, blue: 0.18))
+                    .frame(width: width * 0.14, height: width * 0.14)
+                    .offset(y: height * 0.34)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
 }
 
