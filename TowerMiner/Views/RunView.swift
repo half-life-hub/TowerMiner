@@ -99,7 +99,6 @@ struct RunView: View {
                         value: session.player.health,
                         maxValue: session.player.maxHealth,
                         systemImage: "heart.fill",
-                        assetName: "icon_health",
                         tint: Color(red: 0.95, green: 0.34, blue: 0.25)
                     )
 
@@ -108,7 +107,6 @@ struct RunView: View {
                         value: session.player.energy,
                         maxValue: session.player.maxEnergy,
                         systemImage: "bolt.fill",
-                        assetName: "icon_energy",
                         tint: Color(red: 0.52, green: 0.94, blue: 0.86)
                     )
                 }
@@ -445,26 +443,40 @@ struct RunView: View {
         .shadow(color: .black.opacity(0.20), radius: 8, y: 5)
     }
 
-    private func runMeter(title: String, value: Int, maxValue: Int, systemImage: String, assetName: String? = nil, tint: Color) -> some View {
+    private func runMeter(title: String, value: Int, maxValue: Int, systemImage: String, tint: Color) -> some View {
         HStack(spacing: 9) {
             ZStack {
-                if assetName == nil {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [tint.opacity(0.86), tint.opacity(0.28), Color.black.opacity(0.38)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                if title == "HP" {
+                    ProceduralHeartIcon()
                         .fill(
                             LinearGradient(
-                                colors: [tint.opacity(0.86), tint.opacity(0.28), Color.black.opacity(0.38)],
+                                colors: [.white, Color(red: 1.0, green: 0.18, blue: 0.12), Color(red: 0.46, green: 0.02, blue: 0.03)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                }
-
-                if let assetName {
-                    Image(assetName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 30, height: 30)
-                        .scaleEffect(meterAssetScale(for: assetName))
+                        .frame(width: 18, height: 17)
+                        .shadow(color: .black.opacity(0.38), radius: 2, y: 1)
+                } else if title == "EN" {
+                    ProceduralBoltIcon()
+                        .fill(
+                            LinearGradient(
+                                colors: [.white, Color(red: 0.52, green: 0.94, blue: 0.86), Color(red: 0.05, green: 0.42, blue: 0.48)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 13, height: 22)
+                        .shadow(color: .black.opacity(0.38), radius: 2, y: 1)
                 } else {
                     Image(systemName: systemImage)
                         .font(.system(size: 13, weight: .black))
@@ -512,15 +524,6 @@ struct RunView: View {
             }
         }
         .frame(minHeight: 32)
-    }
-
-    private func meterAssetScale(for assetName: String) -> CGFloat {
-        switch assetName {
-        case "icon_energy":
-            return 1.45
-        default:
-            return 1.0
-        }
     }
 
     private func triggerDust() {
@@ -709,6 +712,52 @@ private struct RunStatCardBackground: View {
                 .padding(.vertical, 10)
         }
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+    }
+}
+
+private struct ProceduralHeartIcon: Shape {
+    func path(in rect: CGRect) -> Path {
+        let width = rect.width
+        let height = rect.height
+
+        var path = Path()
+        path.move(to: CGPoint(x: width * 0.50, y: height * 0.92))
+        path.addCurve(
+            to: CGPoint(x: width * 0.08, y: height * 0.35),
+            control1: CGPoint(x: width * 0.26, y: height * 0.74),
+            control2: CGPoint(x: width * 0.02, y: height * 0.58)
+        )
+        path.addCurve(
+            to: CGPoint(x: width * 0.48, y: height * 0.22),
+            control1: CGPoint(x: width * 0.08, y: height * 0.12),
+            control2: CGPoint(x: width * 0.35, y: height * 0.06)
+        )
+        path.addCurve(
+            to: CGPoint(x: width * 0.92, y: height * 0.35),
+            control1: CGPoint(x: width * 0.64, y: height * 0.05),
+            control2: CGPoint(x: width * 0.92, y: height * 0.12)
+        )
+        path.addCurve(
+            to: CGPoint(x: width * 0.50, y: height * 0.92),
+            control1: CGPoint(x: width * 0.98, y: height * 0.58),
+            control2: CGPoint(x: width * 0.74, y: height * 0.74)
+        )
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct ProceduralBoltIcon: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.maxX * 0.64, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.18, y: rect.midY * 1.05))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.47, y: rect.midY * 1.05))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.33, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.84, y: rect.midY * 0.72))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.55, y: rect.midY * 0.72))
+        path.closeSubpath()
+        return path
     }
 }
 
