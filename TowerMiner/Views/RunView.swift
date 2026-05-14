@@ -108,6 +108,7 @@ struct RunView: View {
                         value: session.player.energy,
                         maxValue: session.player.maxEnergy,
                         systemImage: "bolt.fill",
+                        assetName: "icon_energy",
                         tint: Color(red: 0.52, green: 0.94, blue: 0.86)
                     )
                 }
