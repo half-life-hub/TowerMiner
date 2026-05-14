@@ -318,13 +318,13 @@ struct RunView: View {
         HStack(spacing: 8) {
             chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
             chip(title: "Gems", value: "\(session.player.gems)", systemImage: "diamond.fill", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            chip(title: "Bombs", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: .white.opacity(0.80))
+            chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: .white.opacity(0.80))
 
             Button {
                 session.useShield()
             } label: {
                 chip(
-                    title: session.player.activeShieldHits > 0 ? "Shield" : "Shields",
+                    title: session.player.activeShieldHits > 0 ? "Active" : "Shield",
                     value: "\(session.player.shields)",
                     systemImage: "shield.fill",
                     tint: Color(red: 0.62, green: 0.77, blue: 1.0)
@@ -358,38 +358,72 @@ struct RunView: View {
     }
 
     private func chip(title: String, value: String, systemImage: String, tint: Color) -> some View {
-        HStack(spacing: 7) {
-            Image(systemName: systemImage)
-                .font(.caption.weight(.bold))
-                .foregroundStyle(tint)
-            VStack(alignment: .leading, spacing: 1) {
+        HStack(spacing: 5) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.54))
+                    .font(.system(size: 10, weight: .black))
+                    .tracking(0.2)
+                    .foregroundStyle(.white.opacity(0.56))
                     .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+
                 Text(value)
                     .font(.headline.weight(.black))
+                    .monospacedDigit()
                     .foregroundStyle(.white)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.70)
+            }
+
+            Spacer(minLength: 4)
+
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                tint.opacity(0.82),
+                                tint.opacity(0.30),
+                                Color.black.opacity(0.38)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                Image(systemName: systemImage)
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
+            }
+            .frame(width: 28, height: 28)
+            .overlay {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(.white.opacity(0.16), lineWidth: 1)
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
-        .padding(.leading, 26)
-        .padding(.trailing, 12)
+        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+        .padding(.leading, 10)
+        .padding(.trailing, 7)
         .background {
-            Image("panel_hud")
-                .resizable()
-                .scaledToFill()
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(.black.opacity(0.28))
-                }
+            RunStatCardBackground(cornerRadius: 14)
         }
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(.white.opacity(0.10), lineWidth: 1)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            .white.opacity(0.14),
+                            tint.opacity(0.32),
+                            .black.opacity(0.30)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
         }
+        .shadow(color: .black.opacity(0.20), radius: 8, y: 5)
     }
 
     private func runMeter(title: String, value: Int, maxValue: Int, systemImage: String, tint: Color) -> some View {
@@ -603,6 +637,39 @@ private struct RunCashOutButtonStyle: ButtonStyle {
             .brightness(configuration.isPressed ? -0.06 : 0)
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
             .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
+    }
+}
+
+private struct RunStatCardBackground: View {
+    let cornerRadius: CGFloat
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.15, green: 0.16, blue: 0.17).opacity(0.88),
+                            Color(red: 0.05, green: 0.06, blue: 0.08).opacity(0.96),
+                            Color(red: 0.11, green: 0.08, blue: 0.06).opacity(0.88)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            RoundedRectangle(cornerRadius: cornerRadius - 2, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.045), lineWidth: 3)
+                .padding(4)
+
+            Capsule()
+                .fill(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.06))
+                .frame(width: 4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 7)
+                .padding(.vertical, 10)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     }
 }
 
