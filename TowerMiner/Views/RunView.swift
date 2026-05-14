@@ -316,7 +316,7 @@ struct RunView: View {
 
     private var resourceStrip: some View {
         HStack(spacing: 8) {
-            chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+            chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", assetName: "icon_coin", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
             chip(title: "Gems", value: "\(session.player.gems)", systemImage: "diamond.fill", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
             chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: .white.opacity(0.80))
 
@@ -357,7 +357,7 @@ struct RunView: View {
         }
     }
 
-    private func chip(title: String, value: String, systemImage: String, tint: Color) -> some View {
+    private func chip(title: String, value: String, systemImage: String, assetName: String? = nil, tint: Color) -> some View {
         HStack(spacing: 5) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -391,12 +391,20 @@ struct RunView: View {
                         )
                     )
 
-                Image(systemName: systemImage)
-                    .font(.system(size: 11, weight: .black))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
+                if let assetName {
+                    Image(assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(1)
+                        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
+                } else {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
+                }
             }
-            .frame(width: 28, height: 28)
+            .frame(width: 40, height: 40)
             .overlay {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .stroke(.white.opacity(0.16), lineWidth: 1)
