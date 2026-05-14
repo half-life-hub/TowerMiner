@@ -122,6 +122,31 @@ struct TowerMinerTests {
         #expect(session.player.gems == 1)
     }
 
+    @Test func bombClearsNearbyTilesAndConsumesInventory() {
+        let session = GameSession(profile: .default, seed: 9_137)
+        let target = session.player.position.offsetBy(columns: 1)
+        let goldPosition = target.offsetBy(rows: 1)
+        let gemPosition = target.offsetBy(columns: 1)
+
+        session.tiles[target.row][target.column] = MineTile(type: .stone)
+        session.tiles[goldPosition.row][goldPosition.column] = MineTile(type: .gold)
+        session.tiles[gemPosition.row][gemPosition.column] = MineTile(type: .gem)
+
+        let placed = session.useBomb(at: target)
+        let targetWasIncludedInBlast = session.lastBombedPositions.contains { position in
+            position.row == target.row && position.column == target.column
+        }
+
+        #expect(placed)
+        #expect(session.player.bombs == 0)
+        #expect(session.tile(at: target)?.type == .empty)
+        #expect(session.tile(at: goldPosition)?.type == .empty)
+        #expect(session.tile(at: gemPosition)?.type == .empty)
+        #expect(session.player.coins == 4)
+        #expect(session.player.gems == 1)
+        #expect(targetWasIncludedInBlast)
+    }
+
     @Test func runResultCalculatesTotalPayout() {
         let result = RunResult(depth: 20, coins: 12, gems: 3, gemValue: 5)
 
@@ -167,8 +192,9 @@ struct TowerMinerTests {
     @Test func generatorKeepsOpeningRowsSafe() {
         let generator = MineGenerator(columns: 9, seed: 9_137)
         let rows = generator.makeInitialRows(count: 4, startColumn: 4)
+        let openingRowIsSafe = !rows[0].map(\.isEmpty).contains(false)
 
-        #expect(rows[0].allSatisfy(\.isEmpty))
+        #expect(openingRowIsSafe)
         #expect(rows[1][3].isEmpty)
         #expect(rows[1][4].isEmpty)
         #expect(rows[1][5].isEmpty)

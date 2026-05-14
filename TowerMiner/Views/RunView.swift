@@ -9,6 +9,8 @@ struct RunView: View {
     @State private var previousTopVisibleRow = 0
     @State private var shaftScrollOffset: CGFloat = 0
     @State private var activeDigPosition: GridPosition?
+    @State private var activeBlastPositions: Set<GridPosition> = []
+    @State private var isPlacingBomb = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -48,6 +50,9 @@ struct RunView: View {
         }
         .onChange(of: session.digFeedbackID) {
             triggerDigImpact()
+        }
+        .onChange(of: session.bombFeedbackID) {
+            triggerBombImpact()
         }
         .onChange(of: session.damageFeedbackID) {
             damageShake += 1
@@ -222,9 +227,9 @@ struct RunView: View {
                             .font(.caption.weight(.black))
                             .foregroundStyle(.white.opacity(0.56))
                         Spacer()
-                        Text("Tap adjacent blocks")
+                        Text(isPlacingBomb ? "Tap adjacent target" : "Tap adjacent blocks")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.white.opacity(0.46))
+                            .foregroundStyle(isPlacingBomb ? Color(red: 1.0, green: 0.74, blue: 0.30).opacity(0.90) : .white.opacity(0.46))
                     }
 
                     VStack(spacing: spacing) {
@@ -235,13 +240,13 @@ struct RunView: View {
                                     let tile = session.tiles[row][column]
 
                                     Button {
-                                        session.dig(at: position)
+                                        handleTileTap(at: position)
                                     } label: {
                                         MineTileView(
                                             tile: tile,
                                             isPlayerHere: session.player.position == position,
-                                            canDig: session.canDig(at: position),
-                                            isDigAnimating: activeDigPosition == position
+                                            canDig: session.canDig(at: position) || session.canPlaceBomb(at: position),
+                                            isDigAnimating: activeDigPosition == position || activeBlastPositions.contains(position)
                                         )
                                         .frame(width: tileSize, height: tileSize)
                                     }
@@ -309,7 +314,15 @@ struct RunView: View {
         HStack(spacing: 8) {
             chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
             chip(title: "Gems", value: "\(session.player.gems)", systemImage: "diamond.fill", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: .white.opacity(0.80))
+
+            Button {
+                isPlacingBomb.toggle()
+            } label: {
+                chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: isPlacingBomb ? Color(red: 1.0, green: 0.74, blue: 0.30) : .white.opacity(0.80))
+            }
+            .buttonStyle(.plain)
+            .disabled(session.player.bombs == 0 || session.isRunOver)
+            .opacity(session.player.bombs == 0 || session.isRunOver ? 0.48 : 1)
 
             Button {
                 session.useShield()
@@ -520,6 +533,17 @@ struct RunView: View {
         .frame(minHeight: 32)
     }
 
+    private func handleTileTap(at position: GridPosition) {
+        if isPlacingBomb {
+            if session.useBomb(at: position) {
+                isPlacingBomb = false
+            }
+            return
+        }
+
+        session.dig(at: position)
+    }
+
     private func triggerDigImpact() {
         guard let position = session.lastDugPosition else {
             return
@@ -530,6 +554,24 @@ struct RunView: View {
             try? await Task.sleep(for: .milliseconds(180))
             if activeDigPosition == position {
                 activeDigPosition = nil
+            }
+        }
+    }
+
+    private func triggerBombImpact() {
+        let positions = session.lastBombedPositions
+        guard !positions.isEmpty else {
+            return
+        }
+        let blastPositionSet = Set(positions)
+
+        activeDigPosition = nil
+        activeBlastPositions = blastPositionSet
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(260))
+            if activeBlastPositions == blastPositionSet {
+                activeBlastPositions = []
             }
         }
     }

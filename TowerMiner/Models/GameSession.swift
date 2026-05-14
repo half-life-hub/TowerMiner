@@ -14,9 +14,11 @@ final class GameSession {
     var digPower: Int
     var isRunOver: Bool
     var digFeedbackID: Int
+    var bombFeedbackID: Int
     var rewardFeedbackID: Int
     var damageFeedbackID: Int
     var lastDugPosition: GridPosition?
+    var lastBombedPositions: [GridPosition]
 
     init(
         profile: PlayerProfile,
@@ -34,9 +36,11 @@ final class GameSession {
         self.digPower = 1
         self.isRunOver = false
         self.digFeedbackID = 0
+        self.bombFeedbackID = 0
         self.rewardFeedbackID = 0
         self.damageFeedbackID = 0
         self.lastDugPosition = nil
+        self.lastBombedPositions = []
 
         let startColumn = columns / 2
         let maxHealth = 5 + profile.maxHealthLevel
@@ -129,6 +133,49 @@ final class GameSession {
         applyGravityIfNeeded()
     }
 
+    func canPlaceBomb(at position: GridPosition) -> Bool {
+        guard !isRunOver, player.bombs > 0, isWithinBounds(position) else {
+            return false
+        }
+
+        return player.position.manhattanDistance(to: position) == 1
+    }
+
+    @discardableResult
+    func useBomb(at position: GridPosition) -> Bool {
+        guard canPlaceBomb(at: position) else {
+            return false
+        }
+
+        player.bombs -= 1
+        lastBombedPositions = bombBlastPositions(centeredAt: position)
+
+        var earnedCoins = 0
+        var earnedGems = 0
+
+        for blastPosition in lastBombedPositions {
+            let tile = tiles[blastPosition.row][blastPosition.column]
+            guard !tile.isEmpty else {
+                continue
+            }
+
+            earnedCoins += tile.coinReward
+            earnedGems += tile.gemReward
+            tiles[blastPosition.row][blastPosition.column] = MineTile(type: .empty)
+        }
+
+        player.coins += earnedCoins
+        player.gems += earnedGems
+        if earnedCoins > 0 || earnedGems > 0 {
+            rewardFeedbackID += 1
+        }
+
+        bombFeedbackID += 1
+        ensureRowsAvailable()
+        applyGravityIfNeeded()
+        return true
+    }
+
     func useShield() {
         guard !isRunOver, player.shields > 0, player.activeShieldHits == 0 else {
             return
@@ -212,6 +259,23 @@ final class GameSession {
             recoverEnergy()
             ensureRowsAvailable()
         }
+    }
+
+    private func bombBlastPositions(centeredAt center: GridPosition) -> [GridPosition] {
+        var positions: [GridPosition] = []
+
+        for rowOffset in -1...1 {
+            for columnOffset in -1...1 {
+                let position = center.offsetBy(rows: rowOffset, columns: columnOffset)
+                guard isWithinBounds(position), position != player.position else {
+                    continue
+                }
+
+                positions.append(position)
+            }
+        }
+
+        return positions
     }
 
     private func isWithinBounds(_ position: GridPosition) -> Bool {
