@@ -323,12 +323,13 @@ struct RunView: View {
             Button {
                 session.useShield()
             } label: {
-                chip(
-                    title: session.player.activeShieldHits > 0 ? "Active" : "Shield",
-                    value: "\(session.player.shields)",
-                    systemImage: "shield.fill",
-                    tint: Color(red: 0.62, green: 0.77, blue: 1.0)
-                )
+                    chip(
+                        title: session.player.activeShieldHits > 0 ? "Active" : "Shield",
+                        value: "\(session.player.shields)",
+                        systemImage: "shield.fill",
+                        assetName: "icon_shield",
+                        tint: Color(red: 0.62, green: 0.77, blue: 1.0)
+                    )
             }
             .buttonStyle(.plain)
             .disabled(session.player.shields == 0 || session.player.activeShieldHits > 0 || session.isRunOver)
