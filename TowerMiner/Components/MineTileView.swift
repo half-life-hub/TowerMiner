@@ -61,20 +61,34 @@ struct MineTileView: View {
             }
 
             if isPlayerHere {
-                Image("player_miner")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                    .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.85), radius: 8)
-                    .transition(.scale.combined(with: .opacity))
+                ZStack {
+                    Circle()
+                        .fill(Color.black.opacity(0.70))
+                        .padding(5)
+
+                    Circle()
+                        .strokeBorder(Color.white.opacity(0.95), lineWidth: 2)
+                        .padding(4)
+
+                    Circle()
+                        .strokeBorder(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.95), lineWidth: 3)
+                        .padding(8)
+
+                    Image("player_miner")
+                        .resizable()
+                        .scaledToFit()
+                        .padding(4)
+                }
+                .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.95), radius: 9)
+                .transition(.scale.combined(with: .opacity))
             }
         }
         .aspectRatio(1, contentMode: .fit)
-        .shadow(color: shadowColor, radius: canDig ? 8 : 3)
-        .scaleEffect(isDigAnimating ? 0.94 : (canDig ? 1.04 : 1.0))
+        .shadow(color: shadowColor, radius: isPlayerHere ? 8 : 3)
+        .scaleEffect(isDigAnimating ? 0.94 : (isPlayerHere ? 1.04 : 1.0))
         .rotationEffect(.degrees(isDigAnimating ? -1.4 : 0))
         .brightness(isDigAnimating ? 0.08 : 0)
-        .animation(.spring(response: 0.2, dampingFraction: 0.72), value: canDig)
+        .animation(.spring(response: 0.2, dampingFraction: 0.72), value: isPlayerHere)
         .animation(.spring(response: 0.18, dampingFraction: 0.7), value: isPlayerHere)
         .animation(.spring(response: 0.16, dampingFraction: 0.42), value: isDigAnimating)
     }
@@ -194,11 +208,7 @@ struct MineTileView: View {
 
     private var borderColor: Color {
         if isPlayerHere {
-            return .white.opacity(0.9)
-        }
-
-        if canDig {
-            return Color(red: 0.55, green: 0.92, blue: 0.88)
+            return Color(red: 0.55, green: 0.92, blue: 0.88).opacity(0.95)
         }
 
         return .white.opacity(tile.isEmpty ? 0.06 : 0.12)
@@ -213,7 +223,7 @@ struct MineTileView: View {
             return Color(red: 1.0, green: 0.22, blue: 0.08).opacity(0.5)
         }
 
-        return canDig ? Color(red: 0.55, green: 0.92, blue: 0.88).opacity(0.25) : .clear
+        return isPlayerHere ? Color(red: 0.55, green: 0.92, blue: 0.88).opacity(0.38) : .clear
     }
 }
 
