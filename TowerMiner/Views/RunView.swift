@@ -89,45 +89,103 @@ struct RunView: View {
     }
 
     private var topBar: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Run")
-                    .font(.title.weight(.black))
-                    .foregroundStyle(.white)
-                Label("Depth \(session.currentDepth)", systemImage: "arrow.down.to.line.compact")
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.70))
-            }
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                depthBadge
 
-            Spacer()
+                VStack(spacing: 8) {
+                    runMeter(
+                        title: "Health",
+                        value: session.player.health,
+                        maxValue: session.player.maxHealth,
+                        systemImage: "heart.fill",
+                        tint: Color(red: 0.95, green: 0.34, blue: 0.25)
+                    )
 
-            VStack(spacing: 8) {
-                meter(title: "HP", value: session.player.health, maxValue: session.player.maxHealth, tint: Color(red: 0.95, green: 0.34, blue: 0.25))
-                meter(title: "EN", value: session.player.energy, maxValue: session.player.maxEnergy, tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            }
-            .frame(width: 124)
-
-            Button {
-                onFinishRun(session.makeRunResult())
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
-                    Text("Cash Out")
+                    runMeter(
+                        title: "Energy",
+                        value: session.player.energy,
+                        maxValue: session.player.maxEnergy,
+                        systemImage: "bolt.fill",
+                        tint: Color(red: 0.52, green: 0.94, blue: 0.86)
+                    )
                 }
-                .font(.caption.weight(.black))
-                .foregroundStyle(.black)
-                .padding(.horizontal, 12)
-                .frame(height: 42)
-                .background(Color(red: 0.52, green: 0.94, blue: 0.86), in: Capsule())
+
+                Button {
+                    onFinishRun(session.makeRunResult())
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .font(.system(size: 17, weight: .black))
+
+                        Text("Cash Out")
+                            .font(.caption2.weight(.black))
+                            .tracking(0.4)
+                    }
+                    .frame(width: 76, height: 62)
+                }
+                .buttonStyle(RunCashOutButtonStyle())
+                .accessibilityLabel("Cash Out")
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Cash Out")
         }
-        .padding(14)
-        .background(.black.opacity(0.32), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .padding(.leading, 18)
+        .padding(.trailing, 14)
+        .padding(.vertical, 14)
+        .background {
+            RunHUDPanel(cornerRadius: 20)
+        }
         .overlay {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            .white.opacity(0.18),
+                            Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.34),
+                            .black.opacity(0.32)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        }
+        .shadow(color: .black.opacity(0.30), radius: 14, y: 8)
+    }
+
+    private var depthBadge: some View {
+        VStack(spacing: 4) {
+            Image(systemName: "arrow.down.to.line.compact")
+                .font(.system(size: 18, weight: .black))
+                .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
+
+            Text("\(session.currentDepth)")
+                .font(.title2.weight(.black))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+
+            Text("DEPTH")
+                .font(.caption2.weight(.black))
+                .tracking(0.8)
+                .foregroundStyle(.white.opacity(0.58))
+        }
+        .frame(width: 76, height: 74)
+        .background {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.18, green: 0.19, blue: 0.20),
+                            Color(red: 0.05, green: 0.06, blue: 0.08),
+                            Color(red: 0.12, green: 0.09, blue: 0.07)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.32), lineWidth: 1)
         }
     }
 
@@ -334,28 +392,62 @@ struct RunView: View {
         }
     }
 
-    private func meter(title: String, value: Int, maxValue: Int, tint: Color) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(title)
-                    .font(.caption.weight(.bold))
-                Spacer()
-                Text("\(value)/\(maxValue)")
-                    .font(.caption.weight(.bold))
-            }
-            .foregroundStyle(.white.opacity(0.82))
+    private func runMeter(title: String, value: Int, maxValue: Int, systemImage: String, tint: Color) -> some View {
+        HStack(spacing: 9) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [tint.opacity(0.86), tint.opacity(0.28), Color.black.opacity(0.38)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
 
-            GeometryReader { geometry in
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .fill(.white.opacity(0.12))
-                    .overlay(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .fill(tint)
-                            .frame(width: geometry.size.width * CGFloat(max(0, min(value, maxValue))) / CGFloat(max(maxValue, 1)))
-                    }
+                Image(systemName: systemImage)
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(.white)
             }
-            .frame(height: 6)
+            .frame(width: 34, height: 30)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text(title.uppercased())
+                        .font(.caption2.weight(.black))
+                        .tracking(0.7)
+                        .foregroundStyle(.white.opacity(0.58))
+
+                    Spacer(minLength: 4)
+
+                    Text("\(value)/\(maxValue)")
+                        .font(.caption.weight(.black))
+                        .monospacedDigit()
+                        .foregroundStyle(.white.opacity(0.86))
+                }
+
+                GeometryReader { geometry in
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(Color.black.opacity(0.38))
+                        .overlay(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [tint.opacity(0.95), tint.opacity(0.52)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .frame(width: geometry.size.width * CGFloat(max(0, min(value, maxValue))) / CGFloat(max(maxValue, 1)))
+                        }
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .stroke(.white.opacity(0.10), lineWidth: 1)
+                        }
+                }
+                .frame(height: 9)
+            }
         }
+        .frame(minHeight: 32)
     }
 
     private func triggerDust() {
@@ -430,6 +522,87 @@ private struct ScreenShakeEffect: GeometryEffect {
 
     func effectValue(size: CGSize) -> ProjectionTransform {
         ProjectionTransform(CGAffineTransform(translationX: sin(shakes * .pi * 3) * amount, y: 0))
+    }
+}
+
+private struct RunHUDPanel: View {
+    let cornerRadius: CGFloat
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.16, green: 0.17, blue: 0.18).opacity(0.86),
+                            Color(red: 0.05, green: 0.06, blue: 0.08).opacity(0.96),
+                            Color(red: 0.13, green: 0.09, blue: 0.06).opacity(0.90)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            RoundedRectangle(cornerRadius: cornerRadius - 2, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.05), lineWidth: 4)
+                .padding(5)
+
+            HStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.08))
+                    .frame(width: 5)
+                    .padding(.vertical, 14)
+
+                Spacer()
+
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.05))
+                    .frame(width: 5)
+                    .padding(.vertical, 14)
+            }
+            .padding(.horizontal, 12)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+    }
+}
+
+private struct RunCashOutButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.white)
+            .background {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.70, green: 0.42, blue: 0.16),
+                                Color(red: 0.24, green: 0.12, blue: 0.07),
+                                Color.black.opacity(0.55)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                .white.opacity(0.28),
+                                Color(red: 1.0, green: 0.78, blue: 0.23).opacity(0.50),
+                                .black.opacity(0.38)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.5
+                    )
+            }
+            .shadow(color: Color(red: 1.0, green: 0.54, blue: 0.18).opacity(configuration.isPressed ? 0.10 : 0.24), radius: 10, y: 5)
+            .brightness(configuration.isPressed ? -0.06 : 0)
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
     }
 }
 
