@@ -921,18 +921,26 @@ private struct ProceduralBombIcon: View {
 
 private struct ProceduralShieldIcon: View {
     var body: some View {
-        ProceduralShieldShape()
-            .fill(
-                LinearGradient(
-                    colors: [Color.white, Color(red: 0.62, green: 0.77, blue: 1.0), Color(red: 0.09, green: 0.20, blue: 0.38)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+        ZStack {
+            ProceduralShieldShape()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.white, Color(red: 0.62, green: 0.77, blue: 1.0), Color(red: 0.09, green: 0.20, blue: 0.38)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
-            )
-            .overlay {
-                ProceduralShieldShape()
-                    .stroke(Color.white.opacity(0.42), lineWidth: 1.2)
-            }
+                .overlay {
+                    ProceduralShieldShape()
+                        .stroke(Color.white.opacity(0.42), lineWidth: 1.2)
+                }
+
+            ProceduralSparkleIcon()
+                .fill(Color.white.opacity(0.86))
+                .frame(width: 7, height: 7)
+                .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.7), radius: 4)
+                .offset(x: -5, y: -6)
+        }
     }
 }
 
@@ -940,17 +948,33 @@ private struct ProceduralShieldShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX * 0.86, y: rect.height * 0.18))
-        path.addLine(to: CGPoint(x: rect.maxX * 0.78, y: rect.height * 0.66))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.96, y: rect.height * 0.18))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.88, y: rect.height * 0.65))
         path.addQuadCurve(
             to: CGPoint(x: rect.midX, y: rect.maxY),
-            control: CGPoint(x: rect.maxX * 0.70, y: rect.height * 0.86)
+            control: CGPoint(x: rect.maxX * 0.76, y: rect.height * 0.88)
         )
         path.addQuadCurve(
-            to: CGPoint(x: rect.maxX * 0.22, y: rect.height * 0.66),
-            control: CGPoint(x: rect.maxX * 0.30, y: rect.height * 0.86)
+            to: CGPoint(x: rect.maxX * 0.12, y: rect.height * 0.65),
+            control: CGPoint(x: rect.maxX * 0.24, y: rect.height * 0.88)
         )
-        path.addLine(to: CGPoint(x: rect.maxX * 0.14, y: rect.height * 0.18))
+        path.addLine(to: CGPoint(x: rect.maxX * 0.04, y: rect.height * 0.18))
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct ProceduralSparkleIcon: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.width * 0.62, y: rect.height * 0.38))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+        path.addLine(to: CGPoint(x: rect.width * 0.62, y: rect.height * 0.62))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.width * 0.38, y: rect.height * 0.62))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.midY))
+        path.addLine(to: CGPoint(x: rect.width * 0.38, y: rect.height * 0.38))
         path.closeSubpath()
         return path
     }
