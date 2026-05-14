@@ -318,7 +318,7 @@ struct RunView: View {
         HStack(spacing: 8) {
             chip(title: "Coins", value: "\(session.player.coins)", systemImage: "circle.fill", assetName: "icon_coin", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
             chip(title: "Gems", value: "\(session.player.gems)", systemImage: "diamond.fill", assetName: "icon_gem", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", tint: .white.opacity(0.80))
+            chip(title: "Bomb", value: "\(session.player.bombs)", systemImage: "burst.fill", assetName: "icon_bomb", tint: .white.opacity(0.80))
 
             Button {
                 session.useShield()
