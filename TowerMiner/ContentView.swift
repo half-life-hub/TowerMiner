@@ -74,13 +74,22 @@ struct ContentView: View {
                     onBack: appModel.showHome
                 )
             case .help:
-                HelpView(onClose: appModel.showHome)
-                    .transition(
-                        .asymmetric(
-                            insertion: .move(edge: .bottom).combined(with: .opacity),
-                            removal: .move(edge: .bottom).combined(with: .opacity)
-                        )
+                ZStack {
+                    HomeView(
+                        profile: appModel.playerProfile,
+                        onStartRun: appModel.startRun,
+                        onOpenUpgrades: appModel.showUpgrades,
+                        onOpenHelp: appModel.showHelp
                     )
+
+                    HelpView(onClose: appModel.showHome)
+                        .transition(
+                            .asymmetric(
+                                insertion: .move(edge: .bottom),
+                                removal: .move(edge: .bottom)
+                            )
+                        )
+                }
             case .run:
                 if let session = appModel.activeSession {
                     RunView(
