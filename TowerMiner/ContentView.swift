@@ -74,7 +74,13 @@ struct ContentView: View {
                     onBack: appModel.showHome
                 )
             case .help:
-                HelpView(onBack: appModel.showHome)
+                HelpView(onClose: appModel.showHome)
+                    .transition(
+                        .asymmetric(
+                            insertion: .move(edge: .bottom).combined(with: .opacity),
+                            removal: .move(edge: .bottom).combined(with: .opacity)
+                        )
+                    )
             case .run:
                 if let session = appModel.activeSession {
                     RunView(
@@ -112,6 +118,7 @@ struct ContentView: View {
         .onChange(of: appModel.playerProfile) {
             appModel.persistProfile()
         }
+        .animation(.spring(response: 0.42, dampingFraction: 0.86), value: appModel.currentScreen)
     }
 }
 

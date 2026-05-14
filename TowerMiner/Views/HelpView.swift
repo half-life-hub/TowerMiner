@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HelpView: View {
-    let onBack: () -> Void
+    let onClose: () -> Void
 
     var body: some View {
         GeometryReader { geometry in
@@ -55,18 +55,24 @@ struct HelpView: View {
                                 HelpSymbolIcon(symbol: "heart.fill", tint: Color(red: 1.0, green: 0.32, blue: 0.28))
                             }
                         }
-
-                        Button(action: onBack) {
-                            Label("Back To Menu", systemImage: "chevron.left.circle.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(HelpBackButtonStyle())
                     }
                     .frame(width: contentWidth)
                     .padding(.vertical, 28)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollIndicators(.hidden)
+
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 17, weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: 46, height: 46)
+                }
+                .buttonStyle(HelpCloseButtonStyle())
+                .padding(.top, 14)
+                .padding(.trailing, 16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .accessibilityLabel("Close help")
             }
         }
     }
@@ -265,15 +271,11 @@ private struct HelpScreenBackground: View {
     }
 }
 
-private struct HelpBackButtonStyle: ButtonStyle {
+private struct HelpCloseButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.headline.weight(.black))
-            .foregroundStyle(.white)
-            .padding(.vertical, 16)
-            .padding(.horizontal, 18)
             .background {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                Circle()
                     .fill(
                         LinearGradient(
                             colors: [
@@ -287,14 +289,15 @@ private struct HelpBackButtonStyle: ButtonStyle {
                     )
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                Circle()
                     .strokeBorder(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.56), lineWidth: 1.5)
             }
+            .shadow(color: .black.opacity(0.32), radius: 10, y: 6)
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
             .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
     }
 }
 
 #Preview {
-    HelpView(onBack: {})
+    HelpView(onClose: {})
 }
