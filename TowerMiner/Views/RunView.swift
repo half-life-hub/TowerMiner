@@ -95,7 +95,7 @@ struct RunView: View {
 
                 VStack(spacing: 8) {
                     runMeter(
-                        title: "Health",
+                        title: "HP",
                         value: session.player.health,
                         maxValue: session.player.maxHealth,
                         systemImage: "heart.fill",
@@ -104,7 +104,7 @@ struct RunView: View {
                     )
 
                     runMeter(
-                        title: "Energy",
+                        title: "EN",
                         value: session.player.energy,
                         maxValue: session.player.maxEnergy,
                         systemImage: "bolt.fill",
@@ -155,22 +155,30 @@ struct RunView: View {
     }
 
     private var depthBadge: some View {
-        VStack(spacing: 4) {
-            Image(systemName: "arrow.down.to.line.compact")
-                .font(.system(size: 18, weight: .black))
-                .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
+        HStack(spacing: 8) {
+            Image("icon_depth")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 38, height: 62)
 
-            Text("\(session.currentDepth)")
-                .font(.title2.weight(.black))
-                .monospacedDigit()
-                .foregroundStyle(.white)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("\(session.currentDepth)")
+                    .font(.title3.weight(.black))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.58)
 
-            Text("DEPTH")
-                .font(.caption2.weight(.black))
-                .tracking(0.8)
-                .foregroundStyle(.white.opacity(0.58))
+                Text("DEPTH")
+                    .font(.caption2.weight(.black))
+                    .tracking(0.8)
+                    .foregroundStyle(.white.opacity(0.58))
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(width: 76, height: 74)
+        .padding(.leading, 7)
+        .padding(.trailing, 8)
+        .frame(width: 108, height: 74)
         .background {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(
