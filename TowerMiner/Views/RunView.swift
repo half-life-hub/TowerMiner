@@ -509,7 +509,7 @@ struct RunView: View {
     private func meterAssetScale(for assetName: String) -> CGFloat {
         switch assetName {
         case "icon_energy":
-            return 1.8
+            return 1.45
         default:
             return 1.0
         }
