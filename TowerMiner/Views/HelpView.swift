@@ -46,6 +46,23 @@ struct HelpView: View {
                         }
 
                         HelpCard(
+                            title: "Use Tools",
+                            subtitle: "Tap Bomb to arm it, then tap an adjacent target to blast nearby blocks. Tap Shield to guard against the next hazard hit."
+                        ) {
+                            HStack(spacing: 12) {
+                                HelpFramedIcon {
+                                    ProceduralBombIcon()
+                                        .frame(width: 30, height: 30)
+                                }
+                                HelpSymbolIcon(symbol: "hand.tap.fill", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+                                HelpFramedIcon {
+                                    ProceduralShieldIcon()
+                                        .frame(width: 29, height: 32)
+                                }
+                            }
+                        }
+
+                        HelpCard(
                             title: "Upgrade Between Runs",
                             subtitle: "Bank your haul, return to the menu, and spend credits on stronger upgrades before the next descent."
                         ) {
@@ -227,6 +244,36 @@ private struct HelpSymbolIcon: View {
                     .fill(
                         LinearGradient(
                             colors: [tint.opacity(0.82), tint.opacity(0.28), Color.black.opacity(0.45)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(.white.opacity(0.20), lineWidth: 1)
+            }
+    }
+}
+
+private struct HelpFramedIcon<Content: View>: View {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .frame(width: 68, height: 68)
+            .background {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.16, green: 0.17, blue: 0.18).opacity(0.94),
+                                Color(red: 0.05, green: 0.06, blue: 0.08).opacity(0.98)
+                            ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )

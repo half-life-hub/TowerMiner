@@ -959,7 +959,7 @@ private struct ProceduralGemFacetLines: Shape {
     }
 }
 
-private struct ProceduralBombIcon: View {
+struct ProceduralBombIcon: View {
     var body: some View {
         ZStack {
             Circle()
@@ -1001,7 +1001,7 @@ private struct ProceduralBombIcon: View {
     }
 }
 
-private struct ProceduralShieldIcon: View {
+struct ProceduralShieldIcon: View {
     var body: some View {
         ZStack {
             ProceduralShieldShape()
