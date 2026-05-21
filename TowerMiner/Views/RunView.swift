@@ -374,24 +374,78 @@ struct RunView: View {
     }
 
     private var runOverOverlay: some View {
-        VStack(spacing: 16) {
-            Text("Run Over")
-                .font(.largeTitle.weight(.black))
-                .foregroundStyle(.white)
-            Text("Depth \(session.currentDepth)")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.78))
-            Button("View Results") {
-                onFinishRun(session.makeRunResult())
+        ZStack {
+            Color.black.opacity(0.42)
+                .ignoresSafeArea()
+
+            VStack(spacing: 18) {
+                VStack(spacing: 6) {
+                    Text("RUN OVER")
+                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .tracking(1.0)
+                        .foregroundStyle(.white)
+
+                    Text("DEPTH \(session.currentDepth)")
+                        .font(.caption.weight(.black))
+                        .tracking(1.2)
+                        .monospacedDigit()
+                        .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
+                }
+
+                HStack(spacing: 12) {
+                    RunOverStat(title: "Coins", value: "\(session.player.coins)", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+                    RunOverStat(title: "Gems", value: "\(session.player.gems)", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+                }
+
+                Button {
+                    onFinishRun(session.makeRunResult())
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "chart.bar.fill")
+                            .font(.system(size: 14, weight: .black))
+
+                        Text("VIEW RESULTS")
+                            .font(.caption.weight(.black))
+                            .tracking(0.8)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                }
+                .buttonStyle(RunOverButtonStyle())
             }
-            .buttonStyle(.borderedProminent)
-        }
-        .padding(28)
-        .frame(maxWidth: 300)
-        .background(.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(Color(red: 0.95, green: 0.34, blue: 0.25).opacity(0.7), lineWidth: 1)
+            .padding(22)
+            .frame(maxWidth: 330)
+            .background {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.13, green: 0.15, blue: 0.17).opacity(0.97),
+                                Color(red: 0.05, green: 0.06, blue: 0.08).opacity(0.99)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                .white.opacity(0.18),
+                                Color(red: 0.95, green: 0.34, blue: 0.25).opacity(0.48),
+                                Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.20),
+                                .black.opacity(0.36)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.2
+                    )
+            }
+            .shadow(color: .black.opacity(0.42), radius: 24, y: 14)
+            .padding(.horizontal, 22)
         }
     }
 
@@ -712,6 +766,74 @@ private struct RunCashOutButtonStyle: ButtonStyle {
             .shadow(color: Color(red: 1.0, green: 0.54, blue: 0.18).opacity(configuration.isPressed ? 0.10 : 0.24), radius: 10, y: 5)
             .brightness(configuration.isPressed ? -0.06 : 0)
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
+    }
+}
+
+private struct RunOverStat: View {
+    let title: String
+    let value: String
+    let tint: Color
+
+    var body: some View {
+        VStack(spacing: 3) {
+            Text(title.uppercased())
+                .font(.system(size: 9, weight: .black))
+                .tracking(0.6)
+                .foregroundStyle(.white.opacity(0.56))
+
+            Text(value)
+                .font(.title3.weight(.black))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 58)
+        .background {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            tint.opacity(0.24),
+                            Color.black.opacity(0.36)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(tint.opacity(0.26), lineWidth: 1)
+        }
+    }
+}
+
+private struct RunOverButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.white)
+            .background {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.70, green: 0.42, blue: 0.16),
+                                Color(red: 0.24, green: 0.12, blue: 0.07),
+                                Color.black.opacity(0.55)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Color(red: 1.0, green: 0.78, blue: 0.23).opacity(0.52), lineWidth: 1.2)
+            }
+            .shadow(color: Color(red: 1.0, green: 0.54, blue: 0.18).opacity(configuration.isPressed ? 0.08 : 0.20), radius: 10, y: 5)
+            .brightness(configuration.isPressed ? -0.06 : 0)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
     }
 }
