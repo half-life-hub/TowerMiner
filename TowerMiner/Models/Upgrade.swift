@@ -53,19 +53,19 @@ enum UpgradeID: String, CaseIterable, Codable, Identifiable {
     var baseCost: Int {
         switch self {
         case .maxHealth:
-            return 20
+            return 35
         case .maxEnergy:
-            return 18
+            return 32
         case .startingBombs:
-            return 25
+            return 45
         case .startingShields:
-            return 22
+            return 40
         case .gemValue:
-            return 30
+            return 55
         }
     }
 
     func cost(for currentLevel: Int) -> Int {
-        baseCost * (currentLevel + 1)
+        baseCost * (currentLevel + 1) * (currentLevel + 1)
     }
 }

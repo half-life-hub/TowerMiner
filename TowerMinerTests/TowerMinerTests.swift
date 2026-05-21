@@ -169,12 +169,12 @@ struct TowerMinerTests {
 
         #expect(purchased)
         #expect(profile.maxHealthLevel == 1)
-        #expect(profile.totalCredits == 15)
+        #expect(profile.totalCredits == 0)
     }
 
     @Test func purchasedUpgradesAffectNextSession() {
         var profile = PlayerProfile.default
-        profile.totalCredits = 100
+        profile.totalCredits = 500
 
         _ = profile.purchase(.maxHealth)
         _ = profile.purchase(.maxEnergy)
