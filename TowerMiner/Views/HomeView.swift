@@ -24,6 +24,7 @@ struct HomeView: View {
                         titleBlock
                         progressPanel
                         actionPanel
+                        versionLabel
                     }
                     .frame(width: contentWidth)
                     .padding(.vertical, 32)
@@ -84,6 +85,25 @@ struct HomeView: View {
             }
             .buttonStyle(SecondaryGameButtonStyle())
         }
+    }
+
+    private var versionLabel: some View {
+        Text(appVersionLabel)
+            .font(.caption2.weight(.semibold))
+            .monospacedDigit()
+            .foregroundStyle(.white.opacity(0.42))
+            .accessibilityLabel("App version \(appVersionLabel)")
+    }
+
+    private var appVersionLabel: String {
+        let info = Bundle.main.infoDictionary
+        let name = info?["CFBundleDisplayName"] as? String
+            ?? info?["CFBundleName"] as? String
+            ?? "TowerMiner"
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+
+        return "\(name) \(version)(\(build))"
     }
 }
 
