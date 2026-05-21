@@ -212,7 +212,7 @@ struct RunView: View {
         let boardHeight = max(
             320,
             min(
-                availableHeight * (isLandscape ? 0.58 : (isLargeBoard ? 0.62 : 0.48)),
+                availableHeight * (isLandscape ? 0.58 : (isLargeBoard ? 0.62 : 0.54)),
                 isLargeBoard ? 760 : 520
             )
         )
@@ -223,7 +223,7 @@ struct RunView: View {
             let fullVisibleRows = Array(session.visibleRowRange)
             let visibleRows = rowsForCurrentOrientation(
                 from: fullVisibleRows,
-                maxVisibleRows: isLandscape ? 8 : fullVisibleRows.count
+                maxVisibleRows: isLandscape ? 8 : (isLargeBoard ? fullVisibleRows.count : 10)
             )
             let availableWidth = geometry.size.width - (boardInset * 2)
             let availableTileHeight = geometry.size.height - (boardInset * 2) - 32
