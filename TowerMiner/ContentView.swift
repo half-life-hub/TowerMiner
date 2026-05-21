@@ -56,76 +56,91 @@ final class AppModel {
 
 struct ContentView: View {
     @State private var appModel = AppModel()
+    @State private var isShowingSplash = true
 
     var body: some View {
-        Group {
-            switch appModel.currentScreen {
-            case .home:
-                HomeView(
-                    profile: appModel.playerProfile,
-                    onStartRun: appModel.startRun,
-                    onOpenUpgrades: appModel.showUpgrades,
-                    onOpenHelp: appModel.showHelp
-                )
-            case .upgrades:
-                UpgradeView(
-                    profile: appModel.playerProfile,
-                    onPurchase: appModel.purchaseUpgrade,
-                    onBack: appModel.showHome
-                )
-            case .help:
-                ZStack {
+        ZStack {
+            Group {
+                switch appModel.currentScreen {
+                case .home:
                     HomeView(
                         profile: appModel.playerProfile,
                         onStartRun: appModel.startRun,
                         onOpenUpgrades: appModel.showUpgrades,
                         onOpenHelp: appModel.showHelp
                     )
-
-                    HelpView(onClose: appModel.showHome)
-                        .transition(
-                            .asymmetric(
-                                insertion: .move(edge: .bottom),
-                                removal: .move(edge: .bottom)
-                            )
+                case .upgrades:
+                    UpgradeView(
+                        profile: appModel.playerProfile,
+                        onPurchase: appModel.purchaseUpgrade,
+                        onBack: appModel.showHome
+                    )
+                case .help:
+                    ZStack {
+                        HomeView(
+                            profile: appModel.playerProfile,
+                            onStartRun: appModel.startRun,
+                            onOpenUpgrades: appModel.showUpgrades,
+                            onOpenHelp: appModel.showHelp
                         )
+
+                        HelpView(onClose: appModel.showHome)
+                            .transition(
+                                .asymmetric(
+                                    insertion: .move(edge: .bottom),
+                                    removal: .move(edge: .bottom)
+                                )
+                            )
+                    }
+                case .run:
+                    if let session = appModel.activeSession {
+                        RunView(
+                            session: session,
+                            onBackToMenu: appModel.showHome,
+                            onFinishRun: appModel.finishRun
+                        )
+                    } else {
+                        HomeView(
+                            profile: appModel.playerProfile,
+                            onStartRun: appModel.startRun,
+                            onOpenUpgrades: appModel.showUpgrades,
+                            onOpenHelp: appModel.showHelp
+                        )
+                    }
+                case .results:
+                    if let result = appModel.lastRunResult {
+                        ResultsView(
+                            result: result,
+                            profile: appModel.playerProfile,
+                            onRetry: appModel.startRun,
+                            onOpenUpgrades: appModel.showUpgrades,
+                            onBackToMenu: appModel.showHome
+                        )
+                    } else {
+                        HomeView(
+                            profile: appModel.playerProfile,
+                            onStartRun: appModel.startRun,
+                            onOpenUpgrades: appModel.showUpgrades,
+                            onOpenHelp: appModel.showHelp
+                        )
+                    }
                 }
-            case .run:
-                if let session = appModel.activeSession {
-                    RunView(
-                        session: session,
-                        onBackToMenu: appModel.showHome,
-                        onFinishRun: appModel.finishRun
-                    )
-                } else {
-                    HomeView(
-                        profile: appModel.playerProfile,
-                        onStartRun: appModel.startRun,
-                        onOpenUpgrades: appModel.showUpgrades,
-                        onOpenHelp: appModel.showHelp
-                    )
-                }
-            case .results:
-                if let result = appModel.lastRunResult {
-                    ResultsView(
-                        result: result,
-                        profile: appModel.playerProfile,
-                        onRetry: appModel.startRun,
-                        onOpenUpgrades: appModel.showUpgrades,
-                        onBackToMenu: appModel.showHome
-                    )
-                } else {
-                    HomeView(
-                        profile: appModel.playerProfile,
-                        onStartRun: appModel.startRun,
-                        onOpenUpgrades: appModel.showUpgrades,
-                        onOpenHelp: appModel.showHelp
-                    )
-                }
+            }
+
+            if isShowingSplash {
+                SplashView()
+                    .transition(.opacity.combined(with: .scale(scale: 1.02)))
+                    .zIndex(1)
             }
         }
         .onChange(of: appModel.playerProfile) {
             appModel.persistProfile()
+        }
+        .task {
+            try? await Task.sleep(for: .milliseconds(1450))
+            withAnimation(.easeOut(duration: 0.35)) {
+                isShowingSplash = false
+            }
         }
         .animation(.spring(response: 0.42, dampingFraction: 0.86), value: appModel.currentScreen)
     }
