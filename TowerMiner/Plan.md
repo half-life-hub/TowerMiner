@@ -647,7 +647,7 @@ Definition of done:
 
 - [x] Add pickups and inventory changes.
 - [x] Add hazard interactions and damage.
-- [ ] Add bombs.
+- [x] Add bombs.
 - [x] Add shields.
 - [x] Add run-end logic.
 - [x] Add summary conversion.
@@ -761,7 +761,7 @@ Mitigation:
 - [x] Rewards and results
 - [x] Persistent upgrades
 - [x] Effects and polish
-- [ ] Tests and balancing
+- [x] Tests and balancing
 
 ---
 
@@ -770,8 +770,8 @@ Mitigation:
 The MVP is complete when:
 
 - [ ] The game can be launched and played end to end without placeholder blockers
-- [ ] A full run can start, progress, end, and convert into persistent rewards
-- [ ] Upgrades can be purchased and affect later runs
-- [ ] Core controls feel responsive on iPhone
-- [ ] The project has basic automated coverage for core rules
-- [ ] The visual presentation is simple but polished enough to feel intentional
+- [x] A full run can start, progress, end, and convert into persistent rewards
+- [x] Upgrades can be purchased and affect later runs
+- [x] Core controls feel responsive on iPhone
+- [x] The project has basic automated coverage for core rules
+- [x] The visual presentation is simple but polished enough to feel intentional
