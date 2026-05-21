@@ -33,9 +33,21 @@ struct RunView: View {
                         .frame(width: contentWidth)
 
                     ControlPad(
-                        onMoveLeft: session.moveLeft,
-                        onMoveRight: session.moveRight,
-                        onMoveDown: session.moveDown
+                        onMoveLeft: {
+                            performGameAction {
+                                session.moveLeft()
+                            }
+                        },
+                        onMoveRight: {
+                            performGameAction {
+                                session.moveRight()
+                            }
+                        },
+                        onMoveDown: {
+                            performGameAction {
+                                session.moveDown()
+                            }
+                        }
                     )
                     .frame(width: contentWidth)
 
@@ -336,9 +348,17 @@ struct RunView: View {
             return
         }
 
-        shaftScrollOffset = CGFloat(delta)
-        withAnimation(.easeOut(duration: 0.26)) {
-            shaftScrollOffset = 0
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            shaftScrollOffset = CGFloat(delta)
+        }
+
+        Task { @MainActor in
+            await Task.yield()
+            withAnimation(.smooth(duration: 0.32)) {
+                shaftScrollOffset = 0
+            }
         }
     }
 
@@ -567,13 +587,23 @@ struct RunView: View {
 
     private func handleTileTap(at position: GridPosition) {
         if isPlacingBomb {
-            if session.useBomb(at: position) {
-                isPlacingBomb = false
+            performGameAction {
+                if session.useBomb(at: position) {
+                    isPlacingBomb = false
+                }
             }
             return
         }
 
-        session.dig(at: position)
+        performGameAction {
+            session.dig(at: position)
+        }
+    }
+
+    private func performGameAction(_ action: () -> Void) {
+        withAnimation(.smooth(duration: 0.22)) {
+            action()
+        }
     }
 
     private func triggerDigImpact() {

@@ -88,9 +88,8 @@ struct MineTileView: View {
         .scaleEffect(isDigAnimating ? 0.94 : (isPlayerHere ? 1.04 : 1.0))
         .rotationEffect(.degrees(isDigAnimating ? -1.4 : 0))
         .brightness(isDigAnimating ? 0.08 : 0)
-        .animation(.spring(response: 0.2, dampingFraction: 0.72), value: isPlayerHere)
-        .animation(.spring(response: 0.18, dampingFraction: 0.7), value: isPlayerHere)
-        .animation(.spring(response: 0.16, dampingFraction: 0.42), value: isDigAnimating)
+        .animation(.smooth(duration: 0.20), value: isPlayerHere)
+        .animation(.smooth(duration: 0.16), value: isDigAnimating)
     }
 
     @ViewBuilder
