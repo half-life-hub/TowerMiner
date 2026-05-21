@@ -93,39 +93,34 @@ struct ResultsView: View {
         .padding(.vertical, 22)
         .frame(maxWidth: .infinity)
         .background {
-            ZStack {
-                Image("panel_hud")
-                    .resizable()
-                    .scaledToFill()
-                    .opacity(0.70)
-
-                LinearGradient(
-                    colors: [
-                        Color(red: 0.18, green: 0.12, blue: 0.06).opacity(0.84),
-                        Color.black.opacity(0.62)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.13, green: 0.15, blue: 0.17).opacity(0.96),
+                            Color(red: 0.05, green: 0.06, blue: 0.08).opacity(0.98)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
         .overlay {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .strokeBorder(
                     LinearGradient(
                         colors: [
-                            .white.opacity(0.30),
-                            Color(red: 1.0, green: 0.78, blue: 0.23).opacity(0.58),
-                            Color.black.opacity(0.42)
+                            .white.opacity(0.16),
+                            Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.24),
+                            .black.opacity(0.35)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
-                    lineWidth: 1.5
+                    lineWidth: 1
                 )
         }
-        .shadow(color: Color(red: 1.0, green: 0.54, blue: 0.18).opacity(0.18), radius: 18, y: 10)
+        .shadow(color: .black.opacity(0.22), radius: 14, y: 8)
     }
 
     private var resultGrid: some View {
