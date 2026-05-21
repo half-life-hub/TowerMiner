@@ -270,15 +270,29 @@ struct RunView: View {
         .frame(height: boardHeight)
         .background(
             LinearGradient(
-                colors: [Color.black.opacity(0.50), Color(red: 0.04, green: 0.04, blue: 0.07).opacity(0.96)],
-                startPoint: .top,
-                endPoint: .bottom
+                colors: [
+                    Color(red: 0.13, green: 0.15, blue: 0.17).opacity(0.96),
+                    Color(red: 0.05, green: 0.06, blue: 0.08).opacity(0.98)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             ),
             in: RoundedRectangle(cornerRadius: 22, style: .continuous)
         )
         .overlay {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(.white.opacity(0.10), lineWidth: 1)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            .white.opacity(0.16),
+                            Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.24),
+                            .black.opacity(0.35)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
         }
     }
 
