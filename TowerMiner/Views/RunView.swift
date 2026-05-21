@@ -38,6 +38,13 @@ struct RunView: View {
                         onMoveDown: session.moveDown
                     )
                     .frame(width: contentWidth)
+
+                    Text(appVersionLabel)
+                        .font(.caption2.weight(.semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(.white.opacity(0.42))
+                        .frame(width: contentWidth)
+                        .accessibilityLabel("App version \(appVersionLabel)")
                 }
                 .padding(.top, isLargeScreen ? 22 : 16)
                 .padding(.bottom, isLargeScreen ? 22 : 18)
@@ -60,6 +67,17 @@ struct RunView: View {
         .onChange(of: session.visibleRowRange.lowerBound) { _, newTopRow in
             animateShaftScroll(to: newTopRow)
         }
+    }
+
+    private var appVersionLabel: String {
+        let info = Bundle.main.infoDictionary
+        let name = info?["CFBundleDisplayName"] as? String
+            ?? info?["CFBundleName"] as? String
+            ?? "TowerMiner"
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+
+        return "\(name) \(version)(\(build))"
     }
 
     private var runBackground: some View {
