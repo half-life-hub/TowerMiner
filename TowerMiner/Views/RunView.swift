@@ -2,6 +2,8 @@ import SwiftUI
 
 struct RunView: View {
     let session: GameSession
+    let feedbackSystem: GameFeedbackSystem
+    let feedbackSettings: FeedbackSettings
     let onBackToMenu: () -> Void
     let onFinishRun: (RunResult) -> Void
 
@@ -61,13 +63,31 @@ struct RunView: View {
             }
         }
         .onChange(of: session.digFeedbackID) {
+            feedbackSystem.play(.dig, settings: feedbackSettings)
             triggerDigImpact()
         }
+        .onChange(of: session.movementFeedbackID) {
+            feedbackSystem.play(.move, settings: feedbackSettings)
+        }
         .onChange(of: session.bombFeedbackID) {
+            feedbackSystem.play(.bomb, settings: feedbackSettings)
             triggerBombImpact()
         }
+        .onChange(of: session.rewardFeedbackID) {
+            feedbackSystem.play(.reward, settings: feedbackSettings)
+        }
         .onChange(of: session.damageFeedbackID) {
+            feedbackSystem.play(.damage, settings: feedbackSettings)
             damageShake += 1
+        }
+        .onChange(of: session.failedActionFeedbackID) {
+            feedbackSystem.play(.failedAction, settings: feedbackSettings)
+        }
+        .onChange(of: session.shieldFeedbackID) {
+            feedbackSystem.play(.shield, settings: feedbackSettings)
+        }
+        .onChange(of: session.runOverFeedbackID) {
+            feedbackSystem.play(.runOver, settings: feedbackSettings)
         }
         .onChange(of: session.visibleRowRange.lowerBound) { _, newTopRow in
             animateShaftScroll(to: newTopRow)
@@ -1187,6 +1207,8 @@ private struct ProceduralSparkleIcon: Shape {
 #Preview {
     RunView(
         session: GameSession(profile: .default),
+        feedbackSystem: GameFeedbackSystem(),
+        feedbackSettings: .default,
         onBackToMenu: {},
         onFinishRun: { _ in }
     )

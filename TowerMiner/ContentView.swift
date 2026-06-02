@@ -41,11 +41,22 @@ final class AppModel {
         currentScreen = .results
     }
 
-    func purchaseUpgrade(_ upgrade: UpgradeID) {
+    func purchaseUpgrade(_ upgrade: UpgradeID) -> Bool {
         guard playerProfile.purchase(upgrade) else {
-            return
+            return false
         }
 
+        persistProfile()
+        return true
+    }
+
+    func setSoundEnabled(_ isEnabled: Bool) {
+        playerProfile.setSoundEnabled(isEnabled)
+        persistProfile()
+    }
+
+    func setHapticsEnabled(_ isEnabled: Bool) {
+        playerProfile.setHapticsEnabled(isEnabled)
         persistProfile()
     }
 
@@ -56,6 +67,7 @@ final class AppModel {
 
 struct ContentView: View {
     @State private var appModel = AppModel()
+    @State private var feedbackSystem = GameFeedbackSystem()
     @State private var isShowingSplash = true
 
     var body: some View {
@@ -65,14 +77,35 @@ struct ContentView: View {
                 case .home:
                     HomeView(
                         profile: appModel.playerProfile,
-                        onStartRun: appModel.startRun,
-                        onOpenUpgrades: appModel.showUpgrades,
-                        onOpenHelp: appModel.showHelp
+                        onStartRun: {
+                            feedbackSystem.play(.move, settings: appModel.playerProfile.feedbackSettings)
+                            appModel.startRun()
+                        },
+                        onOpenUpgrades: {
+                            feedbackSystem.play(.move, settings: appModel.playerProfile.feedbackSettings)
+                            appModel.showUpgrades()
+                        },
+                        onOpenHelp: {
+                            feedbackSystem.play(.move, settings: appModel.playerProfile.feedbackSettings)
+                            appModel.showHelp()
+                        },
+                        onSoundEnabledChanged: { isEnabled in
+                            appModel.setSoundEnabled(isEnabled)
+                            feedbackSystem.play(.toggle, settings: appModel.playerProfile.feedbackSettings)
+                        },
+                        onHapticsEnabledChanged: { isEnabled in
+                            appModel.setHapticsEnabled(isEnabled)
+                            feedbackSystem.play(.toggle, settings: appModel.playerProfile.feedbackSettings)
+                        }
                     )
                 case .upgrades:
                     UpgradeView(
                         profile: appModel.playerProfile,
-                        onPurchase: appModel.purchaseUpgrade,
+                        onPurchase: { upgrade in
+                            if appModel.purchaseUpgrade(upgrade) {
+                                feedbackSystem.play(.upgradePurchase, settings: appModel.playerProfile.feedbackSettings)
+                            }
+                        },
                         onBack: appModel.showHome
                     )
                 case .help:
@@ -81,7 +114,9 @@ struct ContentView: View {
                             profile: appModel.playerProfile,
                             onStartRun: appModel.startRun,
                             onOpenUpgrades: appModel.showUpgrades,
-                            onOpenHelp: appModel.showHelp
+                            onOpenHelp: appModel.showHelp,
+                            onSoundEnabledChanged: appModel.setSoundEnabled,
+                            onHapticsEnabledChanged: appModel.setHapticsEnabled
                         )
 
                         HelpView(onClose: appModel.showHome)
@@ -96,6 +131,8 @@ struct ContentView: View {
                     if let session = appModel.activeSession {
                         RunView(
                             session: session,
+                            feedbackSystem: feedbackSystem,
+                            feedbackSettings: appModel.playerProfile.feedbackSettings,
                             onBackToMenu: appModel.showHome,
                             onFinishRun: appModel.finishRun
                         )
@@ -104,7 +141,9 @@ struct ContentView: View {
                             profile: appModel.playerProfile,
                             onStartRun: appModel.startRun,
                             onOpenUpgrades: appModel.showUpgrades,
-                            onOpenHelp: appModel.showHelp
+                            onOpenHelp: appModel.showHelp,
+                            onSoundEnabledChanged: appModel.setSoundEnabled,
+                            onHapticsEnabledChanged: appModel.setHapticsEnabled
                         )
                     }
                 case .results:
@@ -121,7 +160,9 @@ struct ContentView: View {
                             profile: appModel.playerProfile,
                             onStartRun: appModel.startRun,
                             onOpenUpgrades: appModel.showUpgrades,
-                            onOpenHelp: appModel.showHelp
+                            onOpenHelp: appModel.showHelp,
+                            onSoundEnabledChanged: appModel.setSoundEnabled,
+                            onHapticsEnabledChanged: appModel.setHapticsEnabled
                         )
                     }
                 }

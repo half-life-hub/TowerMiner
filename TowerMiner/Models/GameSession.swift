@@ -14,9 +14,13 @@ final class GameSession {
     var digPower: Int
     var isRunOver: Bool
     var digFeedbackID: Int
+    var movementFeedbackID: Int
     var bombFeedbackID: Int
     var rewardFeedbackID: Int
     var damageFeedbackID: Int
+    var failedActionFeedbackID: Int
+    var shieldFeedbackID: Int
+    var runOverFeedbackID: Int
     var lastDugPosition: GridPosition?
     var lastBombedPositions: [GridPosition]
 
@@ -36,9 +40,13 @@ final class GameSession {
         self.digPower = 1
         self.isRunOver = false
         self.digFeedbackID = 0
+        self.movementFeedbackID = 0
         self.bombFeedbackID = 0
         self.rewardFeedbackID = 0
         self.damageFeedbackID = 0
+        self.failedActionFeedbackID = 0
+        self.shieldFeedbackID = 0
+        self.runOverFeedbackID = 0
         self.lastDugPosition = nil
         self.lastBombedPositions = []
 
@@ -122,6 +130,7 @@ final class GameSession {
         }
 
         guard canDig(at: position) else {
+            failedActionFeedbackID += 1
             return
         }
 
@@ -144,6 +153,7 @@ final class GameSession {
     @discardableResult
     func useBomb(at position: GridPosition) -> Bool {
         guard canPlaceBomb(at: position) else {
+            failedActionFeedbackID += 1
             return false
         }
 
@@ -178,11 +188,13 @@ final class GameSession {
 
     func useShield() {
         guard !isRunOver, player.shields > 0, player.activeShieldHits == 0 else {
+            failedActionFeedbackID += 1
             return
         }
 
         player.shields -= 1
         player.activeShieldHits = 1
+        shieldFeedbackID += 1
     }
 
     func makeRunResult() -> RunResult {
@@ -196,6 +208,7 @@ final class GameSession {
 
     private func attemptMoveOrDig(to destination: GridPosition) {
         guard isWithinBounds(destination) else {
+            failedActionFeedbackID += 1
             return
         }
 
@@ -208,6 +221,7 @@ final class GameSession {
         }
 
         guard tiles[destination.row][destination.column].isPassable else {
+            failedActionFeedbackID += 1
             return
         }
 
@@ -233,6 +247,7 @@ final class GameSession {
 
     private func moveIntoClearedTile(at destination: GridPosition) {
         player.position = destination
+        movementFeedbackID += 1
         resolveTileInteraction(at: destination)
         guard !isRunOver else {
             return
@@ -335,6 +350,7 @@ final class GameSession {
         damageFeedbackID += 1
         if player.health == 0 {
             isRunOver = true
+            runOverFeedbackID += 1
         }
     }
 }

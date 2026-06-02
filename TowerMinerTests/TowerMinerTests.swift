@@ -172,6 +172,26 @@ struct TowerMinerTests {
         #expect(profile.totalCredits == 0)
     }
 
+    @Test func profileDecodesLegacySaveWithDefaultFeedbackSettings() throws {
+        let legacyJSON = """
+        {
+            "totalCredits": 12,
+            "bestDepth": 18,
+            "maxHealthLevel": 1,
+            "maxEnergyLevel": 2,
+            "startingBombsLevel": 0,
+            "startingShieldsLevel": 1,
+            "gemValueLevel": 0
+        }
+        """
+        let data = try #require(legacyJSON.data(using: .utf8))
+
+        let profile = try JSONDecoder().decode(PlayerProfile.self, from: data)
+
+        #expect(profile.totalCredits == 12)
+        #expect(profile.feedbackSettings == .default)
+    }
+
     @Test func purchasedUpgradesAffectNextSession() {
         var profile = PlayerProfile.default
         profile.totalCredits = 500

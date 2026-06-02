@@ -5,6 +5,8 @@ struct HomeView: View {
     let onStartRun: () -> Void
     let onOpenUpgrades: () -> Void
     let onOpenHelp: () -> Void
+    let onSoundEnabledChanged: (Bool) -> Void
+    let onHapticsEnabledChanged: (Bool) -> Void
 
     private var totalUpgradeLevels: Int {
         UpgradeID.allCases.reduce(0) { total, upgrade in
@@ -24,6 +26,7 @@ struct HomeView: View {
                         titleBlock
                         progressPanel
                         actionPanel
+                        feedbackPanel
                         versionLabel
                     }
                     .frame(width: contentWidth)
@@ -84,6 +87,39 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(SecondaryGameButtonStyle())
+        }
+    }
+
+    private var feedbackPanel: some View {
+        VStack(spacing: 10) {
+            FeedbackToggleRow(
+                title: "Sound",
+                symbol: profile.feedbackSettings.isSoundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill",
+                tint: Color(red: 0.52, green: 0.94, blue: 0.86),
+                isOn: Binding(
+                    get: { profile.feedbackSettings.isSoundEnabled },
+                    set: onSoundEnabledChanged
+                )
+            )
+
+            FeedbackToggleRow(
+                title: "Haptics",
+                symbol: profile.feedbackSettings.isHapticsEnabled ? "iphone.radiowaves.left.and.right" : "iphone.slash",
+                tint: Color(red: 1.0, green: 0.78, blue: 0.23),
+                isOn: Binding(
+                    get: { profile.feedbackSettings.isHapticsEnabled },
+                    set: onHapticsEnabledChanged
+                )
+            )
+        }
+        .padding(12)
+        .background {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.black.opacity(0.28))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(.white.opacity(0.08), lineWidth: 1)
         }
     }
 
@@ -240,6 +276,72 @@ private struct StatBar: View {
     }
 }
 
+private struct FeedbackToggleRow: View {
+    let title: String
+    let symbol: String
+    let tint: Color
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    tint.opacity(isOn ? 0.86 : 0.26),
+                                    tint.opacity(isOn ? 0.34 : 0.12),
+                                    Color.black.opacity(0.45)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+
+                    Image(systemName: symbol)
+                        .font(.system(size: 15, weight: .black))
+                        .foregroundStyle(.white)
+                }
+                .frame(width: 38, height: 34)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(.white.opacity(0.18), lineWidth: 1)
+                }
+
+                Text(title.uppercased())
+                    .font(.caption.weight(.black))
+                    .tracking(0.8)
+                    .foregroundStyle(.white.opacity(0.74))
+
+                Spacer()
+            }
+        }
+        .toggleStyle(.switch)
+        .tint(tint)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.16, green: 0.17, blue: 0.18),
+                            Color(red: 0.05, green: 0.06, blue: 0.08),
+                            Color(red: 0.12, green: 0.09, blue: 0.07)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(tint.opacity(isOn ? 0.34 : 0.16), lineWidth: 1)
+        }
+    }
+}
+
 private struct Diamond: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -379,10 +481,13 @@ private struct GameMenuButtonBackground: View {
             maxEnergyLevel: 1,
             startingBombsLevel: 1,
             startingShieldsLevel: 1,
-            gemValueLevel: 2
+            gemValueLevel: 2,
+            feedbackSettings: .default
         ),
         onStartRun: {},
         onOpenUpgrades: {},
-        onOpenHelp: {}
+        onOpenHelp: {},
+        onSoundEnabledChanged: { _ in },
+        onHapticsEnabledChanged: { _ in }
     )
 }

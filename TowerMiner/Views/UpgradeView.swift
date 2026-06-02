@@ -456,7 +456,8 @@ private extension UpgradeID {
             maxEnergyLevel: 1,
             startingBombsLevel: 0,
             startingShieldsLevel: 0,
-            gemValueLevel: 0
+            gemValueLevel: 0,
+            feedbackSettings: .default
         ),
         onPurchase: { _ in },
         onBack: {}
