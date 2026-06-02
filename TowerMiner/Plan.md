@@ -753,17 +753,17 @@ Version fit:
 
 Implementation checklist:
 
-- [ ] Add an `AudioFeedbackSystem` for short gameplay sounds.
-- [ ] Add a `HapticFeedbackSystem` with small, medium, and warning feedback events.
-- [ ] Trigger feedback for mining, failed dig, movement, coin pickup, gem pickup, damage, bomb use, shield use, run over, and upgrade purchase.
-- [ ] Add user settings for sound enabled and haptics enabled.
-- [ ] Persist feedback settings in the profile or settings store.
-- [ ] Keep feedback calls out of SwiftUI view bodies where practical by routing through game actions or session events.
+- [x] Add an `AudioFeedbackSystem` for short gameplay sounds.
+- [x] Add a `HapticFeedbackSystem` with small, medium, and warning feedback events.
+- [x] Trigger feedback for mining, failed dig, movement, coin pickup, gem pickup, damage, bomb use, shield use, run over, and upgrade purchase.
+- [x] Add user settings for sound enabled and haptics enabled.
+- [x] Persist feedback settings in the profile or settings store.
+- [x] Keep feedback calls out of SwiftUI view bodies where practical by routing through game actions or session events.
 - [ ] Tune volume and haptic intensity so repeated digging does not feel noisy or tiring.
 
 Testing checklist:
 
-- [ ] Verify settings persist after app relaunch.
+- [x] Verify settings persist after app relaunch.
 - [ ] Verify disabled sound and haptics do not fire during gameplay.
 - [ ] Manually test repeated mining and pickup feedback on device.
 
