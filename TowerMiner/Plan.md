@@ -739,14 +739,228 @@ Mitigation:
 
 ## Post-MVP Expansion Options
 
-- Biomes with unique tile tables
-- Enemy creatures
-- Drill or rope tools
-- Combo scoring
-- Daily seed challenge
-- Meta progression tree
-- Better audio and haptics
-- Accessibility options
+Use this section to choose feature groups for future versions after the MVP is complete. Each option should be implemented as a coherent release slice rather than partially scattered across unrelated versions.
+
+### 1. Better Audio and Haptics
+
+Goal:
+
+- Make existing actions feel more responsive and polished without changing core rules.
+
+Version fit:
+
+- Best for an early post-MVP quality release.
+
+Implementation checklist:
+
+- [ ] Add an `AudioFeedbackSystem` for short gameplay sounds.
+- [ ] Add a `HapticFeedbackSystem` with small, medium, and warning feedback events.
+- [ ] Trigger feedback for mining, failed dig, movement, coin pickup, gem pickup, damage, bomb use, shield use, run over, and upgrade purchase.
+- [ ] Add user settings for sound enabled and haptics enabled.
+- [ ] Persist feedback settings in the profile or settings store.
+- [ ] Keep feedback calls out of SwiftUI view bodies where practical by routing through game actions or session events.
+- [ ] Tune volume and haptic intensity so repeated digging does not feel noisy or tiring.
+
+Testing checklist:
+
+- [ ] Verify settings persist after app relaunch.
+- [ ] Verify disabled sound and haptics do not fire during gameplay.
+- [ ] Manually test repeated mining and pickup feedback on device.
+
+### 2. Accessibility Options
+
+Goal:
+
+- Make the game easier to read and control across more players and devices.
+
+Version fit:
+
+- Best for an early post-MVP quality release, especially once real users are playing.
+
+Implementation checklist:
+
+- [ ] Add a settings screen or settings panel reachable from the home and pause screens.
+- [ ] Add reduced motion mode that disables or softens screen shake and intense transitions.
+- [ ] Add larger controls mode for bigger touch targets.
+- [ ] Add high-contrast tile and HUD styling.
+- [ ] Add optional hold-to-repeat for movement and digging.
+- [ ] Ensure all controls have useful accessibility labels.
+- [ ] Review text scaling so HUD counters and buttons remain readable without overlapping.
+- [ ] Persist accessibility settings.
+
+Testing checklist:
+
+- [ ] Verify reduced motion disables screen shake.
+- [ ] Verify larger controls remain usable on small iPhones.
+- [ ] Verify high-contrast mode keeps hazards and resources visually distinct.
+- [ ] Verify VoiceOver names core buttons clearly.
+
+### 3. Daily Seed Challenge
+
+Goal:
+
+- Add a lightweight reason to replay by giving every player the same daily mine layout.
+
+Version fit:
+
+- Good for a retention-focused release after the core loop feels stable.
+
+Implementation checklist:
+
+- [ ] Add a `DailyChallenge` model with date, seed, run rules, and best local result.
+- [ ] Add deterministic seed generation based on local calendar date.
+- [ ] Add a daily challenge entry point on the home screen.
+- [ ] Start challenge runs from the daily seed instead of a random seed.
+- [ ] Keep challenge results separate from normal best-depth stats.
+- [ ] Decide whether upgrades apply to daily challenges or whether daily runs use fixed stats.
+- [ ] Add a daily results presentation showing depth, payout, and local best for the day.
+- [ ] Persist current-day best result and recent challenge history.
+
+Testing checklist:
+
+- [ ] Verify the same date produces the same seed.
+- [ ] Verify different dates produce different seeds.
+- [ ] Verify challenge runs do not overwrite normal run records incorrectly.
+- [ ] Manually verify the daily challenge resets on the next calendar day.
+
+### 4. Biomes With Unique Tile Tables
+
+Goal:
+
+- Increase variety by changing visuals, tile weights, hazards, and rewards by depth band.
+
+Version fit:
+
+- Strong candidate for the first larger content release.
+
+Implementation checklist:
+
+- [ ] Add a `Biome` model with identifier, name, depth range, color palette, tile weights, reward tuning, and hazard tuning.
+- [ ] Update `MineGenerator` to select generation rules from the active biome.
+- [ ] Add at least two post-MVP biomes after the starting dirt cave.
+- [ ] Add visual treatment for biome transitions.
+- [ ] Add biome-specific tile variants or overlays where needed.
+- [ ] Ensure each biome still guarantees a playable downward path.
+- [ ] Add biome names or subtle transition banners in the run UI.
+- [ ] Tune reward and hazard curves so later biomes feel harder but fair.
+
+Testing checklist:
+
+- [ ] Add generation validity tests for each biome.
+- [ ] Verify biome transitions happen at expected depths.
+- [ ] Verify each biome can generate many rows without fully blocking progress.
+- [ ] Manually test readability of each biome on phone and iPad.
+
+### 5. Drill or Rope Tools
+
+Goal:
+
+- Add new consumable tools that create tactical choices without requiring enemy AI or large systems.
+
+Version fit:
+
+- Good for a mechanics-focused release after upgrades and economy are stable.
+
+Implementation checklist:
+
+- [ ] Add a `ToolType` or extend consumable inventory to support drill and rope.
+- [ ] Define drill behavior, such as clearing a short line downward or breaking hard blocks more efficiently.
+- [ ] Define rope behavior, such as recovering from a fall, escaping upward, or returning to a safer row.
+- [ ] Add tool counts to `PlayerState`.
+- [ ] Add tool buttons or a compact tool selector to the run controls.
+- [ ] Add upgrade hooks for starting tool count or tool effectiveness.
+- [ ] Add clear visual and feedback effects for each tool.
+- [ ] Update results and profile data if tools affect rewards or progression.
+
+Testing checklist:
+
+- [ ] Add unit tests for drill tile-clearing rules.
+- [ ] Add unit tests for rope positioning and invalid-use rules.
+- [ ] Verify tool counts decrement only on successful use.
+- [ ] Manually test controls for accidental taps and cramped layouts.
+
+### 6. Combo Scoring
+
+Goal:
+
+- Reward skillful play and create score-chasing goals beyond raw depth.
+
+Version fit:
+
+- Good after players understand the base loop and need higher-skill incentives.
+
+Implementation checklist:
+
+- [ ] Add combo state to the active run, including current combo, best combo, and timeout or break rules.
+- [ ] Define combo triggers, such as consecutive gem pickups, fast digs, no-damage streaks, or continuous downward movement.
+- [ ] Define combo breakers, such as taking damage, idling too long, or using certain tools.
+- [ ] Add score or bonus payout formulas tied to combo tiers.
+- [ ] Add compact HUD feedback for active combo state.
+- [ ] Add results screen stats for best combo and combo bonus earned.
+- [ ] Tune combo values so they reward skill without becoming mandatory for progression.
+
+Testing checklist:
+
+- [ ] Add unit tests for combo start, increment, break, and payout.
+- [ ] Verify combo bonuses are included in run result conversion.
+- [ ] Manually verify HUD feedback is readable during active play.
+
+### 7. Meta Progression Tree
+
+Goal:
+
+- Expand permanent progression beyond a flat upgrade list while preserving a clear economy.
+
+Version fit:
+
+- Best for a larger progression release after upgrade balance is validated.
+
+Implementation checklist:
+
+- [ ] Define progression branches, such as survival, mining, economy, and tools.
+- [ ] Add a `ProgressionNode` model with prerequisites, cost, level, and effect.
+- [ ] Decide whether this replaces the current upgrade list or layers on top of it.
+- [ ] Add profile persistence for unlocked nodes and node levels.
+- [ ] Add a progression tree screen with clear locked, available, purchased, and maxed states.
+- [ ] Apply node effects when creating a new `GameSession`.
+- [ ] Add respec support only if balance changes require it.
+- [ ] Keep early nodes cheap enough to support meaningful progress every few runs.
+
+Testing checklist:
+
+- [ ] Add tests for prerequisite validation.
+- [ ] Add tests for node cost and effect formulas.
+- [ ] Verify profile migration from current upgrade data.
+- [ ] Manually test that the tree remains readable on iPhone portrait.
+
+### 8. Enemy Creatures
+
+Goal:
+
+- Add dynamic threats that make the mine feel more alive and increase decision pressure.
+
+Version fit:
+
+- Save for a later content release because it has the highest complexity and balance risk.
+
+Implementation checklist:
+
+- [ ] Add an `Enemy` model with position, type, health, behavior, and damage.
+- [ ] Add enemy occupancy rules to prevent impossible or unreadable tile states.
+- [ ] Define simple enemy types first, such as stationary nest, horizontal crawler, or falling hazard creature.
+- [ ] Add turn/update rules that integrate with player movement and gravity.
+- [ ] Add spawn rules to `MineGenerator` with depth-based limits.
+- [ ] Add collision and damage rules between player, enemies, tools, bombs, and hazards.
+- [ ] Add enemy rendering and clear danger telegraphs.
+- [ ] Add reward drops only if they improve the loop without encouraging farming.
+- [ ] Tune spawn density so enemies add pressure without blocking progression unfairly.
+
+Testing checklist:
+
+- [ ] Add unit tests for enemy movement and collision rules.
+- [ ] Add generation tests to prevent unfair enemy spawn states.
+- [ ] Verify enemies cannot trap the player immediately after spawn.
+- [ ] Manually test readability during crowded board states.
 
 ---
 
