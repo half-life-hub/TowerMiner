@@ -20,6 +20,23 @@ final class AppModel {
         currentScreen = .run
     }
 
+    func startDailyChallenge(_ challenge: DailyChallenge = .today()) {
+        activeSession = GameSession(
+            profile: playerProfile,
+            seed: challenge.seed,
+            dailyChallenge: challenge
+        )
+        currentScreen = .run
+    }
+
+    func retryLastRun() {
+        if let challenge = lastRunResult?.dailyChallenge {
+            startDailyChallenge(challenge)
+        } else {
+            startRun()
+        }
+    }
+
     func showHome() {
         activeSession = nil
         currentScreen = .home
@@ -81,6 +98,10 @@ struct ContentView: View {
                             feedbackSystem.play(.move, settings: appModel.playerProfile.feedbackSettings)
                             appModel.startRun()
                         },
+                        onStartDailyChallenge: {
+                            feedbackSystem.play(.move, settings: appModel.playerProfile.feedbackSettings)
+                            appModel.startDailyChallenge()
+                        },
                         onOpenUpgrades: {
                             feedbackSystem.play(.move, settings: appModel.playerProfile.feedbackSettings)
                             appModel.showUpgrades()
@@ -113,6 +134,9 @@ struct ContentView: View {
                         HomeView(
                             profile: appModel.playerProfile,
                             onStartRun: appModel.startRun,
+                            onStartDailyChallenge: {
+                                appModel.startDailyChallenge()
+                            },
                             onOpenUpgrades: appModel.showUpgrades,
                             onOpenHelp: appModel.showHelp,
                             onSoundEnabledChanged: appModel.setSoundEnabled,
@@ -140,6 +164,9 @@ struct ContentView: View {
                         HomeView(
                             profile: appModel.playerProfile,
                             onStartRun: appModel.startRun,
+                            onStartDailyChallenge: {
+                                appModel.startDailyChallenge()
+                            },
                             onOpenUpgrades: appModel.showUpgrades,
                             onOpenHelp: appModel.showHelp,
                             onSoundEnabledChanged: appModel.setSoundEnabled,
@@ -151,7 +178,7 @@ struct ContentView: View {
                         ResultsView(
                             result: result,
                             profile: appModel.playerProfile,
-                            onRetry: appModel.startRun,
+                            onRetry: appModel.retryLastRun,
                             onOpenUpgrades: appModel.showUpgrades,
                             onBackToMenu: appModel.showHome
                         )
@@ -159,6 +186,9 @@ struct ContentView: View {
                         HomeView(
                             profile: appModel.playerProfile,
                             onStartRun: appModel.startRun,
+                            onStartDailyChallenge: {
+                                appModel.startDailyChallenge()
+                            },
                             onOpenUpgrades: appModel.showUpgrades,
                             onOpenHelp: appModel.showHelp,
                             onSoundEnabledChanged: appModel.setSoundEnabled,

@@ -5,6 +5,7 @@
 //  Created by Steven Marshall on 7/5/2026.
 //
 
+import Foundation
 import Testing
 @testable import TowerMiner
 
@@ -22,7 +23,9 @@ struct TowerMinerTests {
         let session = GameSession(profile: .default, seed: 9_137)
 
         session.moveLeft()
-        let target = GridPosition(row: 4, column: 3)
+        let target = session.player.position.offsetBy(columns: 1)
+        session.tiles[session.player.position.row + 1][session.player.position.column] = MineTile(type: .dirt)
+        session.tiles[target.row][target.column] = MineTile(type: .dirt)
 
         #expect(session.canDig(at: target))
 
@@ -190,6 +193,37 @@ struct TowerMinerTests {
 
         #expect(profile.totalCredits == 12)
         #expect(profile.feedbackSettings == .default)
+        #expect(profile.dailyChallengeRecords.isEmpty)
+    }
+
+    @Test func dailyChallengeSeedIsStableForDate() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let date = try #require(calendar.date(from: DateComponents(year: 2026, month: 6, day: 3)))
+
+        let first = DailyChallenge.today(calendar: calendar, now: date)
+        let second = DailyChallenge.today(calendar: calendar, now: date)
+        let nextDay = try #require(calendar.date(from: DateComponents(year: 2026, month: 6, day: 4)))
+        let third = DailyChallenge.today(calendar: calendar, now: nextDay)
+
+        #expect(first.dateKey == "2026-06-03")
+        #expect(first.seed == second.seed)
+        #expect(first.seed != third.seed)
+    }
+
+    @Test func dailyChallengeResultUpdatesSeparateRecordWithoutNormalBestDepth() {
+        let challenge = DailyChallenge(dateKey: "2026-06-03", seed: 123)
+        var profile = PlayerProfile.default
+        profile.bestDepth = 50
+
+        profile.apply(RunResult(depth: 30, coins: 10, gems: 1, gemValue: 5, dailyChallenge: challenge))
+
+        let record = profile.dailyChallengeRecord(for: challenge)
+        #expect(profile.totalCredits == 30)
+        #expect(profile.bestDepth == 50)
+        #expect(record.bestDepth == 30)
+        #expect(record.bestPayout == 30)
+        #expect(record.attempts == 1)
     }
 
     @Test func purchasedUpgradesAffectNextSession() {

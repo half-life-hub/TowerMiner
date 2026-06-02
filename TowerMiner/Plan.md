@@ -807,20 +807,20 @@ Version fit:
 
 Implementation checklist:
 
-- [ ] Add a `DailyChallenge` model with date, seed, run rules, and best local result.
-- [ ] Add deterministic seed generation based on local calendar date.
-- [ ] Add a daily challenge entry point on the home screen.
-- [ ] Start challenge runs from the daily seed instead of a random seed.
-- [ ] Keep challenge results separate from normal best-depth stats.
-- [ ] Decide whether upgrades apply to daily challenges or whether daily runs use fixed stats.
-- [ ] Add a daily results presentation showing depth, payout, and local best for the day.
-- [ ] Persist current-day best result and recent challenge history.
+- [x] Add a `DailyChallenge` model with date, seed, run rules, and best local result.
+- [x] Add deterministic seed generation based on local calendar date.
+- [x] Add a daily challenge entry point on the home screen.
+- [x] Start challenge runs from the daily seed instead of a random seed.
+- [x] Keep challenge results separate from normal best-depth stats.
+- [x] Decide whether upgrades apply to daily challenges or whether daily runs use fixed stats.
+- [x] Add a daily results presentation showing depth, payout, and local best for the day.
+- [x] Persist current-day best result and recent challenge history.
 
 Testing checklist:
 
-- [ ] Verify the same date produces the same seed.
-- [ ] Verify different dates produce different seeds.
-- [ ] Verify challenge runs do not overwrite normal run records incorrectly.
+- [x] Verify the same date produces the same seed.
+- [x] Verify different dates produce different seeds.
+- [x] Verify challenge runs do not overwrite normal run records incorrectly.
 - [ ] Manually verify the daily challenge resets on the next calendar day.
 
 ### 4. Biomes With Unique Tile Tables

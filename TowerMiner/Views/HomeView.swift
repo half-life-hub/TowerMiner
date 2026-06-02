@@ -3,10 +3,19 @@ import SwiftUI
 struct HomeView: View {
     let profile: PlayerProfile
     let onStartRun: () -> Void
+    let onStartDailyChallenge: () -> Void
     let onOpenUpgrades: () -> Void
     let onOpenHelp: () -> Void
     let onSoundEnabledChanged: (Bool) -> Void
     let onHapticsEnabledChanged: (Bool) -> Void
+
+    private var todayChallenge: DailyChallenge {
+        .today()
+    }
+
+    private var todayRecord: DailyChallengeRecord {
+        profile.dailyChallengeRecord(for: todayChallenge)
+    }
 
     private var totalUpgradeLevels: Int {
         UpgradeID.allCases.reduce(0) { total, upgrade in
@@ -75,6 +84,11 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(PrimaryGameButtonStyle())
+
+            Button(action: onStartDailyChallenge) {
+                DailyChallengeButtonLabel(record: todayRecord)
+            }
+            .buttonStyle(DailyChallengeButtonStyle())
 
             Button(action: onOpenUpgrades) {
                 Label("Upgrade Rig", systemImage: "wrench.and.screwdriver.fill")
@@ -342,6 +356,58 @@ private struct FeedbackToggleRow: View {
     }
 }
 
+private struct DailyChallengeButtonLabel: View {
+    let record: DailyChallengeRecord
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.88),
+                                Color(red: 0.40, green: 0.26, blue: 0.90).opacity(0.50),
+                                Color.black.opacity(0.46)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                Image(systemName: "calendar.badge.clock")
+                    .font(.system(size: 20, weight: .black))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 46, height: 42)
+            .overlay {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(.white.opacity(0.22), lineWidth: 1)
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Daily Challenge")
+                    .font(.headline.weight(.black))
+                    .foregroundStyle(.white)
+
+                Text(record.attempts == 0 ? "Fresh seed today" : "Best depth \(record.bestDepth) · \(record.attempts) tries")
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(.white.opacity(0.66))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+
+            Spacer()
+
+            Image(systemName: "arrow.right.circle.fill")
+                .font(.system(size: 24, weight: .black))
+                .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
 private struct Diamond: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -387,6 +453,57 @@ private struct SecondaryGameButtonStyle: ButtonStyle {
                 )
             )
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
+    }
+}
+
+private struct DailyChallengeButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.vertical, 13)
+            .padding(.horizontal, 14)
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.15, green: 0.18, blue: 0.20),
+                                    Color(red: 0.05, green: 0.06, blue: 0.09),
+                                    Color(red: 0.12, green: 0.08, blue: 0.18)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+
+                    Capsule()
+                        .fill(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.18))
+                        .frame(height: 4)
+                        .padding(.horizontal, 18)
+                        .padding(.top, 7)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                .white.opacity(0.20),
+                                Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.46),
+                                Color(red: 0.82, green: 0.58, blue: 1.0).opacity(0.30),
+                                .black.opacity(0.36)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+            .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(configuration.isPressed ? 0.08 : 0.18), radius: 12, y: 6)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .brightness(configuration.isPressed ? -0.05 : 0)
             .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
     }
 }
@@ -482,9 +599,13 @@ private struct GameMenuButtonBackground: View {
             startingBombsLevel: 1,
             startingShieldsLevel: 1,
             gemValueLevel: 2,
-            feedbackSettings: .default
+            feedbackSettings: .default,
+            dailyChallengeRecords: [
+                DailyChallengeRecord(dateKey: DailyChallenge.today().dateKey, bestDepth: 41, bestPayout: 88, attempts: 2)
+            ]
         ),
         onStartRun: {},
+        onStartDailyChallenge: {},
         onOpenUpgrades: {},
         onOpenHelp: {},
         onSoundEnabledChanged: { _ in },

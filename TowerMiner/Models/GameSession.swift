@@ -8,6 +8,7 @@ final class GameSession {
     let rowBufferCount: Int
     let generator: MineGenerator
     let gemValue: Int
+    let dailyChallenge: DailyChallenge?
 
     var tiles: [[MineTile]]
     var player: PlayerState
@@ -30,13 +31,15 @@ final class GameSession {
         initialRowCount: Int = 24,
         visibleRowCount: Int = 12,
         rowBufferCount: Int = 12,
-        seed: UInt64 = UInt64.random(in: UInt64.min...UInt64.max)
+        seed: UInt64 = UInt64.random(in: UInt64.min...UInt64.max),
+        dailyChallenge: DailyChallenge? = nil
     ) {
         self.columns = columns
         self.visibleRowCount = visibleRowCount
         self.rowBufferCount = rowBufferCount
         self.generator = MineGenerator(columns: columns, seed: seed)
         self.gemValue = 5 + (profile.gemValueLevel * 2)
+        self.dailyChallenge = dailyChallenge
         self.digPower = 1
         self.isRunOver = false
         self.digFeedbackID = 0
@@ -202,7 +205,8 @@ final class GameSession {
             depth: currentDepth,
             coins: player.coins,
             gems: player.gems,
-            gemValue: gemValue
+            gemValue: gemValue,
+            dailyChallenge: dailyChallenge
         )
     }
 
