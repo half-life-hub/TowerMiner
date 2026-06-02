@@ -86,7 +86,7 @@ struct HomeView: View {
             .buttonStyle(PrimaryGameButtonStyle())
 
             Button(action: onStartDailyChallenge) {
-                DailyChallengeButtonLabel(record: todayRecord)
+                DailyChallengeButtonLabel(challenge: todayChallenge, record: todayRecord)
             }
             .buttonStyle(DailyChallengeButtonStyle())
 
@@ -357,6 +357,7 @@ private struct FeedbackToggleRow: View {
 }
 
 private struct DailyChallengeButtonLabel: View {
+    let challenge: DailyChallenge
     let record: DailyChallengeRecord
 
     var body: some View {
@@ -390,7 +391,14 @@ private struct DailyChallengeButtonLabel: View {
                     .font(.headline.weight(.black))
                     .foregroundStyle(.white)
 
-                Text(record.attempts == 0 ? "Fresh seed today" : "Best depth \(record.bestDepth) · \(record.attempts) tries")
+                Text("\(challenge.goalDescription) · +\(challenge.bonusCredits) credits")
+                    .font(.caption.weight(.black))
+                    .monospacedDigit()
+                    .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.88))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+
+                Text(record.attempts == 0 ? "Today's fixed mine layout" : "Today best \(record.bestDepth) · \(record.attempts) tries")
                     .font(.caption.weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(.white.opacity(0.66))

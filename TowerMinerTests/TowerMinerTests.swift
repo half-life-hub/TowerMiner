@@ -159,6 +159,17 @@ struct TowerMinerTests {
         #expect(result.totalPayout == 37)
     }
 
+    @Test func dailyChallengeAddsBonusWhenGoalIsComplete() {
+        let challenge = DailyChallenge(dateKey: "2026-06-03", seed: 123)
+        let incompleteResult = RunResult(depth: 39, coins: 10, gems: 0, gemValue: 5, dailyChallenge: challenge)
+        let completeResult = RunResult(depth: 40, coins: 10, gems: 0, gemValue: 5, dailyChallenge: challenge)
+
+        #expect(challenge.goalDescription == "Reach depth 40")
+        #expect(incompleteResult.dailyChallengeBonus == 0)
+        #expect(completeResult.dailyChallengeBonus == 25)
+        #expect(completeResult.totalPayout == 55)
+    }
+
     @Test func profileAppliesResultAndPurchasesUpgrade() {
         var profile = PlayerProfile.default
         let result = RunResult(depth: 30, coins: 10, gems: 2, gemValue: 5)

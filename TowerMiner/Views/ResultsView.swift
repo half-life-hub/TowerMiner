@@ -15,6 +15,18 @@ struct ResultsView: View {
         return profile.dailyChallengeRecord(for: challenge)
     }
 
+    private var dailyGoalStatusText: String {
+        guard let challenge = result.dailyChallenge else {
+            return ""
+        }
+
+        if challenge.isCompleted(by: result) {
+            return "Goal complete · +\(challenge.bonusCredits) credits"
+        }
+
+        return "\(challenge.targetDepth - result.depth) depth short · no bonus"
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let contentWidth = min(geometry.size.width - 32, 680)
@@ -211,17 +223,29 @@ struct ResultsView: View {
                     .tracking(1.0)
                     .foregroundStyle(.white.opacity(0.55))
 
-                Text("Best depth \(dailyChallengeRecord?.bestDepth ?? result.depth) · Best payout \(dailyChallengeRecord?.bestPayout ?? result.totalPayout)")
+                Text(result.dailyChallenge?.goalDescription ?? "Reach today's target")
                     .font(.subheadline.weight(.black))
                     .monospacedDigit()
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
 
+                Text(dailyGoalStatusText)
+                    .font(.caption.weight(.black))
+                    .monospacedDigit()
+                    .foregroundStyle(result.dailyChallenge?.isCompleted(by: result) == true ? Color(red: 0.52, green: 0.94, blue: 0.86) : Color(red: 1.0, green: 0.78, blue: 0.23))
+
+                Text("Best depth \(dailyChallengeRecord?.bestDepth ?? result.depth) · Best payout \(dailyChallengeRecord?.bestPayout ?? result.totalPayout)")
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(.white.opacity(0.70))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+
                 Text("\(dailyChallengeRecord?.attempts ?? 1) attempt\(dailyChallengeRecord?.attempts == 1 ? "" : "s") today")
                     .font(.caption.weight(.semibold))
                     .monospacedDigit()
-                    .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.78))
+                    .foregroundStyle(.white.opacity(0.62))
             }
 
             Spacer()

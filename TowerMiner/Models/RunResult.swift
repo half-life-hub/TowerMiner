@@ -31,7 +31,15 @@ struct RunResult: Equatable {
         depth / 2
     }
 
+    var dailyChallengeBonus: Int {
+        guard let dailyChallenge, dailyChallenge.isCompleted(by: self) else {
+            return 0
+        }
+
+        return dailyChallenge.bonusCredits
+    }
+
     var totalPayout: Int {
-        coinPayout + gemPayout + depthBonus
+        coinPayout + gemPayout + depthBonus + dailyChallengeBonus
     }
 }

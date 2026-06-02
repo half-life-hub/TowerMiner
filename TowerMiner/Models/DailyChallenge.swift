@@ -8,6 +8,22 @@ struct DailyChallenge: Codable, Equatable {
         "Daily Mine \(dateKey)"
     }
 
+    var targetDepth: Int {
+        40
+    }
+
+    var bonusCredits: Int {
+        25
+    }
+
+    var goalDescription: String {
+        "Reach depth \(targetDepth)"
+    }
+
+    func isCompleted(by result: RunResult) -> Bool {
+        result.depth >= targetDepth
+    }
+
     static func today(calendar: Calendar = .autoupdatingCurrent, now: Date = Date()) -> DailyChallenge {
         let dateKey = makeDateKey(for: now, calendar: calendar)
         return DailyChallenge(dateKey: dateKey, seed: makeSeed(from: dateKey))
