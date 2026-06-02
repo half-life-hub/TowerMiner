@@ -64,12 +64,15 @@ struct ResultsView: View {
                 .font(.caption.weight(.black))
                 .tracking(1.4)
                 .foregroundStyle(.white.opacity(0.58))
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+                .allowsTightening(true)
 
             HStack(spacing: 12) {
                 ResultsCoinIcon()
                     .frame(width: 58, height: 58)
 
-                Text("\(result.totalPayout)")
+                Text(NumberFormatting.compact(result.totalPayout))
                     .font(.system(size: 56, weight: .black, design: .rounded))
                     .monospacedDigit()
                     .lineLimit(1)
@@ -82,6 +85,8 @@ struct ResultsView: View {
                         )
                     )
                     .shadow(color: .black.opacity(0.45), radius: 3, y: 2)
+                    .accessibilityLabel("Total credits")
+                    .accessibilityValue(NumberFormatting.grouped(result.totalPayout))
             }
 
             Text("Coins, gems, and depth bonus banked.")
@@ -153,12 +158,20 @@ struct ResultsView: View {
                     .font(.caption2.weight(.black))
                     .tracking(1.0)
                     .foregroundStyle(.white.opacity(0.55))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+                    .allowsTightening(true)
 
-                Text("\(profile.totalCredits)")
+                Text(NumberFormatting.compact(profile.totalCredits))
                     .font(.title2.weight(.black))
                     .monospacedDigit()
                     .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.62)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Banked credits")
+            .accessibilityValue(NumberFormatting.grouped(profile.totalCredits))
 
             Spacer()
         }

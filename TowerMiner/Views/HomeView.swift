@@ -57,7 +57,13 @@ struct HomeView: View {
     private var progressPanel: some View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
-                StatBar(title: "Credits", value: "\(profile.totalCredits)", symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+                StatBar(
+                    title: "Credits",
+                    value: NumberFormatting.compact(profile.totalCredits),
+                    accessibilityValue: NumberFormatting.grouped(profile.totalCredits),
+                    symbol: "creditcard.fill",
+                    tint: Color(red: 1.0, green: 0.78, blue: 0.23)
+                )
                 StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
             }
 
@@ -178,11 +184,12 @@ private struct MineMenuBackground: View {
 private struct StatBar: View {
     let title: String
     let value: String
+    var accessibilityValue: String?
     let symbol: String
     let tint: Color
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(
@@ -212,8 +219,11 @@ private struct StatBar: View {
                 .font(.caption.weight(.black))
                 .tracking(0.8)
                 .foregroundStyle(.white.opacity(0.66))
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+                .allowsTightening(true)
 
-            Spacer(minLength: 10)
+            Spacer(minLength: 4)
 
             Text(value)
                 .font(.title3.weight(.black))
@@ -221,8 +231,12 @@ private struct StatBar: View {
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.70)
+                .layoutPriority(1)
         }
-        .padding(.horizontal, 12)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(accessibilityValue ?? value)
+        .padding(.horizontal, 10)
         .padding(.vertical, 9)
         .background {
             ZStack {

@@ -159,6 +159,13 @@ struct TowerMinerTests {
         #expect(result.totalPayout == 37)
     }
 
+    @Test func compactNumberFormattingKeepsLargeCreditValuesShort() {
+        #expect(NumberFormatting.compact(9_999) == "9999")
+        #expect(NumberFormatting.compact(12_400) == "12.4K")
+        #expect(NumberFormatting.compact(999_900) == "1M")
+        #expect(NumberFormatting.compact(1_250_000) == "1.25M")
+    }
+
     @Test func profileAppliesResultAndPurchasesUpgrade() {
         var profile = PlayerProfile.default
         let result = RunResult(depth: 30, coins: 10, gems: 2, gemValue: 5)

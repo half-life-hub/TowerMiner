@@ -88,12 +88,20 @@ struct UpgradeView: View {
                     .font(.caption.weight(.black))
                     .tracking(0.8)
                     .foregroundStyle(.white.opacity(0.60))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+                    .allowsTightening(true)
 
-                Text("\(profile.totalCredits)")
+                Text(NumberFormatting.compact(profile.totalCredits))
                     .font(.largeTitle.weight(.black))
                     .monospacedDigit()
                     .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.58)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Available credits")
+            .accessibilityValue(NumberFormatting.grouped(profile.totalCredits))
 
             Spacer()
         }
