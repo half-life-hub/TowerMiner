@@ -159,17 +159,6 @@ struct TowerMinerTests {
         #expect(result.totalPayout == 37)
     }
 
-    @Test func dailyChallengeAddsBonusWhenGoalIsComplete() {
-        let challenge = DailyChallenge(dateKey: "2026-06-03", seed: 123)
-        let incompleteResult = RunResult(depth: 39, coins: 10, gems: 0, gemValue: 5, dailyChallenge: challenge)
-        let completeResult = RunResult(depth: 40, coins: 10, gems: 0, gemValue: 5, dailyChallenge: challenge)
-
-        #expect(challenge.goalDescription == "Reach depth 40")
-        #expect(incompleteResult.dailyChallengeBonus == 0)
-        #expect(completeResult.dailyChallengeBonus == 25)
-        #expect(completeResult.totalPayout == 55)
-    }
-
     @Test func profileAppliesResultAndPurchasesUpgrade() {
         var profile = PlayerProfile.default
         let result = RunResult(depth: 30, coins: 10, gems: 2, gemValue: 5)
@@ -204,37 +193,6 @@ struct TowerMinerTests {
 
         #expect(profile.totalCredits == 12)
         #expect(profile.feedbackSettings == .default)
-        #expect(profile.dailyChallengeRecords.isEmpty)
-    }
-
-    @Test func dailyChallengeSeedIsStableForDate() throws {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
-        let date = try #require(calendar.date(from: DateComponents(year: 2026, month: 6, day: 3)))
-
-        let first = DailyChallenge.today(calendar: calendar, now: date)
-        let second = DailyChallenge.today(calendar: calendar, now: date)
-        let nextDay = try #require(calendar.date(from: DateComponents(year: 2026, month: 6, day: 4)))
-        let third = DailyChallenge.today(calendar: calendar, now: nextDay)
-
-        #expect(first.dateKey == "2026-06-03")
-        #expect(first.seed == second.seed)
-        #expect(first.seed != third.seed)
-    }
-
-    @Test func dailyChallengeResultUpdatesSeparateRecordWithoutNormalBestDepth() {
-        let challenge = DailyChallenge(dateKey: "2026-06-03", seed: 123)
-        var profile = PlayerProfile.default
-        profile.bestDepth = 50
-
-        profile.apply(RunResult(depth: 30, coins: 10, gems: 1, gemValue: 5, dailyChallenge: challenge))
-
-        let record = profile.dailyChallengeRecord(for: challenge)
-        #expect(profile.totalCredits == 30)
-        #expect(profile.bestDepth == 50)
-        #expect(record.bestDepth == 30)
-        #expect(record.bestPayout == 30)
-        #expect(record.attempts == 1)
     }
 
     @Test func purchasedUpgradesAffectNextSession() {

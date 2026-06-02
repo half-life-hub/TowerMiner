@@ -9,7 +9,6 @@ struct PlayerProfile: Codable, Equatable {
     var startingShieldsLevel: Int
     var gemValueLevel: Int
     var feedbackSettings: FeedbackSettings
-    var dailyChallengeRecords: [DailyChallengeRecord]
 
     static let `default` = PlayerProfile(
         totalCredits: 0,
@@ -19,8 +18,7 @@ struct PlayerProfile: Codable, Equatable {
         startingBombsLevel: 0,
         startingShieldsLevel: 0,
         gemValueLevel: 0,
-        feedbackSettings: .default,
-        dailyChallengeRecords: []
+        feedbackSettings: .default
     )
 
     enum CodingKeys: String, CodingKey {
@@ -32,7 +30,6 @@ struct PlayerProfile: Codable, Equatable {
         case startingShieldsLevel
         case gemValueLevel
         case feedbackSettings
-        case dailyChallengeRecords
     }
 
     init(
@@ -43,8 +40,7 @@ struct PlayerProfile: Codable, Equatable {
         startingBombsLevel: Int,
         startingShieldsLevel: Int,
         gemValueLevel: Int,
-        feedbackSettings: FeedbackSettings,
-        dailyChallengeRecords: [DailyChallengeRecord]
+        feedbackSettings: FeedbackSettings
     ) {
         self.totalCredits = totalCredits
         self.bestDepth = bestDepth
@@ -54,7 +50,6 @@ struct PlayerProfile: Codable, Equatable {
         self.startingShieldsLevel = startingShieldsLevel
         self.gemValueLevel = gemValueLevel
         self.feedbackSettings = feedbackSettings
-        self.dailyChallengeRecords = dailyChallengeRecords
     }
 
     init(from decoder: Decoder) throws {
@@ -68,7 +63,6 @@ struct PlayerProfile: Codable, Equatable {
         self.startingShieldsLevel = try container.decode(Int.self, forKey: .startingShieldsLevel)
         self.gemValueLevel = try container.decode(Int.self, forKey: .gemValueLevel)
         self.feedbackSettings = try container.decodeIfPresent(FeedbackSettings.self, forKey: .feedbackSettings) ?? .default
-        self.dailyChallengeRecords = try container.decodeIfPresent([DailyChallengeRecord].self, forKey: .dailyChallengeRecords) ?? []
     }
 
     func level(for upgrade: UpgradeID) -> Int {
@@ -87,12 +81,8 @@ struct PlayerProfile: Codable, Equatable {
     }
 
     mutating func apply(_ result: RunResult) {
-        if let dailyChallenge = result.dailyChallenge {
-            applyDailyChallenge(result, challenge: dailyChallenge)
-        } else {
-            totalCredits += result.totalPayout
-            bestDepth = max(bestDepth, result.depth)
-        }
+        totalCredits += result.totalPayout
+        bestDepth = max(bestDepth, result.depth)
     }
 
     mutating func purchase(_ upgrade: UpgradeID) -> Bool {
@@ -129,31 +119,5 @@ struct PlayerProfile: Codable, Equatable {
 
     mutating func setHapticsEnabled(_ isEnabled: Bool) {
         feedbackSettings.isHapticsEnabled = isEnabled
-    }
-
-    func dailyChallengeRecord(for challenge: DailyChallenge) -> DailyChallengeRecord {
-        dailyChallengeRecords.first { record in
-            record.dateKey == challenge.dateKey
-        } ?? .empty(for: challenge)
-    }
-
-    mutating func applyDailyChallenge(_ result: RunResult, challenge: DailyChallenge) {
-        totalCredits += result.totalPayout
-
-        if let index = dailyChallengeRecords.firstIndex(where: { $0.dateKey == challenge.dateKey }) {
-            dailyChallengeRecords[index].apply(result)
-        } else {
-            var record = DailyChallengeRecord.empty(for: challenge)
-            record.apply(result)
-            dailyChallengeRecords.insert(record, at: 0)
-        }
-
-        dailyChallengeRecords.sort { lhs, rhs in
-            lhs.dateKey > rhs.dateKey
-        }
-
-        if dailyChallengeRecords.count > 14 {
-            dailyChallengeRecords = Array(dailyChallengeRecords.prefix(14))
-        }
     }
 }

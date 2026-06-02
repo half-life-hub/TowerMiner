@@ -7,26 +7,6 @@ struct ResultsView: View {
     let onOpenUpgrades: () -> Void
     let onBackToMenu: () -> Void
 
-    private var dailyChallengeRecord: DailyChallengeRecord? {
-        guard let challenge = result.dailyChallenge else {
-            return nil
-        }
-
-        return profile.dailyChallengeRecord(for: challenge)
-    }
-
-    private var dailyGoalStatusText: String {
-        guard let challenge = result.dailyChallenge else {
-            return ""
-        }
-
-        if challenge.isCompleted(by: result) {
-            return "Goal complete · +\(challenge.bonusCredits) credits"
-        }
-
-        return "\(challenge.targetDepth - result.depth) depth short · no bonus"
-    }
-
     var body: some View {
         GeometryReader { geometry in
             let contentWidth = min(geometry.size.width - 32, 680)
@@ -39,9 +19,6 @@ struct ResultsView: View {
                         header
                         totalPayoutCard
                         resultGrid
-                        if result.isDailyChallenge {
-                            dailyChallengeCard
-                        }
                         bankedCreditsCard
                         actionButtons
                     }
@@ -63,7 +40,7 @@ struct ResultsView: View {
                 .shadow(color: Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.28), radius: 16)
                 .accessibilityLabel("Tower Miner")
 
-            Text(result.isDailyChallenge ? "DAILY COMPLETE" : "RUN COMPLETE")
+            Text("RUN COMPLETE")
                 .font(.caption.weight(.black))
                 .tracking(2.2)
                 .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
@@ -107,7 +84,7 @@ struct ResultsView: View {
                     .shadow(color: .black.opacity(0.45), radius: 3, y: 2)
             }
 
-            Text(result.isDailyChallenge ? "Daily haul banked. Local best updated." : "Coins, gems, and depth bonus banked.")
+            Text("Coins, gems, and depth bonus banked.")
                 .font(.callout.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.68))
                 .multilineTextAlignment(.center)
@@ -191,79 +168,10 @@ struct ResultsView: View {
         }
     }
 
-    private var dailyChallengeCard: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.84),
-                                Color(red: 0.40, green: 0.26, blue: 0.90).opacity(0.48),
-                                Color.black.opacity(0.44)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-
-                Image(systemName: "calendar.badge.clock")
-                    .font(.system(size: 20, weight: .black))
-                    .foregroundStyle(.white)
-            }
-            .frame(width: 46, height: 46)
-            .overlay {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(.white.opacity(0.18), lineWidth: 1)
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(result.dailyChallenge?.displayTitle.uppercased() ?? "DAILY CHALLENGE")
-                    .font(.caption2.weight(.black))
-                    .tracking(1.0)
-                    .foregroundStyle(.white.opacity(0.55))
-
-                Text(result.dailyChallenge?.goalDescription ?? "Reach today's target")
-                    .font(.subheadline.weight(.black))
-                    .monospacedDigit()
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.72)
-
-                Text(dailyGoalStatusText)
-                    .font(.caption.weight(.black))
-                    .monospacedDigit()
-                    .foregroundStyle(result.dailyChallenge?.isCompleted(by: result) == true ? Color(red: 0.52, green: 0.94, blue: 0.86) : Color(red: 1.0, green: 0.78, blue: 0.23))
-
-                Text("Best depth \(dailyChallengeRecord?.bestDepth ?? result.depth) · Best payout \(dailyChallengeRecord?.bestPayout ?? result.totalPayout)")
-                    .font(.caption.weight(.semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(.white.opacity(0.70))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.72)
-
-                Text("\(dailyChallengeRecord?.attempts ?? 1) attempt\(dailyChallengeRecord?.attempts == 1 ? "" : "s") today")
-                    .font(.caption.weight(.semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(.white.opacity(0.62))
-            }
-
-            Spacer()
-        }
-        .padding(14)
-        .background {
-            ResultsPanel(cornerRadius: 18)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .strokeBorder(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.30), lineWidth: 1)
-        }
-    }
-
     private var actionButtons: some View {
         VStack(spacing: 10) {
             Button(action: onRetry) {
-                ResultsActionLabel(title: result.isDailyChallenge ? "Retry Daily" : "Retry Run", systemImage: "arrow.clockwise")
+                ResultsActionLabel(title: "Retry Run", systemImage: "arrow.clockwise")
             }
             .buttonStyle(ResultsPrimaryButtonStyle())
 

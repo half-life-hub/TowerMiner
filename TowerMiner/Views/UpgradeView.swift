@@ -457,8 +457,7 @@ private extension UpgradeID {
             startingBombsLevel: 0,
             startingShieldsLevel: 0,
             gemValueLevel: 0,
-            feedbackSettings: .default,
-            dailyChallengeRecords: []
+            feedbackSettings: .default
         ),
         onPurchase: { _ in },
         onBack: {}
