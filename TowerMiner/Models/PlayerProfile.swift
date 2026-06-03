@@ -77,7 +77,8 @@ struct PlayerProfile: Codable, Equatable {
 
         self.totalCredits = try container.decodeIfPresent(Int.self, forKey: .totalCredits) ?? 0
         self.bestDepth = try container.decodeIfPresent(Int.self, forKey: .bestDepth) ?? 0
-        self.totalRuns = try container.decodeIfPresent(Int.self, forKey: .totalRuns) ?? 0
+        let decodedTotalRuns = try container.decodeIfPresent(Int.self, forKey: .totalRuns)
+        self.totalRuns = decodedTotalRuns ?? 0
         self.lifetimeCreditsEarned = try container.decodeIfPresent(Int.self, forKey: .lifetimeCreditsEarned) ?? totalCredits
         self.lifetimeCoinsCollected = try container.decodeIfPresent(Int.self, forKey: .lifetimeCoinsCollected) ?? 0
         self.lifetimeGemsCollected = try container.decodeIfPresent(Int.self, forKey: .lifetimeGemsCollected) ?? 0
@@ -87,6 +88,20 @@ struct PlayerProfile: Codable, Equatable {
         self.startingShieldsLevel = try container.decodeIfPresent(Int.self, forKey: .startingShieldsLevel) ?? 0
         self.gemValueLevel = try container.decodeIfPresent(Int.self, forKey: .gemValueLevel) ?? 0
         self.feedbackSettings = try container.decodeIfPresent(FeedbackSettings.self, forKey: .feedbackSettings) ?? .default
+
+        if decodedTotalRuns == nil, hasAnyLegacyProgress {
+            self.totalRuns = 1
+        }
+    }
+
+    private var hasAnyLegacyProgress: Bool {
+        totalCredits > 0
+            || bestDepth > 0
+            || maxHealthLevel > 0
+            || maxEnergyLevel > 0
+            || startingBombsLevel > 0
+            || startingShieldsLevel > 0
+            || gemValueLevel > 0
     }
 
     func level(for upgrade: UpgradeID) -> Int {

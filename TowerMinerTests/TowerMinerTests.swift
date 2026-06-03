@@ -204,7 +204,7 @@ struct TowerMinerTests {
 
         #expect(profile.totalCredits == 12)
         #expect(profile.feedbackSettings == .default)
-        #expect(profile.totalRuns == 0)
+        #expect(profile.totalRuns == 1)
         #expect(profile.lifetimeCreditsEarned == 12)
         #expect(profile.lifetimeCoinsCollected == 0)
         #expect(profile.lifetimeGemsCollected == 0)
@@ -227,12 +227,24 @@ struct TowerMinerTests {
 
         #expect(profile.totalCredits == 42)
         #expect(profile.bestDepth == 25)
+        #expect(profile.totalRuns == 1)
         #expect(profile.maxHealthLevel == 2)
         #expect(profile.maxEnergyLevel == 0)
         #expect(profile.startingBombsLevel == 0)
         #expect(profile.startingShieldsLevel == 0)
         #expect(profile.gemValueLevel == 0)
         #expect(profile.feedbackSettings == .default)
+    }
+
+    @Test func emptyOlderSaveKeepsZeroRuns() throws {
+        let olderJSON = "{}"
+        let data = try #require(olderJSON.data(using: .utf8))
+
+        let profile = try JSONDecoder().decode(PlayerProfile.self, from: data)
+
+        #expect(profile.totalCredits == 0)
+        #expect(profile.bestDepth == 0)
+        #expect(profile.totalRuns == 0)
     }
 
     @Test func purchasedUpgradesAffectNextSession() {
