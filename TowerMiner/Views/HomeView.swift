@@ -22,12 +22,11 @@ struct HomeView: View {
                 MineMenuBackground()
 
                 ScrollView {
-                    VStack(spacing: 22) {
+                    VStack(spacing: 18) {
                         titleBlock
                         progressPanel
-                        careerStatsPanel
                         actionPanel
-                        feedbackPanel
+                        utilityStrip
                         versionLabel
                     }
                     .frame(width: contentWidth)
@@ -56,22 +55,15 @@ struct HomeView: View {
     }
 
     private var progressPanel: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                StatBar(
-                    title: "Credits",
-                    value: NumberFormatting.compact(profile.totalCredits),
-                    accessibilityValue: NumberFormatting.grouped(profile.totalCredits),
-                    symbol: "creditcard.fill",
-                    tint: Color(red: 1.0, green: 0.78, blue: 0.23)
-                )
-                StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            }
-
-            HStack(spacing: 12) {
-                StatBar(title: "Rig Level", value: "\(totalUpgradeLevels)", symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
-                StatBar(title: "Gem Value", value: "\(5 + profile.gemValueLevel * 2)", symbol: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
-            }
+        HStack(spacing: 12) {
+            StatBar(
+                title: "Credits",
+                value: NumberFormatting.compact(profile.totalCredits),
+                accessibilityValue: NumberFormatting.grouped(profile.totalCredits),
+                symbol: "creditcard.fill",
+                tint: Color(red: 1.0, green: 0.78, blue: 0.23)
+            )
+            StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
         }
     }
 
@@ -97,63 +89,49 @@ struct HomeView: View {
         }
     }
 
-    private var careerStatsPanel: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Career Stats")
-                .font(.caption.weight(.black))
-                .tracking(1.0)
-                .foregroundStyle(.white.opacity(0.58))
-                .lineLimit(1)
-                .textCase(.uppercase)
+    private var utilityStrip: some View {
+        HStack(spacing: 8) {
+            MiniStatPill(
+                title: "Upgrades",
+                value: "\(totalUpgradeLevels)",
+                accessibilityValue: "\(totalUpgradeLevels)",
+                symbol: "wrench.and.screwdriver.fill",
+                tint: Color(red: 0.62, green: 0.77, blue: 1.0)
+            )
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                CareerStatChip(title: "Runs", value: NumberFormatting.compact(profile.totalRuns), accessibilityValue: NumberFormatting.grouped(profile.totalRuns), tint: Color(red: 0.62, green: 0.77, blue: 1.0))
-                CareerStatChip(title: "Earned", value: NumberFormatting.compact(profile.lifetimeCreditsEarned), accessibilityValue: NumberFormatting.grouped(profile.lifetimeCreditsEarned), tint: Color(red: 1.0, green: 0.78, blue: 0.23))
-                CareerStatChip(title: "Coins", value: NumberFormatting.compact(profile.lifetimeCoinsCollected), accessibilityValue: NumberFormatting.grouped(profile.lifetimeCoinsCollected), tint: Color(red: 0.96, green: 0.56, blue: 0.28))
-                CareerStatChip(title: "Gems", value: NumberFormatting.compact(profile.lifetimeGemsCollected), accessibilityValue: NumberFormatting.grouped(profile.lifetimeGemsCollected), tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-            }
-        }
-        .padding(12)
-        .background {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.black.opacity(0.28))
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
-        }
-    }
+            MiniStatPill(
+                title: "Runs",
+                value: NumberFormatting.compact(profile.totalRuns),
+                accessibilityValue: NumberFormatting.grouped(profile.totalRuns),
+                symbol: "flag.checkered",
+                tint: Color(red: 0.52, green: 0.94, blue: 0.86)
+            )
 
+            Spacer(minLength: 4)
 
-    private var feedbackPanel: some View {
-        VStack(spacing: 10) {
-            FeedbackToggleRow(
+            FeedbackIconButton(
                 title: "Sound",
                 symbol: profile.feedbackSettings.isSoundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill",
                 tint: Color(red: 0.52, green: 0.94, blue: 0.86),
-                isOn: Binding(
-                    get: { profile.feedbackSettings.isSoundEnabled },
-                    set: onSoundEnabledChanged
-                )
+                isOn: profile.feedbackSettings.isSoundEnabled,
+                action: { onSoundEnabledChanged(!profile.feedbackSettings.isSoundEnabled) }
             )
 
-            FeedbackToggleRow(
+            FeedbackIconButton(
                 title: "Haptics",
                 symbol: profile.feedbackSettings.isHapticsEnabled ? "iphone.radiowaves.left.and.right" : "iphone.slash",
                 tint: Color(red: 1.0, green: 0.78, blue: 0.23),
-                isOn: Binding(
-                    get: { profile.feedbackSettings.isHapticsEnabled },
-                    set: onHapticsEnabledChanged
-                )
+                isOn: profile.feedbackSettings.isHapticsEnabled,
+                action: { onHapticsEnabledChanged(!profile.feedbackSettings.isHapticsEnabled) }
             )
         }
-        .padding(12)
+        .padding(8)
         .background {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.black.opacity(0.28))
+            Capsule(style: .continuous)
+                .fill(Color.black.opacity(0.24))
         }
         .overlay {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
+            Capsule(style: .continuous)
                 .stroke(.white.opacity(0.08), lineWidth: 1)
         }
     }
@@ -319,119 +297,86 @@ private struct StatBar: View {
     }
 }
 
-private struct FeedbackToggleRow: View {
-    let title: String
-    let symbol: String
-    let tint: Color
-    @Binding var isOn: Bool
-
-    var body: some View {
-        Toggle(isOn: $isOn) {
-            HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    tint.opacity(isOn ? 0.86 : 0.26),
-                                    tint.opacity(isOn ? 0.34 : 0.12),
-                                    Color.black.opacity(0.45)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-
-                    Image(systemName: symbol)
-                        .font(.system(size: 15, weight: .black))
-                        .foregroundStyle(.white)
-                }
-                .frame(width: 38, height: 34)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(.white.opacity(0.18), lineWidth: 1)
-                }
-
-                Text(title.uppercased())
-                    .font(.caption.weight(.black))
-                    .tracking(0.8)
-                    .foregroundStyle(.white.opacity(0.74))
-
-                Spacer()
-            }
-        }
-        .toggleStyle(.switch)
-        .tint(tint)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 9)
-        .background {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.16, green: 0.17, blue: 0.18),
-                            Color(red: 0.05, green: 0.06, blue: 0.08),
-                            Color(red: 0.12, green: 0.09, blue: 0.07)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(tint.opacity(isOn ? 0.34 : 0.16), lineWidth: 1)
-        }
-    }
-}
-
-private struct CareerStatChip: View {
+private struct MiniStatPill: View {
     let title: String
     let value: String
     let accessibilityValue: String
+    let symbol: String
     let tint: Color
 
     var body: some View {
-        HStack(spacing: 8) {
-            Circle()
-                .fill(
-                    LinearGradient(
-                        colors: [tint.opacity(0.88), tint.opacity(0.34), Color.black.opacity(0.34)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 10, height: 10)
+        HStack(spacing: 6) {
+            Image(systemName: symbol)
+                .font(.system(size: 11, weight: .black))
+                .foregroundStyle(tint)
+                .frame(width: 14)
 
             Text(title.uppercased())
                 .font(.system(size: 10, weight: .black))
-                .tracking(0.6)
-                .foregroundStyle(.white.opacity(0.58))
+                .tracking(0.5)
+                .foregroundStyle(.white.opacity(0.52))
                 .lineLimit(1)
-                .minimumScaleFactor(0.76)
-
-            Spacer(minLength: 4)
+                .minimumScaleFactor(0.75)
 
             Text(value)
                 .font(.subheadline.weight(.black))
                 .monospacedDigit()
                 .foregroundStyle(.white)
                 .lineLimit(1)
-                .minimumScaleFactor(0.70)
+                .minimumScaleFactor(0.75)
         }
         .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(.vertical, 7)
         .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            Capsule(style: .continuous)
                 .fill(Color.white.opacity(0.055))
         }
         .overlay {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            Capsule(style: .continuous)
                 .stroke(tint.opacity(0.18), lineWidth: 1)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
         .accessibilityValue(accessibilityValue)
+    }
+}
+
+private struct FeedbackIconButton: View {
+    let title: String
+    let symbol: String
+    let tint: Color
+    let isOn: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 14, weight: .black))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .frame(width: 36, height: 30)
+                .background {
+                    Capsule(style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    tint.opacity(isOn ? 0.84 : 0.20),
+                                    tint.opacity(isOn ? 0.30 : 0.08),
+                                    Color.black.opacity(0.48)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
+                .overlay {
+                    Capsule(style: .continuous)
+                        .stroke(tint.opacity(isOn ? 0.36 : 0.14), lineWidth: 1)
+                }
+        }
+        .accessibilityLabel(title)
+        .accessibilityValue(isOn ? "On" : "Off")
+        .accessibilityHint("Double tap to toggle")
     }
 }
 
