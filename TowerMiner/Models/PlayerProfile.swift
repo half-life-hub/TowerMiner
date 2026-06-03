@@ -75,17 +75,17 @@ struct PlayerProfile: Codable, Equatable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.totalCredits = try container.decode(Int.self, forKey: .totalCredits)
-        self.bestDepth = try container.decode(Int.self, forKey: .bestDepth)
+        self.totalCredits = try container.decodeIfPresent(Int.self, forKey: .totalCredits) ?? 0
+        self.bestDepth = try container.decodeIfPresent(Int.self, forKey: .bestDepth) ?? 0
         self.totalRuns = try container.decodeIfPresent(Int.self, forKey: .totalRuns) ?? 0
         self.lifetimeCreditsEarned = try container.decodeIfPresent(Int.self, forKey: .lifetimeCreditsEarned) ?? totalCredits
         self.lifetimeCoinsCollected = try container.decodeIfPresent(Int.self, forKey: .lifetimeCoinsCollected) ?? 0
         self.lifetimeGemsCollected = try container.decodeIfPresent(Int.self, forKey: .lifetimeGemsCollected) ?? 0
-        self.maxHealthLevel = try container.decode(Int.self, forKey: .maxHealthLevel)
-        self.maxEnergyLevel = try container.decode(Int.self, forKey: .maxEnergyLevel)
-        self.startingBombsLevel = try container.decode(Int.self, forKey: .startingBombsLevel)
-        self.startingShieldsLevel = try container.decode(Int.self, forKey: .startingShieldsLevel)
-        self.gemValueLevel = try container.decode(Int.self, forKey: .gemValueLevel)
+        self.maxHealthLevel = try container.decodeIfPresent(Int.self, forKey: .maxHealthLevel) ?? 0
+        self.maxEnergyLevel = try container.decodeIfPresent(Int.self, forKey: .maxEnergyLevel) ?? 0
+        self.startingBombsLevel = try container.decodeIfPresent(Int.self, forKey: .startingBombsLevel) ?? 0
+        self.startingShieldsLevel = try container.decodeIfPresent(Int.self, forKey: .startingShieldsLevel) ?? 0
+        self.gemValueLevel = try container.decodeIfPresent(Int.self, forKey: .gemValueLevel) ?? 0
         self.feedbackSettings = try container.decodeIfPresent(FeedbackSettings.self, forKey: .feedbackSettings) ?? .default
     }
 

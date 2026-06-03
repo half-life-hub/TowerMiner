@@ -208,6 +208,31 @@ struct TowerMinerTests {
         #expect(profile.lifetimeCreditsEarned == 12)
         #expect(profile.lifetimeCoinsCollected == 0)
         #expect(profile.lifetimeGemsCollected == 0)
+        #expect(profile.maxHealthLevel == 1)
+        #expect(profile.maxEnergyLevel == 2)
+        #expect(profile.startingShieldsLevel == 1)
+    }
+
+    @Test func profileDecodesOlderSaveWithMissingUpgradeFields() throws {
+        let olderJSON = """
+        {
+            "totalCredits": 42,
+            "bestDepth": 25,
+            "maxHealthLevel": 2
+        }
+        """
+        let data = try #require(olderJSON.data(using: .utf8))
+
+        let profile = try JSONDecoder().decode(PlayerProfile.self, from: data)
+
+        #expect(profile.totalCredits == 42)
+        #expect(profile.bestDepth == 25)
+        #expect(profile.maxHealthLevel == 2)
+        #expect(profile.maxEnergyLevel == 0)
+        #expect(profile.startingBombsLevel == 0)
+        #expect(profile.startingShieldsLevel == 0)
+        #expect(profile.gemValueLevel == 0)
+        #expect(profile.feedbackSettings == .default)
     }
 
     @Test func purchasedUpgradesAffectNextSession() {
