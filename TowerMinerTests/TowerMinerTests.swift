@@ -174,6 +174,10 @@ struct TowerMinerTests {
 
         #expect(profile.totalCredits == 35)
         #expect(profile.bestDepth == 30)
+        #expect(profile.totalRuns == 1)
+        #expect(profile.lifetimeCreditsEarned == 35)
+        #expect(profile.lifetimeCoinsCollected == 10)
+        #expect(profile.lifetimeGemsCollected == 2)
 
         let purchased = profile.purchase(.maxHealth)
 
@@ -200,6 +204,10 @@ struct TowerMinerTests {
 
         #expect(profile.totalCredits == 12)
         #expect(profile.feedbackSettings == .default)
+        #expect(profile.totalRuns == 0)
+        #expect(profile.lifetimeCreditsEarned == 12)
+        #expect(profile.lifetimeCoinsCollected == 0)
+        #expect(profile.lifetimeGemsCollected == 0)
     }
 
     @Test func purchasedUpgradesAffectNextSession() {

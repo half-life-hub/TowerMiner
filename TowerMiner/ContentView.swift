@@ -7,6 +7,7 @@ final class AppModel {
     var playerProfile: PlayerProfile
     var activeSession: GameSession?
     var lastRunResult: RunResult?
+    var lastRunWasNewBestDepth = false
 
     private let profileStore: ProfileStore
 
@@ -17,6 +18,7 @@ final class AppModel {
 
     func startRun() {
         activeSession = GameSession(profile: playerProfile)
+        lastRunWasNewBestDepth = false
         currentScreen = .run
     }
 
@@ -35,6 +37,7 @@ final class AppModel {
 
     func finishRun(_ result: RunResult) {
         lastRunResult = result
+        lastRunWasNewBestDepth = result.depth > playerProfile.bestDepth
         activeSession = nil
         playerProfile.apply(result)
         persistProfile()
@@ -151,6 +154,7 @@ struct ContentView: View {
                         ResultsView(
                             result: result,
                             profile: appModel.playerProfile,
+                            isNewBestDepth: appModel.lastRunWasNewBestDepth,
                             onRetry: appModel.startRun,
                             onOpenUpgrades: appModel.showUpgrades,
                             onBackToMenu: appModel.showHome

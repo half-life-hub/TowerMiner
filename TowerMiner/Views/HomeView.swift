@@ -25,6 +25,7 @@ struct HomeView: View {
                     VStack(spacing: 22) {
                         titleBlock
                         progressPanel
+                        careerStatsPanel
                         actionPanel
                         feedbackPanel
                         versionLabel
@@ -95,6 +96,34 @@ struct HomeView: View {
             .buttonStyle(SecondaryGameButtonStyle())
         }
     }
+
+    private var careerStatsPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Career Stats")
+                .font(.caption.weight(.black))
+                .tracking(1.0)
+                .foregroundStyle(.white.opacity(0.58))
+                .lineLimit(1)
+                .textCase(.uppercase)
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                CareerStatChip(title: "Runs", value: NumberFormatting.compact(profile.totalRuns), accessibilityValue: NumberFormatting.grouped(profile.totalRuns), tint: Color(red: 0.62, green: 0.77, blue: 1.0))
+                CareerStatChip(title: "Earned", value: NumberFormatting.compact(profile.lifetimeCreditsEarned), accessibilityValue: NumberFormatting.grouped(profile.lifetimeCreditsEarned), tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+                CareerStatChip(title: "Coins", value: NumberFormatting.compact(profile.lifetimeCoinsCollected), accessibilityValue: NumberFormatting.grouped(profile.lifetimeCoinsCollected), tint: Color(red: 0.96, green: 0.56, blue: 0.28))
+                CareerStatChip(title: "Gems", value: NumberFormatting.compact(profile.lifetimeGemsCollected), accessibilityValue: NumberFormatting.grouped(profile.lifetimeGemsCollected), tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+            }
+        }
+        .padding(12)
+        .background {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.black.opacity(0.28))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(.white.opacity(0.08), lineWidth: 1)
+        }
+    }
+
 
     private var feedbackPanel: some View {
         VStack(spacing: 10) {
@@ -356,6 +385,56 @@ private struct FeedbackToggleRow: View {
     }
 }
 
+private struct CareerStatChip: View {
+    let title: String
+    let value: String
+    let accessibilityValue: String
+    let tint: Color
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [tint.opacity(0.88), tint.opacity(0.34), Color.black.opacity(0.34)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 10, height: 10)
+
+            Text(title.uppercased())
+                .font(.system(size: 10, weight: .black))
+                .tracking(0.6)
+                .foregroundStyle(.white.opacity(0.58))
+                .lineLimit(1)
+                .minimumScaleFactor(0.76)
+
+            Spacer(minLength: 4)
+
+            Text(value)
+                .font(.subheadline.weight(.black))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.70)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.white.opacity(0.055))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(tint.opacity(0.18), lineWidth: 1)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(accessibilityValue)
+    }
+}
+
 private struct Diamond: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -491,6 +570,10 @@ private struct GameMenuButtonBackground: View {
         profile: PlayerProfile(
             totalCredits: 145,
             bestDepth: 72,
+            totalRuns: 12,
+            lifetimeCreditsEarned: 1_240,
+            lifetimeCoinsCollected: 870,
+            lifetimeGemsCollected: 38,
             maxHealthLevel: 2,
             maxEnergyLevel: 1,
             startingBombsLevel: 1,

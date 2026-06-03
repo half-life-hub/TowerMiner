@@ -460,6 +460,10 @@ private extension UpgradeID {
         profile: PlayerProfile(
             totalCredits: 100,
             bestDepth: 0,
+            totalRuns: 0,
+            lifetimeCreditsEarned: 100,
+            lifetimeCoinsCollected: 0,
+            lifetimeGemsCollected: 0,
             maxHealthLevel: 0,
             maxEnergyLevel: 1,
             startingBombsLevel: 0,

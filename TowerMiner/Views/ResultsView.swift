@@ -3,6 +3,7 @@ import SwiftUI
 struct ResultsView: View {
     let result: RunResult
     let profile: PlayerProfile
+    let isNewBestDepth: Bool
     let onRetry: () -> Void
     let onOpenUpgrades: () -> Void
     let onBackToMenu: () -> Void
@@ -17,6 +18,9 @@ struct ResultsView: View {
                 ScrollView {
                     VStack(spacing: 18) {
                         header
+                        if isNewBestDepth {
+                            newBestDepthCard
+                        }
                         totalPayoutCard
                         resultGrid
                         bankedCreditsCard
@@ -127,6 +131,42 @@ struct ResultsView: View {
         }
         .shadow(color: .black.opacity(0.22), radius: 14, y: 8)
     }
+
+    private var newBestDepthCard: some View {
+        HStack(spacing: 12) {
+            ResultsDepthIcon()
+                .frame(width: 42, height: 42)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("NEW BEST")
+                    .font(.caption2.weight(.black))
+                    .tracking(1.1)
+                    .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
+                    .lineLimit(1)
+
+                Text("Depth \(result.depth)")
+                    .font(.title3.weight(.black))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+
+            Spacer()
+        }
+        .padding(14)
+        .background {
+            ResultsPanel(cornerRadius: 18)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.38), lineWidth: 1)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("New best depth")
+        .accessibilityValue("\(result.depth)")
+    }
+
 
     private var resultGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
@@ -504,6 +544,7 @@ private struct DiamondShape: Shape {
     ResultsView(
         result: RunResult(depth: 24, coins: 18, gems: 3, gemValue: 5),
         profile: .default,
+        isNewBestDepth: true,
         onRetry: {},
         onOpenUpgrades: {},
         onBackToMenu: {}

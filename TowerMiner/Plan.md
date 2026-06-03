@@ -962,6 +962,32 @@ Testing checklist:
 - [ ] Verify enemies cannot trap the player immediately after spawn.
 - [ ] Manually test readability during crowded board states.
 
+### 9. Career Stats and New Best Callout
+
+Goal:
+
+- Give players a quick sense of long-term progress and make personal-best runs feel more rewarding.
+
+Version fit:
+
+- Small quality-of-life item that fits an early polish release.
+
+Implementation checklist:
+
+- [x] Add lifetime run count, credits earned, coins collected, and gems collected to `PlayerProfile`.
+- [x] Update profile result application to increment career totals after each run.
+- [x] Preserve older saves by decoding missing career fields with sensible defaults.
+- [x] Add a compact career stats panel to the home screen.
+- [x] Add a new-best-depth callout on the results screen.
+- [x] Keep large values compact and single-line in career stat UI.
+
+Testing checklist:
+
+- [x] Add unit coverage for career total updates after a run.
+- [x] Add unit coverage for legacy profile decoding defaults.
+- [x] Run the unit test suite.
+- [ ] Manually verify the home stats and new-best callout on device.
+
 ---
 
 ## Recommended Build Order

@@ -3,6 +3,10 @@ import Foundation
 struct PlayerProfile: Codable, Equatable {
     var totalCredits: Int
     var bestDepth: Int
+    var totalRuns: Int
+    var lifetimeCreditsEarned: Int
+    var lifetimeCoinsCollected: Int
+    var lifetimeGemsCollected: Int
     var maxHealthLevel: Int
     var maxEnergyLevel: Int
     var startingBombsLevel: Int
@@ -13,6 +17,10 @@ struct PlayerProfile: Codable, Equatable {
     static let `default` = PlayerProfile(
         totalCredits: 0,
         bestDepth: 0,
+        totalRuns: 0,
+        lifetimeCreditsEarned: 0,
+        lifetimeCoinsCollected: 0,
+        lifetimeGemsCollected: 0,
         maxHealthLevel: 0,
         maxEnergyLevel: 0,
         startingBombsLevel: 0,
@@ -24,6 +32,10 @@ struct PlayerProfile: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case totalCredits
         case bestDepth
+        case totalRuns
+        case lifetimeCreditsEarned
+        case lifetimeCoinsCollected
+        case lifetimeGemsCollected
         case maxHealthLevel
         case maxEnergyLevel
         case startingBombsLevel
@@ -35,6 +47,10 @@ struct PlayerProfile: Codable, Equatable {
     init(
         totalCredits: Int,
         bestDepth: Int,
+        totalRuns: Int,
+        lifetimeCreditsEarned: Int,
+        lifetimeCoinsCollected: Int,
+        lifetimeGemsCollected: Int,
         maxHealthLevel: Int,
         maxEnergyLevel: Int,
         startingBombsLevel: Int,
@@ -44,6 +60,10 @@ struct PlayerProfile: Codable, Equatable {
     ) {
         self.totalCredits = totalCredits
         self.bestDepth = bestDepth
+        self.totalRuns = totalRuns
+        self.lifetimeCreditsEarned = lifetimeCreditsEarned
+        self.lifetimeCoinsCollected = lifetimeCoinsCollected
+        self.lifetimeGemsCollected = lifetimeGemsCollected
         self.maxHealthLevel = maxHealthLevel
         self.maxEnergyLevel = maxEnergyLevel
         self.startingBombsLevel = startingBombsLevel
@@ -57,6 +77,10 @@ struct PlayerProfile: Codable, Equatable {
 
         self.totalCredits = try container.decode(Int.self, forKey: .totalCredits)
         self.bestDepth = try container.decode(Int.self, forKey: .bestDepth)
+        self.totalRuns = try container.decodeIfPresent(Int.self, forKey: .totalRuns) ?? 0
+        self.lifetimeCreditsEarned = try container.decodeIfPresent(Int.self, forKey: .lifetimeCreditsEarned) ?? totalCredits
+        self.lifetimeCoinsCollected = try container.decodeIfPresent(Int.self, forKey: .lifetimeCoinsCollected) ?? 0
+        self.lifetimeGemsCollected = try container.decodeIfPresent(Int.self, forKey: .lifetimeGemsCollected) ?? 0
         self.maxHealthLevel = try container.decode(Int.self, forKey: .maxHealthLevel)
         self.maxEnergyLevel = try container.decode(Int.self, forKey: .maxEnergyLevel)
         self.startingBombsLevel = try container.decode(Int.self, forKey: .startingBombsLevel)
@@ -83,6 +107,10 @@ struct PlayerProfile: Codable, Equatable {
     mutating func apply(_ result: RunResult) {
         totalCredits += result.totalPayout
         bestDepth = max(bestDepth, result.depth)
+        totalRuns += 1
+        lifetimeCreditsEarned += result.totalPayout
+        lifetimeCoinsCollected += result.coins
+        lifetimeGemsCollected += result.gems
     }
 
     mutating func purchase(_ upgrade: UpgradeID) -> Bool {
