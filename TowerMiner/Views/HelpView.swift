@@ -74,31 +74,15 @@ struct HelpView: View {
                         }
 
                         HelpCard(
-                            title: "Credits",
-                            subtitle: "Credits are your banked currency. Spend them on upgrades between runs."
+                            title: "Home Stats",
+                            subtitle: "These numbers show your saved progress between runs."
                         ) {
-                            HelpSymbolIcon(symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
-                        }
-
-                        HelpCard(
-                            title: "Best Depth",
-                            subtitle: "Best Depth is the deepest point you have reached across all normal runs."
-                        ) {
-                            HelpSymbolIcon(symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
-                        }
-
-                        HelpCard(
-                            title: "Rig Level",
-                            subtitle: "Rig Level is the total number of upgrade levels you have bought."
-                        ) {
-                            HelpSymbolIcon(symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
-                        }
-
-                        HelpCard(
-                            title: "Gem Value",
-                            subtitle: "Gem Value is how many credits each gem is worth when a run pays out."
-                        ) {
-                            HelpSymbolIcon(symbol: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
+                            VStack(spacing: 10) {
+                                HelpStatRow(symbol: "creditcard.fill", title: "Credits", detail: "Banked currency for upgrades.", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+                                HelpStatRow(symbol: "arrow.down.to.line.compact", title: "Best Depth", detail: "Deepest normal run reached.", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+                                HelpStatRow(symbol: "wrench.and.screwdriver.fill", title: "Rig Level", detail: "Total upgrade levels bought.", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
+                                HelpStatRow(symbol: "diamond.fill", title: "Gem Value", detail: "Credits each gem is worth.", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
+                            }
                         }
                     }
                     .frame(width: contentWidth)
@@ -281,6 +265,63 @@ private struct HelpSymbolIcon: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .stroke(.white.opacity(0.20), lineWidth: 1)
             }
+    }
+}
+
+private struct HelpStatRow: View {
+    let symbol: String
+    let title: String
+    let detail: String
+    let tint: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: symbol)
+                .font(.system(size: 18, weight: .black))
+                .foregroundStyle(.white)
+                .frame(width: 38, height: 38)
+                .background {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [tint.opacity(0.82), tint.opacity(0.26), Color.black.opacity(0.44)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(.white.opacity(0.18), lineWidth: 1)
+                }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title.uppercased())
+                    .font(.caption.weight(.black))
+                    .tracking(0.8)
+                    .foregroundStyle(tint)
+                    .lineLimit(1)
+
+                Text(detail)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.black.opacity(0.22))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(.white.opacity(0.08), lineWidth: 1)
+        }
     }
 }
 
