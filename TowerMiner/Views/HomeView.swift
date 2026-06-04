@@ -22,11 +22,11 @@ struct HomeView: View {
                 MineMenuBackground()
 
                 ScrollView {
-                    VStack(spacing: 18) {
+                    VStack(spacing: 22) {
                         titleBlock
                         progressPanel
                         actionPanel
-                        utilityStrip
+                        feedbackPanel
                         versionLabel
                     }
                     .frame(width: contentWidth)
@@ -55,15 +55,22 @@ struct HomeView: View {
     }
 
     private var progressPanel: some View {
-        HStack(spacing: 12) {
-            StatBar(
-                title: "Credits",
-                value: NumberFormatting.compact(profile.totalCredits),
-                accessibilityValue: NumberFormatting.grouped(profile.totalCredits),
-                symbol: "creditcard.fill",
-                tint: Color(red: 1.0, green: 0.78, blue: 0.23)
-            )
-            StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                StatBar(
+                    title: "Credits",
+                    value: NumberFormatting.compact(profile.totalCredits),
+                    accessibilityValue: NumberFormatting.grouped(profile.totalCredits),
+                    symbol: "creditcard.fill",
+                    tint: Color(red: 1.0, green: 0.78, blue: 0.23)
+                )
+                StatBar(title: "Best Depth", value: "\(profile.bestDepth)", symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+            }
+
+            HStack(spacing: 12) {
+                StatBar(title: "Rig Level", value: "\(totalUpgradeLevels)", symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
+                StatBar(title: "Gem Value", value: "\(5 + profile.gemValueLevel * 2)", symbol: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
+            }
         }
     }
 
@@ -89,49 +96,35 @@ struct HomeView: View {
         }
     }
 
-    private var utilityStrip: some View {
-        HStack(spacing: 8) {
-            MiniStatPill(
-                title: "Upgrades",
-                value: "\(totalUpgradeLevels)",
-                accessibilityValue: "\(totalUpgradeLevels)",
-                symbol: "wrench.and.screwdriver.fill",
-                tint: Color(red: 0.62, green: 0.77, blue: 1.0)
-            )
-
-            MiniStatPill(
-                title: "Runs",
-                value: NumberFormatting.compact(profile.totalRuns),
-                accessibilityValue: NumberFormatting.grouped(profile.totalRuns),
-                symbol: "flag.checkered",
-                tint: Color(red: 0.52, green: 0.94, blue: 0.86)
-            )
-
-            Spacer(minLength: 4)
-
-            FeedbackIconButton(
+    private var feedbackPanel: some View {
+        VStack(spacing: 10) {
+            FeedbackToggleRow(
                 title: "Sound",
                 symbol: profile.feedbackSettings.isSoundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill",
                 tint: Color(red: 0.52, green: 0.94, blue: 0.86),
-                isOn: profile.feedbackSettings.isSoundEnabled,
-                action: { onSoundEnabledChanged(!profile.feedbackSettings.isSoundEnabled) }
+                isOn: Binding(
+                    get: { profile.feedbackSettings.isSoundEnabled },
+                    set: onSoundEnabledChanged
+                )
             )
 
-            FeedbackIconButton(
+            FeedbackToggleRow(
                 title: "Haptics",
                 symbol: profile.feedbackSettings.isHapticsEnabled ? "iphone.radiowaves.left.and.right" : "iphone.slash",
                 tint: Color(red: 1.0, green: 0.78, blue: 0.23),
-                isOn: profile.feedbackSettings.isHapticsEnabled,
-                action: { onHapticsEnabledChanged(!profile.feedbackSettings.isHapticsEnabled) }
+                isOn: Binding(
+                    get: { profile.feedbackSettings.isHapticsEnabled },
+                    set: onHapticsEnabledChanged
+                )
             )
         }
-        .padding(8)
+        .padding(12)
         .background {
-            Capsule(style: .continuous)
-                .fill(Color.black.opacity(0.24))
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.black.opacity(0.28))
         }
         .overlay {
-            Capsule(style: .continuous)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(.white.opacity(0.08), lineWidth: 1)
         }
     }
@@ -297,86 +290,69 @@ private struct StatBar: View {
     }
 }
 
-private struct MiniStatPill: View {
-    let title: String
-    let value: String
-    let accessibilityValue: String
-    let symbol: String
-    let tint: Color
-
-    var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: symbol)
-                .font(.system(size: 11, weight: .black))
-                .foregroundStyle(tint)
-                .frame(width: 14)
-
-            Text(title.uppercased())
-                .font(.system(size: 10, weight: .black))
-                .tracking(0.5)
-                .foregroundStyle(.white.opacity(0.52))
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
-
-            Text(value)
-                .font(.subheadline.weight(.black))
-                .monospacedDigit()
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .background {
-            Capsule(style: .continuous)
-                .fill(Color.white.opacity(0.055))
-        }
-        .overlay {
-            Capsule(style: .continuous)
-                .stroke(tint.opacity(0.18), lineWidth: 1)
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(title)
-        .accessibilityValue(accessibilityValue)
-    }
-}
-
-private struct FeedbackIconButton: View {
+private struct FeedbackToggleRow: View {
     let title: String
     let symbol: String
     let tint: Color
-    let isOn: Bool
-    let action: () -> Void
+    @Binding var isOn: Bool
 
     var body: some View {
-        Button(action: action) {
-            Image(systemName: symbol)
-                .font(.system(size: 14, weight: .black))
-                .monospacedDigit()
-                .foregroundStyle(.white)
-                .frame(width: 36, height: 30)
-                .background {
-                    Capsule(style: .continuous)
+        Toggle(isOn: $isOn) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    tint.opacity(isOn ? 0.84 : 0.20),
-                                    tint.opacity(isOn ? 0.30 : 0.08),
-                                    Color.black.opacity(0.48)
+                                    tint.opacity(isOn ? 0.86 : 0.26),
+                                    tint.opacity(isOn ? 0.34 : 0.12),
+                                    Color.black.opacity(0.45)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
+
+                    Image(systemName: symbol)
+                        .font(.system(size: 15, weight: .black))
+                        .foregroundStyle(.white)
                 }
+                .frame(width: 38, height: 34)
                 .overlay {
-                    Capsule(style: .continuous)
-                        .stroke(tint.opacity(isOn ? 0.36 : 0.14), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(.white.opacity(0.18), lineWidth: 1)
                 }
+
+                Text(title.uppercased())
+                    .font(.caption.weight(.black))
+                    .tracking(0.8)
+                    .foregroundStyle(.white.opacity(0.74))
+
+                Spacer()
+            }
         }
-        .accessibilityLabel(title)
-        .accessibilityValue(isOn ? "On" : "Off")
-        .accessibilityHint("Double tap to toggle")
+        .toggleStyle(.switch)
+        .tint(tint)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .background {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.16, green: 0.17, blue: 0.18),
+                            Color(red: 0.05, green: 0.06, blue: 0.08),
+                            Color(red: 0.12, green: 0.09, blue: 0.07)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(tint.opacity(isOn ? 0.34 : 0.16), lineWidth: 1)
+        }
     }
 }
 
