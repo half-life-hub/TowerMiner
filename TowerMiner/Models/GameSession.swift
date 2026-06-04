@@ -8,11 +8,14 @@ final class GameSession {
     let rowBufferCount: Int
     let generator: MineGenerator
     let gemValue: Int
+    let dailyChallenge: DailyChallenge
 
     var tiles: [[MineTile]]
     var player: PlayerState
     var digPower: Int
     var isRunOver: Bool
+    var isDailyChallengeCompleted: Bool
+    var dailyChallengeCompletionID: Int
     var digFeedbackID: Int
     var movementFeedbackID: Int
     var bombFeedbackID: Int
@@ -30,15 +33,19 @@ final class GameSession {
         initialRowCount: Int = 24,
         visibleRowCount: Int = 12,
         rowBufferCount: Int = 12,
-        seed: UInt64 = UInt64.random(in: UInt64.min...UInt64.max)
+        seed: UInt64 = UInt64.random(in: UInt64.min...UInt64.max),
+        dailyChallenge: DailyChallenge = DailyChallenge.challenge()
     ) {
         self.columns = columns
         self.visibleRowCount = visibleRowCount
         self.rowBufferCount = rowBufferCount
         self.generator = MineGenerator(columns: columns, seed: seed)
         self.gemValue = 5 + (profile.gemValueLevel * 2)
+        self.dailyChallenge = dailyChallenge
         self.digPower = 1
         self.isRunOver = false
+        self.isDailyChallengeCompleted = false
+        self.dailyChallengeCompletionID = 0
         self.digFeedbackID = 0
         self.movementFeedbackID = 0
         self.bombFeedbackID = 0
@@ -202,7 +209,9 @@ final class GameSession {
             depth: currentDepth,
             coins: player.coins,
             gems: player.gems,
-            gemValue: gemValue
+            gemValue: gemValue,
+            completedDailyChallenge: isDailyChallengeCompleted ? dailyChallenge : nil,
+            dailyChallengeGemReward: isDailyChallengeCompleted ? dailyChallenge.gemReward : 0
         )
     }
 
@@ -248,6 +257,7 @@ final class GameSession {
     private func moveIntoClearedTile(at destination: GridPosition) {
         player.position = destination
         movementFeedbackID += 1
+        updateDailyChallengeProgress()
         resolveTileInteraction(at: destination)
         guard !isRunOver else {
             return
@@ -266,6 +276,8 @@ final class GameSession {
             }
 
             player.position = below
+            movementFeedbackID += 1
+            updateDailyChallengeProgress()
             resolveTileInteraction(at: below)
             guard !isRunOver else {
                 break
@@ -321,6 +333,16 @@ final class GameSession {
 
     private func recoverEnergy() {
         player.energy = min(player.maxEnergy, player.energy + 1)
+    }
+
+    private func updateDailyChallengeProgress() {
+        guard !isDailyChallengeCompleted, dailyChallenge.isCompleted(depth: currentDepth) else {
+            return
+        }
+
+        isDailyChallengeCompleted = true
+        dailyChallengeCompletionID += 1
+        rewardFeedbackID += 1
     }
 
     private func resolveTileInteraction(at position: GridPosition) {

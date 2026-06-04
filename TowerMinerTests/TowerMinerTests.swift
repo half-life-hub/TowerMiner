@@ -154,9 +154,42 @@ struct TowerMinerTests {
         let result = RunResult(depth: 20, coins: 12, gems: 3, gemValue: 5)
 
         #expect(result.coinPayout == 12)
+        #expect(result.totalGems == 3)
         #expect(result.gemPayout == 15)
         #expect(result.depthBonus == 10)
         #expect(result.totalPayout == 37)
+    }
+
+    @Test func dailyChallengeRewardAddsBonusGemsToPayout() {
+        let challenge = DailyChallenge(id: "test", title: "Test", goal: .reachDepth(10), reward: .gems(5))
+        let result = RunResult(depth: 10, coins: 0, gems: 2, gemValue: 5, completedDailyChallenge: challenge, dailyChallengeGemReward: 5)
+
+        #expect(result.totalGems == 7)
+        #expect(result.gemPayout == 35)
+        #expect(result.totalPayout == 40)
+    }
+
+    @Test func reachingDailyChallengeDepthCompletesOnce() {
+        let challenge = DailyChallenge(id: "test", title: "Test", goal: .reachDepth(3), reward: .gems(5))
+        let session = GameSession(profile: .default, seed: 9_137, dailyChallenge: challenge)
+        let column = session.player.position.column
+
+        for row in 2...4 {
+            session.tiles[row][column] = MineTile(type: .empty)
+        }
+
+        session.moveDown()
+        session.moveDown()
+        session.moveDown()
+
+        #expect(session.currentDepth >= 3)
+        #expect(session.isDailyChallengeCompleted)
+        #expect(session.dailyChallengeCompletionID == 1)
+        #expect(session.makeRunResult().dailyChallengeGemReward == 5)
+
+        session.moveDown()
+
+        #expect(session.dailyChallengeCompletionID == 1)
     }
 
     @Test func compactNumberFormattingKeepsLargeCreditValuesShort() {
@@ -184,6 +217,17 @@ struct TowerMinerTests {
         #expect(purchased)
         #expect(profile.maxHealthLevel == 1)
         #expect(profile.totalCredits == 0)
+    }
+
+    @Test func profileCountsDailyChallengeBonusGems() {
+        var profile = PlayerProfile.default
+        let challenge = DailyChallenge(id: "test", title: "Test", goal: .reachDepth(10), reward: .gems(5))
+        let result = RunResult(depth: 10, coins: 0, gems: 1, gemValue: 5, completedDailyChallenge: challenge, dailyChallengeGemReward: 5)
+
+        profile.apply(result)
+
+        #expect(profile.totalCredits == 35)
+        #expect(profile.lifetimeGemsCollected == 6)
     }
 
     @Test func profileDecodesLegacySaveWithDefaultFeedbackSettings() throws {

@@ -21,6 +21,9 @@ struct ResultsView: View {
                         if isNewBestDepth {
                             newBestDepthCard
                         }
+                        if result.completedDailyChallenge != nil {
+                            dailyChallengeCard
+                        }
                         totalPayoutCard
                         resultGrid
                         bankedCreditsCard
@@ -93,7 +96,7 @@ struct ResultsView: View {
                     .accessibilityValue(NumberFormatting.grouped(result.totalPayout))
             }
 
-            Text("Coins, gems, and depth bonus banked.")
+            Text(result.completedDailyChallenge == nil ? "Coins, gems, and depth bonus banked." : "Coins, gems, daily reward, and depth bonus banked.")
                 .font(.callout.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.68))
                 .multilineTextAlignment(.center)
@@ -167,6 +170,41 @@ struct ResultsView: View {
         .accessibilityValue("\(result.depth)")
     }
 
+    private var dailyChallengeCard: some View {
+        HStack(spacing: 12) {
+            ResultsGemIcon()
+                .frame(width: 42, height: 42)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("DAILY CHALLENGE")
+                    .font(.caption2.weight(.black))
+                    .tracking(1.1)
+                    .foregroundStyle(Color(red: 0.52, green: 0.94, blue: 0.86))
+                    .lineLimit(1)
+
+                Text(result.completedDailyChallenge?.rewardText ?? "")
+                    .font(.title3.weight(.black))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+
+            Spacer()
+        }
+        .padding(14)
+        .background {
+            ResultsPanel(cornerRadius: 18)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(Color(red: 0.52, green: 0.94, blue: 0.86).opacity(0.38), lineWidth: 1)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Daily challenge complete")
+        .accessibilityValue(result.completedDailyChallenge?.rewardText ?? "")
+    }
+
 
     private var resultGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
@@ -174,7 +212,7 @@ struct ResultsView: View {
                 ResultsCoinIcon()
             }
 
-            ResultStatCard(title: "Gems", value: "\(result.gems)", tint: Color(red: 0.52, green: 0.94, blue: 0.86)) {
+            ResultStatCard(title: "Gems", value: "\(result.totalGems)", tint: Color(red: 0.52, green: 0.94, blue: 0.86)) {
                 ResultsGemIcon()
             }
 

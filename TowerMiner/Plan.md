@@ -795,11 +795,11 @@ Testing checklist:
 - [ ] Verify high-contrast mode keeps hazards and resources visually distinct.
 - [ ] Verify VoiceOver names core buttons clearly.
 
-### 3. Daily Seed Challenge
+### 3. Daily Run Challenge
 
 Goal:
 
-- Add a lightweight reason to replay by giving every player the same daily mine layout.
+- Add a lightweight reason to replay by giving normal runs a rotating optional goal and reward.
 
 Version fit:
 
@@ -807,21 +807,24 @@ Version fit:
 
 Implementation checklist:
 
-- [ ] Add a `DailyChallenge` model with date, seed, run rules, and best local result.
-- [ ] Add deterministic seed generation based on local calendar date.
-- [ ] Add a daily challenge entry point on the home screen.
-- [ ] Start challenge runs from the daily seed instead of a random seed.
-- [ ] Keep challenge results separate from normal best-depth stats.
-- [ ] Decide whether upgrades apply to daily challenges or whether daily runs use fixed stats.
-- [ ] Add a daily results presentation showing depth, payout, and local best for the day.
-- [ ] Persist current-day best result and recent challenge history.
+- [x] Add a `DailyChallenge` model with rotating goal and reward definitions.
+- [x] Select the active challenge from the local calendar day.
+- [x] Show a bottom popup when a run starts with the active challenge goal and reward.
+- [x] Track challenge completion inside `GameSession`.
+- [x] Show a bottom achievement popup when the player completes the goal.
+- [x] Apply the challenge reward to the run result payout.
+- [x] Show completed challenge reward on the results screen.
+- [ ] Add more challenge goal types beyond depth targets.
+- [ ] Persist current-day completion so the same reward cannot be farmed repeatedly.
 
 Testing checklist:
 
-- [ ] Verify the same date produces the same seed.
-- [ ] Verify different dates produce different seeds.
-- [ ] Verify challenge runs do not overwrite normal run records incorrectly.
-- [ ] Manually verify the daily challenge resets on the next calendar day.
+- [x] Add tests for challenge reward payout math.
+- [x] Add tests for depth challenge completion.
+- [x] Add tests that challenge completion fires once.
+- [x] Add tests for profile payout accounting with challenge bonus gems.
+- [ ] Manually verify the start and completion popups animate from the bottom.
+- [ ] Manually verify the daily challenge rotates on the next calendar day.
 
 ### 4. Biomes With Unique Tile Tables
 

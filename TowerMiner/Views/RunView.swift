@@ -13,6 +13,8 @@ struct RunView: View {
     @State private var activeDigPosition: GridPosition?
     @State private var activeBlastPositions: Set<GridPosition> = []
     @State private var isPlacingBomb = false
+    @State private var isShowingDailyChallengeStart = false
+    @State private var isShowingDailyChallengeComplete = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -60,7 +62,12 @@ struct RunView: View {
                 if session.isRunOver {
                     runOverOverlay
                 }
+
+                dailyChallengeOverlay(width: contentWidth)
             }
+        }
+        .onAppear {
+            showDailyChallengeStartToast()
         }
         .onChange(of: session.digFeedbackID) {
             feedbackSystem.play(.dig, settings: feedbackSettings)
@@ -88,6 +95,9 @@ struct RunView: View {
         }
         .onChange(of: session.runOverFeedbackID) {
             feedbackSystem.play(.runOver, settings: feedbackSettings)
+        }
+        .onChange(of: session.dailyChallengeCompletionID) {
+            showDailyChallengeCompleteToast()
         }
         .onChange(of: session.visibleRowRange.lowerBound) { _, newTopRow in
             animateShaftScroll(to: newTopRow)
@@ -469,6 +479,65 @@ struct RunView: View {
         }
     }
 
+    private func dailyChallengeOverlay(width: CGFloat) -> some View {
+        VStack {
+            Spacer()
+
+            if isShowingDailyChallengeComplete {
+                DailyChallengeToast(
+                    title: "Challenge Complete",
+                    message: session.dailyChallenge.goalText,
+                    reward: session.dailyChallenge.rewardText,
+                    symbol: "checkmark.seal.fill",
+                    tint: Color(red: 0.52, green: 0.94, blue: 0.86)
+                )
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            } else if isShowingDailyChallengeStart {
+                DailyChallengeToast(
+                    title: "Daily Challenge",
+                    message: session.dailyChallenge.goalText,
+                    reward: session.dailyChallenge.rewardText,
+                    symbol: "calendar.badge.clock",
+                    tint: Color(red: 1.0, green: 0.78, blue: 0.23)
+                )
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .frame(width: width)
+        .padding(.bottom, 18)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .allowsHitTesting(false)
+        .animation(.spring(response: 0.38, dampingFraction: 0.82), value: isShowingDailyChallengeStart)
+        .animation(.spring(response: 0.38, dampingFraction: 0.82), value: isShowingDailyChallengeComplete)
+    }
+
+    private func showDailyChallengeStartToast() {
+        isShowingDailyChallengeStart = true
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(4))
+            withAnimation(.easeOut(duration: 0.24)) {
+                isShowingDailyChallengeStart = false
+            }
+        }
+    }
+
+    private func showDailyChallengeCompleteToast() {
+        guard session.dailyChallengeCompletionID > 0 else {
+            return
+        }
+
+        isShowingDailyChallengeStart = false
+        isShowingDailyChallengeComplete = true
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(4))
+            withAnimation(.easeOut(duration: 0.24)) {
+                isShowingDailyChallengeComplete = false
+            }
+        }
+    }
+
     private func chip(title: String, value: String, systemImage: String, tint: Color) -> some View {
         HStack(spacing: 5) {
             VStack(alignment: .leading, spacing: 2) {
@@ -787,6 +856,69 @@ private struct RunCashOutButtonStyle: ButtonStyle {
             .brightness(configuration.isPressed ? -0.06 : 0)
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
             .animation(.easeOut(duration: 0.14), value: configuration.isPressed)
+    }
+}
+
+private struct DailyChallengeToast: View {
+    let title: String
+    let message: String
+    let reward: String
+    let symbol: String
+    let tint: Color
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: symbol)
+                .font(.system(size: 20, weight: .black))
+                .foregroundStyle(.white)
+                .frame(width: 46, height: 46)
+                .background {
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [tint.opacity(0.88), tint.opacity(0.30), Color.black.opacity(0.42)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .stroke(.white.opacity(0.18), lineWidth: 1)
+                }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title.uppercased())
+                    .font(.caption.weight(.black))
+                    .tracking(0.8)
+                    .foregroundStyle(tint)
+                    .lineLimit(1)
+
+                Text(message)
+                    .font(.callout.weight(.black))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+
+                Text(reward)
+                    .font(.caption.weight(.black))
+                    .tracking(0.4)
+                    .foregroundStyle(.white.opacity(0.70))
+                    .lineLimit(1)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .background {
+            RunHUDPanel(cornerRadius: 20)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(tint.opacity(0.42), lineWidth: 1.2)
+        }
+        .shadow(color: .black.opacity(0.34), radius: 18, y: 10)
+        .padding(.horizontal, 18)
     }
 }
 

@@ -125,7 +125,7 @@ struct PlayerProfile: Codable, Equatable {
         totalRuns += 1
         lifetimeCreditsEarned += result.totalPayout
         lifetimeCoinsCollected += result.coins
-        lifetimeGemsCollected += result.gems
+        lifetimeGemsCollected += result.totalGems
     }
 
     mutating func purchase(_ upgrade: UpgradeID) -> Bool {
