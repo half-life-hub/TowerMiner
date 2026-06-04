@@ -64,7 +64,7 @@ struct HelpView: View {
 
                         HelpCard(
                             title: "Upgrade Between Runs",
-                            subtitle: "Bank your haul, return to the menu, and spend credits on stronger upgrades before the next descent."
+                            subtitle: "Bank your haul, return to the menu, and spend credits on stronger upgrades before the next descent. Rig Level is your total upgrade levels; Gem Value is the credits each gem is worth."
                         ) {
                             HStack(spacing: 12) {
                                 HelpSymbolIcon(symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
