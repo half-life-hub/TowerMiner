@@ -13,6 +13,7 @@ struct PlayerProfile: Codable, Equatable {
     var startingShieldsLevel: Int
     var gemValueLevel: Int
     var feedbackSettings: FeedbackSettings
+    var completedDailyChallengeKey: String?
 
     static let `default` = PlayerProfile(
         totalCredits: 0,
@@ -26,7 +27,8 @@ struct PlayerProfile: Codable, Equatable {
         startingBombsLevel: 0,
         startingShieldsLevel: 0,
         gemValueLevel: 0,
-        feedbackSettings: .default
+        feedbackSettings: .default,
+        completedDailyChallengeKey: nil
     )
 
     enum CodingKeys: String, CodingKey {
@@ -42,6 +44,7 @@ struct PlayerProfile: Codable, Equatable {
         case startingShieldsLevel
         case gemValueLevel
         case feedbackSettings
+        case completedDailyChallengeKey
     }
 
     init(
@@ -56,7 +59,8 @@ struct PlayerProfile: Codable, Equatable {
         startingBombsLevel: Int,
         startingShieldsLevel: Int,
         gemValueLevel: Int,
-        feedbackSettings: FeedbackSettings
+        feedbackSettings: FeedbackSettings,
+        completedDailyChallengeKey: String? = nil
     ) {
         self.totalCredits = totalCredits
         self.bestDepth = bestDepth
@@ -70,6 +74,7 @@ struct PlayerProfile: Codable, Equatable {
         self.startingShieldsLevel = startingShieldsLevel
         self.gemValueLevel = gemValueLevel
         self.feedbackSettings = feedbackSettings
+        self.completedDailyChallengeKey = completedDailyChallengeKey
     }
 
     init(from decoder: Decoder) throws {
@@ -88,6 +93,7 @@ struct PlayerProfile: Codable, Equatable {
         self.startingShieldsLevel = try container.decodeIfPresent(Int.self, forKey: .startingShieldsLevel) ?? 0
         self.gemValueLevel = try container.decodeIfPresent(Int.self, forKey: .gemValueLevel) ?? 0
         self.feedbackSettings = try container.decodeIfPresent(FeedbackSettings.self, forKey: .feedbackSettings) ?? .default
+        self.completedDailyChallengeKey = try container.decodeIfPresent(String.self, forKey: .completedDailyChallengeKey)
 
         if decodedTotalRuns == nil, hasAnyLegacyProgress {
             self.totalRuns = 1
@@ -126,6 +132,23 @@ struct PlayerProfile: Codable, Equatable {
         lifetimeCreditsEarned += result.totalPayout
         lifetimeCoinsCollected += result.coins
         lifetimeGemsCollected += result.totalGems
+
+        if let completedDailyChallenge = result.completedDailyChallenge {
+            markDailyChallengeCompleted(completedDailyChallenge)
+        }
+    }
+
+    func activeDailyChallenge(for date: Date = Date(), calendar: Calendar = .current) -> DailyChallenge? {
+        let challenge = DailyChallenge.challenge(for: date, calendar: calendar)
+        guard completedDailyChallengeKey != challenge.completionKey(for: date, calendar: calendar) else {
+            return nil
+        }
+
+        return challenge
+    }
+
+    mutating func markDailyChallengeCompleted(_ challenge: DailyChallenge, date: Date = Date(), calendar: Calendar = .current) {
+        completedDailyChallengeKey = challenge.completionKey(for: date, calendar: calendar)
     }
 
     mutating func purchase(_ upgrade: UpgradeID) -> Bool {

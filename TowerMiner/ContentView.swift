@@ -17,7 +17,7 @@ final class AppModel {
     }
 
     func startRun() {
-        activeSession = GameSession(profile: playerProfile)
+        activeSession = GameSession(profile: playerProfile, dailyChallenge: playerProfile.activeDailyChallenge())
         lastRunWasNewBestDepth = false
         currentScreen = .run
     }
@@ -42,6 +42,11 @@ final class AppModel {
         playerProfile.apply(result)
         persistProfile()
         currentScreen = .results
+    }
+
+    func completeDailyChallenge(_ challenge: DailyChallenge) {
+        playerProfile.markDailyChallengeCompleted(challenge)
+        persistProfile()
     }
 
     func purchaseUpgrade(_ upgrade: UpgradeID) -> Bool {
@@ -137,6 +142,7 @@ struct ContentView: View {
                             feedbackSystem: feedbackSystem,
                             feedbackSettings: appModel.playerProfile.feedbackSettings,
                             onBackToMenu: appModel.showHome,
+                            onDailyChallengeCompleted: appModel.completeDailyChallenge,
                             onFinishRun: appModel.finishRun
                         )
                     } else {

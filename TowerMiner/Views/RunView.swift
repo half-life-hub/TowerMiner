@@ -5,6 +5,7 @@ struct RunView: View {
     let feedbackSystem: GameFeedbackSystem
     let feedbackSettings: FeedbackSettings
     let onBackToMenu: () -> Void
+    let onDailyChallengeCompleted: (DailyChallenge) -> Void
     let onFinishRun: (RunResult) -> Void
 
     @State private var damageShake = 0
@@ -97,6 +98,10 @@ struct RunView: View {
             feedbackSystem.play(.runOver, settings: feedbackSettings)
         }
         .onChange(of: session.dailyChallengeCompletionID) {
+            if let dailyChallenge = session.dailyChallenge, session.dailyChallengeCompletionID > 0 {
+                onDailyChallengeCompleted(dailyChallenge)
+            }
+
             showDailyChallengeCompleteToast()
         }
         .onChange(of: session.visibleRowRange.lowerBound) { _, newTopRow in
@@ -483,20 +488,20 @@ struct RunView: View {
         VStack {
             Spacer()
 
-            if isShowingDailyChallengeComplete {
+            if isShowingDailyChallengeComplete, let dailyChallenge = session.dailyChallenge {
                 DailyChallengeToast(
                     title: "Challenge Complete",
-                    message: session.dailyChallenge.goalText,
-                    reward: session.dailyChallenge.rewardText,
+                    message: dailyChallenge.goalText,
+                    reward: dailyChallenge.rewardText,
                     symbol: "checkmark.seal.fill",
                     tint: Color(red: 0.52, green: 0.94, blue: 0.86)
                 )
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-            } else if isShowingDailyChallengeStart {
+            } else if isShowingDailyChallengeStart, let dailyChallenge = session.dailyChallenge {
                 DailyChallengeToast(
                     title: "Daily Challenge",
-                    message: session.dailyChallenge.goalText,
-                    reward: session.dailyChallenge.rewardText,
+                    message: dailyChallenge.goalText,
+                    reward: dailyChallenge.rewardText,
                     symbol: "calendar.badge.clock",
                     tint: Color(red: 1.0, green: 0.78, blue: 0.23)
                 )
@@ -512,6 +517,10 @@ struct RunView: View {
     }
 
     private func showDailyChallengeStartToast() {
+        guard session.dailyChallenge != nil else {
+            return
+        }
+
         isShowingDailyChallengeStart = true
 
         Task { @MainActor in
@@ -523,7 +532,7 @@ struct RunView: View {
     }
 
     private func showDailyChallengeCompleteToast() {
-        guard session.dailyChallengeCompletionID > 0 else {
+        guard session.dailyChallenge != nil, session.dailyChallengeCompletionID > 0 else {
             return
         }
 
@@ -1342,6 +1351,7 @@ private struct ProceduralSparkleIcon: Shape {
         feedbackSystem: GameFeedbackSystem(),
         feedbackSettings: .default,
         onBackToMenu: {},
+        onDailyChallengeCompleted: { _ in },
         onFinishRun: { _ in }
     )
 }

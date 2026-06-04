@@ -42,9 +42,21 @@ struct DailyChallenge: Equatable {
         }
     }
 
+    func completionKey(for date: Date = Date(), calendar: Calendar = .current) -> String {
+        "\(Self.dayKey(for: date, calendar: calendar)):\(id)"
+    }
+
     static func challenge(for date: Date = Date(), calendar: Calendar = .current) -> DailyChallenge {
         let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
         return rotation[day % rotation.count]
+    }
+
+    static func dayKey(for date: Date = Date(), calendar: Calendar = .current) -> String {
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        let year = components.year ?? 0
+        let month = components.month ?? 0
+        let day = components.day ?? 0
+        return String(format: "%04d-%02d-%02d", year, month, day)
     }
 
     private static let rotation = [

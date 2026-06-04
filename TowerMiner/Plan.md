@@ -815,7 +815,7 @@ Implementation checklist:
 - [x] Apply the challenge reward to the run result payout.
 - [x] Show completed challenge reward on the results screen.
 - [ ] Add more challenge goal types beyond depth targets.
-- [ ] Persist current-day completion so the same reward cannot be farmed repeatedly.
+- [x] Persist current-day completion so the same reward cannot be farmed repeatedly.
 
 Testing checklist:
 

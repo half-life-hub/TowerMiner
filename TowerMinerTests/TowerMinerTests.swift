@@ -228,6 +228,43 @@ struct TowerMinerTests {
 
         #expect(profile.totalCredits == 35)
         #expect(profile.lifetimeGemsCollected == 6)
+        #expect(profile.completedDailyChallengeKey == challenge.completionKey())
+        #expect(profile.activeDailyChallenge() != nil)
+    }
+
+    @Test func profileHidesCompletedChallengeForSameDay() {
+        var profile = PlayerProfile.default
+        let date = Date(timeIntervalSince1970: 1_800_000_000)
+        let calendar = Calendar(identifier: .gregorian)
+        let challenge = DailyChallenge.challenge(for: date, calendar: calendar)
+
+        profile.markDailyChallengeCompleted(challenge, date: date, calendar: calendar)
+
+        #expect(profile.activeDailyChallenge(for: date, calendar: calendar) == nil)
+        #expect(profile.activeDailyChallenge(for: date.addingTimeInterval(86_400), calendar: calendar) != nil)
+    }
+
+    @Test func appStartsRunWithoutDailyChallengeAfterTodayIsCompleted() {
+        let defaults = UserDefaults(suiteName: "TowerMinerTests.appStartsRunWithoutDailyChallengeAfterTodayIsCompleted")!
+        defaults.removeObject(forKey: "towerminer.playerProfile")
+        let appModel = AppModel(profileStore: ProfileStore(defaults: defaults))
+        let challenge = DailyChallenge.challenge()
+
+        appModel.playerProfile.markDailyChallengeCompleted(challenge)
+        appModel.startRun()
+
+        #expect(appModel.activeSession?.dailyChallenge == nil)
+    }
+
+    @Test func appMarksDailyChallengeCompleteBeforeResultsScreen() {
+        let defaults = UserDefaults(suiteName: "TowerMinerTests.appMarksDailyChallengeCompleteBeforeResultsScreen")!
+        defaults.removeObject(forKey: "towerminer.playerProfile")
+        let appModel = AppModel(profileStore: ProfileStore(defaults: defaults))
+        let challenge = DailyChallenge.challenge()
+
+        appModel.completeDailyChallenge(challenge)
+
+        #expect(appModel.playerProfile.activeDailyChallenge() == nil)
     }
 
     @Test func profileDecodesLegacySaveWithDefaultFeedbackSettings() throws {

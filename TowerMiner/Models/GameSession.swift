@@ -8,7 +8,7 @@ final class GameSession {
     let rowBufferCount: Int
     let generator: MineGenerator
     let gemValue: Int
-    let dailyChallenge: DailyChallenge
+    let dailyChallenge: DailyChallenge?
 
     var tiles: [[MineTile]]
     var player: PlayerState
@@ -34,7 +34,7 @@ final class GameSession {
         visibleRowCount: Int = 12,
         rowBufferCount: Int = 12,
         seed: UInt64 = UInt64.random(in: UInt64.min...UInt64.max),
-        dailyChallenge: DailyChallenge = DailyChallenge.challenge()
+        dailyChallenge: DailyChallenge? = nil
     ) {
         self.columns = columns
         self.visibleRowCount = visibleRowCount
@@ -211,7 +211,7 @@ final class GameSession {
             gems: player.gems,
             gemValue: gemValue,
             completedDailyChallenge: isDailyChallengeCompleted ? dailyChallenge : nil,
-            dailyChallengeGemReward: isDailyChallengeCompleted ? dailyChallenge.gemReward : 0
+            dailyChallengeGemReward: isDailyChallengeCompleted ? dailyChallenge?.gemReward ?? 0 : 0
         )
     }
 
@@ -336,6 +336,10 @@ final class GameSession {
     }
 
     private func updateDailyChallengeProgress() {
+        guard let dailyChallenge else {
+            return
+        }
+
         guard !isDailyChallengeCompleted, dailyChallenge.isCompleted(depth: currentDepth) else {
             return
         }
