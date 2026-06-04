@@ -244,6 +244,22 @@ struct TowerMinerTests {
         #expect(profile.activeDailyChallenge(for: date.addingTimeInterval(86_400), calendar: calendar) != nil)
     }
 
+    @Test func dailyChallengeChangesOnConsecutiveDays() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "Australia/Adelaide"))
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateFormat = "yyyy-MM-dd"
+        let juneFourth = try #require(formatter.date(from: "2026-06-04"))
+        let juneFifth = try #require(formatter.date(from: "2026-06-05"))
+
+        let firstChallenge = DailyChallenge.challenge(for: juneFourth, calendar: calendar)
+        let nextChallenge = DailyChallenge.challenge(for: juneFifth, calendar: calendar)
+
+        #expect(firstChallenge.id != nextChallenge.id)
+    }
+
     @Test func appStartsRunWithoutDailyChallengeAfterTodayIsCompleted() {
         let defaults = UserDefaults(suiteName: "TowerMinerTests.appStartsRunWithoutDailyChallengeAfterTodayIsCompleted")!
         defaults.removeObject(forKey: "towerminer.playerProfile")
