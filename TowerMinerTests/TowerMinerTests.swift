@@ -260,6 +260,25 @@ struct TowerMinerTests {
         #expect(firstChallenge.id != nextChallenge.id)
     }
 
+    @Test func dailyChallengeRotationHasAtLeastTenChallenges() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "Australia/Adelaide"))
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateFormat = "yyyy-MM-dd"
+        let startDate = try #require(formatter.date(from: "2026-06-01"))
+        let challenges = (0..<10).compactMap { dayOffset in
+            calendar.date(byAdding: .day, value: dayOffset, to: startDate)
+        }.map { date in
+            DailyChallenge.challenge(for: date, calendar: calendar)
+        }
+        let uniqueChallengeIDs = Set(challenges.map(\.id))
+
+        #expect(DailyChallenge.rotationCount >= 10)
+        #expect(uniqueChallengeIDs.count == 10)
+    }
+
     @Test func appStartsRunWithoutDailyChallengeAfterTodayIsCompleted() {
         let defaults = UserDefaults(suiteName: "TowerMinerTests.appStartsRunWithoutDailyChallengeAfterTodayIsCompleted")!
         defaults.removeObject(forKey: "towerminer.playerProfile")
