@@ -64,13 +64,41 @@ struct HelpView: View {
 
                         HelpCard(
                             title: "Upgrade Between Runs",
-                            subtitle: "Bank your haul, return to the menu, and spend credits on stronger upgrades before the next descent. Rig Level is your total upgrade levels; Gem Value is the credits each gem is worth."
+                            subtitle: "Bank your haul, return to the menu, and spend credits on stronger upgrades before the next descent."
                         ) {
                             HStack(spacing: 12) {
                                 HelpSymbolIcon(symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
                                 HelpSymbolIcon(symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
                                 HelpSymbolIcon(symbol: "heart.fill", tint: Color(red: 1.0, green: 0.32, blue: 0.28))
                             }
+                        }
+
+                        HelpCard(
+                            title: "Credits",
+                            subtitle: "Credits are your banked currency. Spend them on upgrades between runs."
+                        ) {
+                            HelpSymbolIcon(symbol: "creditcard.fill", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
+                        }
+
+                        HelpCard(
+                            title: "Best Depth",
+                            subtitle: "Best Depth is the deepest point you have reached across all normal runs."
+                        ) {
+                            HelpSymbolIcon(symbol: "arrow.down.to.line.compact", tint: Color(red: 0.52, green: 0.94, blue: 0.86))
+                        }
+
+                        HelpCard(
+                            title: "Rig Level",
+                            subtitle: "Rig Level is the total number of upgrade levels you have bought."
+                        ) {
+                            HelpSymbolIcon(symbol: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.0))
+                        }
+
+                        HelpCard(
+                            title: "Gem Value",
+                            subtitle: "Gem Value is how many credits each gem is worth when a run pays out."
+                        ) {
+                            HelpSymbolIcon(symbol: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.0))
                         }
                     }
                     .frame(width: contentWidth)
