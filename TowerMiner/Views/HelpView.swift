@@ -75,7 +75,8 @@ struct HelpView: View {
 
                         HelpCard(
                             title: "Home Stats",
-                            subtitle: "These numbers show your saved progress between runs."
+                            subtitle: "These numbers show your saved progress between runs.",
+                            showsPanelTexture: false
                         ) {
                             VStack(spacing: 10) {
                                 HelpStatRow(symbol: "creditcard.fill", title: "Credits", detail: "Banked currency for upgrades.", tint: Color(red: 1.0, green: 0.78, blue: 0.23))
@@ -140,11 +141,13 @@ struct HelpView: View {
 private struct HelpCard<Content: View>: View {
     let title: String
     let subtitle: String
+    let showsPanelTexture: Bool
     let content: Content
 
-    init(title: String, subtitle: String, @ViewBuilder content: () -> Content) {
+    init(title: String, subtitle: String, showsPanelTexture: Bool = true, @ViewBuilder content: () -> Content) {
         self.title = title
         self.subtitle = subtitle
+        self.showsPanelTexture = showsPanelTexture
         self.content = content()
     }
 
@@ -170,11 +173,13 @@ private struct HelpCard<Content: View>: View {
         .padding(.vertical, 16)
         .background {
             ZStack {
-                Image("panel_hud")
-                    .resizable()
-                    .scaledToFill()
-                    .opacity(0.62)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                if showsPanelTexture {
+                    Image("panel_hud")
+                        .resizable()
+                        .scaledToFill()
+                        .opacity(0.62)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
 
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(
@@ -312,16 +317,7 @@ private struct HelpStatRow: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.black.opacity(0.22))
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
-        }
+        .padding(.vertical, 4)
     }
 }
 
