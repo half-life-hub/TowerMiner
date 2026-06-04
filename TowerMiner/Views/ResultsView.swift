@@ -11,6 +11,7 @@ struct ResultsView: View {
     var body: some View {
         GeometryReader { geometry in
             let contentWidth = min(geometry.size.width - 32, 680)
+            let bottomScrollPadding = max(geometry.safeAreaInsets.bottom + 96, 120)
 
             ZStack {
                 ResultsBackground()
@@ -30,7 +31,8 @@ struct ResultsView: View {
                         actionButtons
                     }
                     .frame(width: contentWidth)
-                    .padding(.vertical, 24)
+                    .padding(.top, 24)
+                    .padding(.bottom, bottomScrollPadding)
                     .frame(maxWidth: .infinity)
                 }
                 .scrollIndicators(.hidden)
