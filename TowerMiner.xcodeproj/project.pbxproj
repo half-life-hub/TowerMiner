@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5A701BE73023EB010021BE23 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A701BE63023EB010021BE23 /* WidgetKit.framework */; };
+		5A701BE93023EB010021BE23 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A701BE83023EB010021BE23 /* SwiftUI.framework */; };
+		5A701BF63023EB020021BE23 /* TowerMinerWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5A701BE43023EB010021BE23 /* TowerMinerWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5A373FF92FAC2C60000F55C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,13 +27,47 @@
 			remoteGlobalIDString = 5A373FE82FAC2C5F000F55C2;
 			remoteInfo = TowerMiner;
 		};
+		5A701BF43023EB020021BE23 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5A373FE12FAC2C5F000F55C2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5A701BE33023EB010021BE23;
+			remoteInfo = TowerMinerWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5A701BF73023EB020021BE23 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5A701BF63023EB020021BE23 /* TowerMinerWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5A373FE92FAC2C5F000F55C2 /* TowerMiner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TowerMiner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A373FF82FAC2C60000F55C2 /* TowerMinerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TowerMinerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A3740022FAC2C60000F55C2 /* TowerMinerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TowerMinerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A701BE43023EB010021BE23 /* TowerMinerWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TowerMinerWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A701BE63023EB010021BE23 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5A701BE83023EB010021BE23 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5A701BFA3023EB020021BE23 /* Exceptions for "TowerMinerWidget" folder in "TowerMinerWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5A701BE33023EB010021BE23 /* TowerMinerWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5A373FEB2FAC2C5F000F55C2 /* TowerMiner */ = {
@@ -43,6 +83,14 @@
 		5A3740052FAC2C60000F55C2 /* TowerMinerUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TowerMinerUITests;
+			sourceTree = "<group>";
+		};
+		5A701BEA3023EB010021BE23 /* TowerMinerWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5A701BFA3023EB020021BE23 /* Exceptions for "TowerMinerWidget" folder in "TowerMinerWidgetExtension" target */,
+			);
+			path = TowerMinerWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +117,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5A701BE13023EB010021BE23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A701BE93023EB010021BE23 /* SwiftUI.framework in Frameworks */,
+				5A701BE73023EB010021BE23 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +135,8 @@
 				5A373FEB2FAC2C5F000F55C2 /* TowerMiner */,
 				5A373FFB2FAC2C60000F55C2 /* TowerMinerTests */,
 				5A3740052FAC2C60000F55C2 /* TowerMinerUITests */,
+				5A701BEA3023EB010021BE23 /* TowerMinerWidget */,
+				5A701BE53023EB010021BE23 /* Frameworks */,
 				5A373FEA2FAC2C5F000F55C2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,8 +147,18 @@
 				5A373FE92FAC2C5F000F55C2 /* TowerMiner.app */,
 				5A373FF82FAC2C60000F55C2 /* TowerMinerTests.xctest */,
 				5A3740022FAC2C60000F55C2 /* TowerMinerUITests.xctest */,
+				5A701BE43023EB010021BE23 /* TowerMinerWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5A701BE53023EB010021BE23 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5A701BE63023EB010021BE23 /* WidgetKit.framework */,
+				5A701BE83023EB010021BE23 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,10 +171,12 @@
 				5A373FE52FAC2C5F000F55C2 /* Sources */,
 				5A373FE62FAC2C5F000F55C2 /* Frameworks */,
 				5A373FE72FAC2C5F000F55C2 /* Resources */,
+				5A701BF73023EB020021BE23 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5A701BF53023EB020021BE23 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5A373FEB2FAC2C5F000F55C2 /* TowerMiner */,
@@ -163,6 +234,28 @@
 			productReference = 5A3740022FAC2C60000F55C2 /* TowerMinerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		5A701BE33023EB010021BE23 /* TowerMinerWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A701BFB3023EB020021BE23 /* Build configuration list for PBXNativeTarget "TowerMinerWidgetExtension" */;
+			buildPhases = (
+				5A701BE03023EB010021BE23 /* Sources */,
+				5A701BE13023EB010021BE23 /* Frameworks */,
+				5A701BE23023EB010021BE23 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5A701BEA3023EB010021BE23 /* TowerMinerWidget */,
+			);
+			name = TowerMinerWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = TowerMinerWidgetExtension;
+			productReference = 5A701BE43023EB010021BE23 /* TowerMinerWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -170,7 +263,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2640;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					5A373FE82FAC2C5F000F55C2 = {
@@ -183,6 +276,9 @@
 					5A3740012FAC2C60000F55C2 = {
 						CreatedOnToolsVersion = 26.4.1;
 						TestTargetID = 5A373FE82FAC2C5F000F55C2;
+					};
+					5A701BE33023EB010021BE23 = {
+						CreatedOnToolsVersion = 26.6;
 					};
 				};
 			};
@@ -203,6 +299,7 @@
 				5A373FE82FAC2C5F000F55C2 /* TowerMiner */,
 				5A373FF72FAC2C60000F55C2 /* TowerMinerTests */,
 				5A3740012FAC2C60000F55C2 /* TowerMinerUITests */,
+				5A701BE33023EB010021BE23 /* TowerMinerWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +320,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5A3740002FAC2C60000F55C2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5A701BE23023EB010021BE23 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +357,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5A701BE03023EB010021BE23 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +376,11 @@
 			isa = PBXTargetDependency;
 			target = 5A373FE82FAC2C5F000F55C2 /* TowerMiner */;
 			targetProxy = 5A3740032FAC2C60000F55C2 /* PBXContainerItemProxy */;
+		};
+		5A701BF53023EB020021BE23 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5A701BE33023EB010021BE23 /* TowerMinerWidgetExtension */;
+			targetProxy = 5A701BF43023EB020021BE23 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -542,6 +658,68 @@
 			};
 			name = Release;
 		};
+		5A701BF83023EB020021BE23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6PS3DV33C4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TowerMinerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TowerMinerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = tower.miner.au.TowerMiner.TowerMinerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5A701BF93023EB020021BE23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6PS3DV33C4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TowerMinerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TowerMinerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = tower.miner.au.TowerMiner.TowerMinerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -577,6 +755,15 @@
 			buildConfigurations = (
 				5A3740132FAC2C60000F55C2 /* Debug */,
 				5A3740142FAC2C60000F55C2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5A701BFB3023EB020021BE23 /* Build configuration list for PBXNativeTarget "TowerMinerWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5A701BF83023EB020021BE23 /* Debug */,
+				5A701BF93023EB020021BE23 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
