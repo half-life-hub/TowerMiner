@@ -22,6 +22,23 @@ final class AppModel {
         currentScreen = .run
     }
 
+    func handleDeepLink(_ url: URL) {
+        guard url.scheme == "towerminer" else {
+            return
+        }
+
+        switch url.host {
+        case "daily-challenge", "start-run":
+            startRun()
+        case "upgrades":
+            showUpgrades()
+        case "home":
+            showHome()
+        default:
+            break
+        }
+    }
+
     func showHome() {
         activeSession = nil
         currentScreen = .home
@@ -192,6 +209,10 @@ struct ContentView: View {
             withAnimation(.easeOut(duration: 0.35)) {
                 isShowingSplash = false
             }
+        }
+        .onOpenURL { url in
+            isShowingSplash = false
+            appModel.handleDeepLink(url)
         }
         .animation(.spring(response: 0.42, dampingFraction: 0.86), value: appModel.currentScreen)
     }
