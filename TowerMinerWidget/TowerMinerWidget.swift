@@ -558,15 +558,7 @@ struct TowerMinerWidgetEntryView: View {
     }
 
     private var mineBackground: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.02, green: 0.03, blue: 0.05),
-                Color(red: 0.08, green: 0.05, blue: 0.08),
-                Color(red: 0.13, green: 0.07, blue: 0.04)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        WidgetMineBackground()
     }
 
     private func tileColor(row: Int, column: Int) -> Color {
@@ -630,11 +622,28 @@ struct TowerMinerWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             TowerMinerWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) {
+                    WidgetMineBackground()
+                }
         }
         .configurationDisplayName("Tower Miner")
         .description("Track progress, today's challenge, and the next rig upgrade.")
         .supportedFamilies([.systemMedium, .systemLarge])
+        .contentMarginsDisabled()
+    }
+}
+
+private struct WidgetMineBackground: View {
+    var body: some View {
+        LinearGradient(
+            colors: [
+                Color(red: 0.02, green: 0.03, blue: 0.05),
+                Color(red: 0.08, green: 0.05, blue: 0.08),
+                Color(red: 0.13, green: 0.07, blue: 0.04)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 
