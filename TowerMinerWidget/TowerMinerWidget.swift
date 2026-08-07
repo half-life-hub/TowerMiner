@@ -379,8 +379,8 @@ struct TowerMinerWidgetEntryView: View {
     private var largeLayout: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
-                statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
-                statBar(title: "Best Depth", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
+                statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23), iconSize: 34, verticalPadding: 12)
+                statBar(title: "Best Depth", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86), iconSize: 34, verticalPadding: 12)
             }
 
             largeChallengePanel
