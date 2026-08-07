@@ -368,7 +368,6 @@ struct TowerMinerWidgetEntryView: View {
             HStack(spacing: 7) {
                 statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
                 statBar(title: "Best", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
-                iconLink(systemImage: "arrow.down.circle.fill", destination: .startChallenge)
             }
 
             challengePanel(isCompact: true)
@@ -381,8 +380,6 @@ struct TowerMinerWidgetEntryView: View {
             HStack(spacing: 8) {
                 statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
                 statBar(title: "Best Depth", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
-                iconLink(systemImage: "wrench.and.screwdriver.fill", destination: .upgrades)
-                iconLink(systemImage: "arrow.down.circle.fill", destination: .startChallenge)
             }
 
             largeChallengePanel
@@ -585,16 +582,6 @@ struct TowerMinerWidgetEntryView: View {
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity, alignment: .leading)
         .widgetPanel(tint: tint)
-    }
-
-    private func iconLink(systemImage: String, destination: WidgetDeepLink) -> some View {
-        Link(destination: destination.url) {
-            Image(systemName: systemImage)
-                .font(.system(size: 14, weight: .black))
-                .foregroundStyle(.black)
-                .frame(width: 31, height: 31)
-                .background(Color(red: 0.51, green: 0.94, blue: 0.86), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        }
     }
 
     private var mineBackground: some View {
