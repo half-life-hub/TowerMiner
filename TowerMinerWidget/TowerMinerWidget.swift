@@ -377,7 +377,7 @@ struct TowerMinerWidgetEntryView: View {
     }
 
     private var largeLayout: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
                 statBar(title: "Best Depth", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
@@ -385,15 +385,12 @@ struct TowerMinerWidgetEntryView: View {
                 iconLink(systemImage: "arrow.down.circle.fill", destination: .startChallenge)
             }
 
-            HStack(alignment: .top, spacing: 10) {
-                challengePanel(isCompact: false)
-                    .frame(maxWidth: .infinity)
+            largeChallengePanel
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                upgradePanel
-                    .frame(width: 150)
-            }
+            largeUpgradePanel
         }
-        .padding(12)
+        .padding(14)
     }
 
     private func challengePanel(isCompact: Bool) -> some View {
@@ -464,6 +461,86 @@ struct TowerMinerWidgetEntryView: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 9)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .widgetPanel(tint: Color(red: 1.00, green: 0.78, blue: 0.23))
+    }
+
+    private var largeChallengePanel: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 9) {
+                Image(systemName: entry.isChallengeComplete ? "checkmark.seal.fill" : "calendar.badge.clock")
+                    .font(.system(size: 20, weight: .black))
+                    .foregroundStyle(entry.isChallengeComplete ? Color(red: 0.62, green: 0.96, blue: 0.46) : Color(red: 0.92, green: 0.63, blue: 1.00))
+
+                Text("Daily Challenge")
+                    .font(.caption.weight(.black))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .textCase(.uppercase)
+                    .lineLimit(1)
+
+                Spacer(minLength: 8)
+
+                Text(entry.challenge.rewardText)
+                    .font(.headline.weight(.black))
+                    .foregroundStyle(Color(red: 0.47, green: 0.92, blue: 1.00))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+
+            VStack(spacing: 6) {
+                Text(entry.challenge.title)
+                    .font(.system(size: 30, weight: .black, design: .rounded))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.62)
+
+                Text(entry.isChallengeComplete ? "Completed today" : entry.challenge.goalText)
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.68))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .widgetPanel(tint: Color(red: 0.92, green: 0.63, blue: 1.00))
+    }
+
+    private var largeUpgradePanel: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "hammer.fill")
+                .font(.system(size: 18, weight: .black))
+                .foregroundStyle(Color(red: 1.00, green: 0.78, blue: 0.23))
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.upgradeRecommendation.title)
+                    .font(.subheadline.weight(.black))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+
+                Text(entry.upgradeRecommendation.statusText)
+                    .font(.caption2.weight(.black))
+                    .foregroundStyle(entry.upgradeRecommendation.isAffordable ? Color(red: 0.62, green: 0.96, blue: 0.46) : .white.opacity(0.58))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+
+            Spacer(minLength: 8)
+
+            Text("\(WidgetNumberFormatting.compact(entry.upgradeRecommendation.cost)) cr")
+                .font(.headline.weight(.black))
+                .monospacedDigit()
+                .foregroundStyle(Color(red: 1.00, green: 0.78, blue: 0.23))
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
         .widgetPanel(tint: Color(red: 1.00, green: 0.78, blue: 0.23))
     }
 
