@@ -361,6 +361,7 @@ struct TowerMinerWidgetEntryView: View {
                 mediumLayout
             }
         }
+        .widgetURL(WidgetDeepLink.startChallenge.url)
     }
 
     private var mediumLayout: some View {
