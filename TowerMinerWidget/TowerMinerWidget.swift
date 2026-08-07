@@ -365,15 +365,15 @@ struct TowerMinerWidgetEntryView: View {
     }
 
     private var mediumLayout: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 7) {
-                statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
-                statBar(title: "Best", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
+                statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23), iconSize: 30, verticalPadding: 10)
+                statBar(title: "Best", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86), iconSize: 30, verticalPadding: 10)
             }
 
             challengePanel(isCompact: true)
         }
-        .padding(10)
+        .padding(12)
     }
 
     private var largeLayout: some View {
@@ -427,7 +427,7 @@ struct TowerMinerWidgetEntryView: View {
             }
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, isCompact ? 8 : 11)
+        .padding(.vertical, isCompact ? 13 : 11)
         .widgetPanel(tint: Color(red: 0.92, green: 0.63, blue: 1.00))
     }
 
@@ -542,7 +542,7 @@ struct TowerMinerWidgetEntryView: View {
         .widgetPanel(tint: Color(red: 1.00, green: 0.78, blue: 0.23))
     }
 
-    private func statBar(title: String, value: String, systemImage: String, tint: Color) -> some View {
+    private func statBar(title: String, value: String, systemImage: String, tint: Color, iconSize: CGFloat = 28, verticalPadding: CGFloat = 6) -> some View {
         HStack(spacing: 6) {
             ZStack {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -562,7 +562,7 @@ struct TowerMinerWidgetEntryView: View {
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(.white)
             }
-            .frame(width: 28, height: 26)
+            .frame(width: iconSize, height: iconSize - 2)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(value)
@@ -580,7 +580,7 @@ struct TowerMinerWidgetEntryView: View {
             }
         }
         .padding(.horizontal, 7)
-        .padding(.vertical, 6)
+        .padding(.vertical, verticalPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .widgetPanel(tint: tint)
     }
@@ -651,18 +651,18 @@ private struct WidgetPanelModifier: ViewModifier {
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    tint.opacity(0.70),
-                                    tint.opacity(0.18),
+                                    tint.opacity(0.78),
+                                    tint.opacity(0.26),
                                     .clear
                                 ],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
-                        .frame(height: 4)
-                        .padding(.horizontal, 12)
-                        .padding(.top, 6)
-                        .frame(maxHeight: .infinity, alignment: .top)
+                        .frame(height: 3)
+                        .padding(.horizontal, 10)
+                        .padding(.top, 3)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 }
             }
             .overlay {
