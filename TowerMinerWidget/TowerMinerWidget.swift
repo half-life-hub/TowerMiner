@@ -364,91 +364,66 @@ struct TowerMinerWidgetEntryView: View {
     }
 
     private var mediumLayout: some View {
-        HStack(alignment: .top, spacing: 14) {
-            VStack(alignment: .leading, spacing: 12) {
-                progressHeader
-                challengePanel(isCompact: true)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 7) {
+                statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
+                statBar(title: "Best", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
+                iconLink(systemImage: "arrow.down.circle.fill", destination: .startChallenge)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            VStack(alignment: .leading, spacing: 10) {
-                upgradePanel(isCompact: true)
-                deepLinkButton(title: "Start", systemImage: "arrow.down.circle.fill", destination: .startChallenge)
-            }
-            .frame(width: 122, alignment: .leading)
+            challengePanel(isCompact: true)
         }
-        .padding(16)
+        .padding(10)
     }
 
     private var largeLayout: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            HStack(alignment: .top, spacing: 12) {
-                progressHeader
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                upgradePanel(isCompact: false)
-                    .frame(width: 152, alignment: .leading)
-            }
-
-            challengePanel(isCompact: false)
-
-            HStack(spacing: 10) {
-                deepLinkButton(title: "Start Challenge", systemImage: "arrow.down.circle.fill", destination: .startChallenge)
-                deepLinkButton(title: "Upgrade Rig", systemImage: "wrench.and.screwdriver.fill", destination: .upgrades)
-            }
-
-            minePreview
-        }
-        .padding(18)
-    }
-
-    private var progressHeader: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("Tower Miner", systemImage: "mountain.2.fill")
-                .font(.caption.weight(.black))
-                .foregroundStyle(Color(red: 0.51, green: 0.94, blue: 0.86))
-                .lineLimit(1)
-
             HStack(spacing: 8) {
-                statTile(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
-                statTile(title: "Best", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
+                statBar(title: "Credits", value: WidgetNumberFormatting.compact(entry.profile.totalCredits), systemImage: "creditcard.fill", tint: Color(red: 1.00, green: 0.78, blue: 0.23))
+                statBar(title: "Best Depth", value: "\(entry.profile.bestDepth)", systemImage: "arrow.down.to.line.compact", tint: Color(red: 0.51, green: 0.94, blue: 0.86))
+                iconLink(systemImage: "wrench.and.screwdriver.fill", destination: .upgrades)
+                iconLink(systemImage: "arrow.down.circle.fill", destination: .startChallenge)
             }
 
-            HStack(spacing: 8) {
-                statTile(title: "Rig", value: "\(entry.profile.rigLevel)", systemImage: "wrench.and.screwdriver.fill", tint: Color(red: 0.62, green: 0.77, blue: 1.00))
-                statTile(title: "Gem", value: "\(entry.profile.gemValue)", systemImage: "diamond.fill", tint: Color(red: 0.85, green: 0.60, blue: 1.00))
+            HStack(alignment: .top, spacing: 10) {
+                challengePanel(isCompact: false)
+                    .frame(maxWidth: .infinity)
+
+                upgradePanel
+                    .frame(width: 150)
             }
         }
+        .padding(12)
     }
 
     private func challengePanel(isCompact: Bool) -> some View {
-        HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 5) {
-                Label("Daily Challenge", systemImage: entry.isChallengeComplete ? "checkmark.seal.fill" : "calendar.badge.clock")
-                    .font(.caption2.weight(.black))
-                    .foregroundStyle(entry.isChallengeComplete ? Color(red: 0.62, green: 0.96, blue: 0.46) : Color(red: 0.92, green: 0.63, blue: 1.00))
-                    .lineLimit(1)
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: entry.isChallengeComplete ? "checkmark.seal.fill" : "calendar.badge.clock")
+                .font(.system(size: isCompact ? 16 : 18, weight: .black))
+                .foregroundStyle(entry.isChallengeComplete ? Color(red: 0.62, green: 0.96, blue: 0.46) : Color(red: 0.92, green: 0.63, blue: 1.00))
+                .frame(width: isCompact ? 20 : 22)
 
+            VStack(alignment: .leading, spacing: 3) {
                 Text(entry.challenge.title)
-                    .font(.system(size: isCompact ? 17 : 22, weight: .black, design: .rounded))
+                    .font(.system(size: isCompact ? 17 : 20, weight: .black, design: .rounded))
                     .foregroundStyle(.white)
-                    .lineLimit(isCompact ? 1 : 2)
-                    .minimumScaleFactor(0.74)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.62)
 
                 Text(entry.isChallengeComplete ? "Completed today" : entry.challenge.goalText)
-                    .font(.caption.weight(.bold))
+                    .font((isCompact ? Font.caption2 : Font.caption).weight(.bold))
                     .foregroundStyle(.white.opacity(0.66))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.78)
+                    .minimumScaleFactor(0.68)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            VStack(alignment: .trailing, spacing: 3) {
+            VStack(alignment: .trailing, spacing: 2) {
                 Text(entry.challenge.rewardText)
-                    .font(.headline.weight(.black))
+                    .font((isCompact ? Font.subheadline : Font.headline).weight(.black))
                     .foregroundStyle(Color(red: 0.47, green: 0.92, blue: 1.00))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.72)
+                    .minimumScaleFactor(0.68)
 
                 Text("Reward")
                     .font(.caption2.weight(.black))
@@ -456,28 +431,25 @@ struct TowerMinerWidgetEntryView: View {
                     .textCase(.uppercase)
             }
         }
-        .padding(12)
-        .background(Color.black.opacity(0.27), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(.white.opacity(0.10), lineWidth: 1)
-        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, isCompact ? 8 : 11)
+        .widgetPanel(tint: Color(red: 0.92, green: 0.63, blue: 1.00))
     }
 
-    private func upgradePanel(isCompact: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+    private var upgradePanel: some View {
+        VStack(alignment: .leading, spacing: 5) {
             Label("Next Upgrade", systemImage: "hammer.fill")
                 .font(.caption2.weight(.black))
                 .foregroundStyle(Color(red: 1.00, green: 0.78, blue: 0.23))
                 .lineLimit(1)
 
             Text(entry.upgradeRecommendation.title)
-                .font((isCompact ? Font.caption : Font.subheadline).weight(.black))
+                .font(.subheadline.weight(.black))
                 .foregroundStyle(.white)
-                .lineLimit(isCompact ? 1 : 2)
-                .minimumScaleFactor(0.72)
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
 
-            Text("Lv \(entry.upgradeRecommendation.currentLevel)/\(entry.upgradeRecommendation.maxLevel) - \(WidgetNumberFormatting.compact(entry.upgradeRecommendation.cost)) cr")
+            Text("\(WidgetNumberFormatting.compact(entry.upgradeRecommendation.cost)) credits")
                 .font(.caption2.weight(.bold))
                 .foregroundStyle(.white.opacity(0.62))
                 .lineLimit(1)
@@ -489,25 +461,37 @@ struct TowerMinerWidgetEntryView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.68)
         }
-        .padding(10)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 9)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.black.opacity(0.24), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(.white.opacity(0.09), lineWidth: 1)
-        }
+        .widgetPanel(tint: Color(red: 1.00, green: 0.78, blue: 0.23))
     }
 
-    private func statTile(title: String, value: String, systemImage: String, tint: Color) -> some View {
+    private func statBar(title: String, value: String, systemImage: String, tint: Color) -> some View {
         HStack(spacing: 6) {
-            Image(systemName: systemImage)
-                .font(.system(size: 12, weight: .black))
-                .foregroundStyle(tint)
-                .frame(width: 14)
+            ZStack {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                tint.opacity(0.92),
+                                tint.opacity(0.36),
+                                Color.black.opacity(0.45)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                Image(systemName: systemImage)
+                    .font(.system(size: 12, weight: .black))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 28, height: 26)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(value)
-                    .font(.subheadline.weight(.black))
+                    .font(.caption.weight(.black))
                     .monospacedDigit()
                     .foregroundStyle(.white)
                     .lineLimit(1)
@@ -517,65 +501,27 @@ struct TowerMinerWidgetEntryView: View {
                     .font(.caption2.weight(.black))
                     .foregroundStyle(.white.opacity(0.48))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                    .minimumScaleFactor(0.62)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 7)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 6)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .widgetPanel(tint: tint)
     }
 
-    private func deepLinkButton(title: String, systemImage: String, destination: WidgetDeepLink) -> some View {
+    private func iconLink(systemImage: String, destination: WidgetDeepLink) -> some View {
         Link(destination: destination.url) {
-            Label(title, systemImage: systemImage)
-                .font(.caption.weight(.black))
-                .lineLimit(1)
-                .minimumScaleFactor(0.74)
+            Image(systemName: systemImage)
+                .font(.system(size: 14, weight: .black))
                 .foregroundStyle(.black)
-                .frame(maxWidth: .infinity, minHeight: 34)
-                .padding(.horizontal, 8)
+                .frame(width: 31, height: 31)
                 .background(Color(red: 0.51, green: 0.94, blue: 0.86), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
     }
 
-    private var minePreview: some View {
-        HStack(spacing: 5) {
-            ForEach(0..<7, id: \.self) { column in
-                VStack(spacing: 5) {
-                    ForEach(0..<3, id: \.self) { row in
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .fill(tileColor(row: row, column: column))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                    .stroke(.white.opacity(0.08), lineWidth: 1)
-                            }
-                    }
-                }
-            }
-        }
-        .frame(height: 58)
-    }
-
     private var mineBackground: some View {
         WidgetMineBackground()
-    }
-
-    private func tileColor(row: Int, column: Int) -> Color {
-        switch (row + column) % 6 {
-        case 0:
-            return Color(red: 0.25, green: 0.16, blue: 0.10)
-        case 1:
-            return Color(red: 0.35, green: 0.25, blue: 0.16)
-        case 2:
-            return Color(red: 0.18, green: 0.19, blue: 0.22)
-        case 3:
-            return Color(red: 0.48, green: 0.30, blue: 0.13)
-        case 4:
-            return Color(red: 0.09, green: 0.36, blue: 0.38)
-        default:
-            return Color(red: 0.40, green: 0.11, blue: 0.08)
-        }
     }
 }
 
@@ -613,6 +559,68 @@ private enum WidgetNumberFormatting {
         }
 
         return "\(value)"
+    }
+}
+
+private struct WidgetPanelModifier: ViewModifier {
+    let tint: Color
+
+    func body(content: Content) -> some View {
+        content
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.18, green: 0.19, blue: 0.20),
+                                    Color(red: 0.06, green: 0.07, blue: 0.09),
+                                    Color(red: 0.16, green: 0.10, blue: 0.06)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    tint.opacity(0.70),
+                                    tint.opacity(0.18),
+                                    .clear
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(height: 4)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 6)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                .white.opacity(0.18),
+                                tint.opacity(0.36),
+                                .black.opacity(0.34)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+    }
+}
+
+private extension View {
+    func widgetPanel(tint: Color) -> some View {
+        modifier(WidgetPanelModifier(tint: tint))
     }
 }
 
