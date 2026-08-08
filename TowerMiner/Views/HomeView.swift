@@ -265,9 +265,9 @@ private struct StatBar: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(height: 5)
+                    .frame(height: 3)
                     .padding(.horizontal, 14)
-                    .padding(.top, 7)
+                    .padding(.top, 3)
                     .frame(maxHeight: .infinity, alignment: .top)
             }
         }
